@@ -1,0 +1,658 @@
+[
+  {
+    "id": 620,
+    "wcId": 169671,
+    "name": "Soundcore R50i",
+    "flow": "earbuds",
+    "wireless": true,
+    "usbc": false,
+    "silicone": true,
+    "anc": false,
+    "multipoint": null,
+    "aux": false,
+    "auxMic": null,
+    "form": "سری سیلیکونی قابل تعویض",
+    "cautions": [
+      "ANC برای شنیدن ندارد؛ کاهش نویز تماس را با آن اشتباه نگیرید."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/anker-soundcore-r50i/%d9%87%d9%86%d8%af%d8%b2%d9%81%d8%b1%db%8c-%d8%a7%d9%86%da%a9%d8%b1-%d9%85%d8%af%d9%84-soundcore-r50i-a3949"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2024/02/anker-soundcore-r50i-4.webp"
+  },
+  {
+    "id": 94,
+    "wcId": 193516,
+    "name": "JBL Tune 305C USB",
+    "flow": "earbuds",
+    "wireless": false,
+    "usbc": true,
+    "silicone": false,
+    "anc": false,
+    "multipoint": false,
+    "aux": false,
+    "auxMic": null,
+    "form": "بدون سری سیلیکونی",
+    "cautions": [
+      "فرم باز آن برای همه گوش‌ها مناسب نیست؛ راحتی به شکل گوش وابسته است."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات رسمی JBL 305C",
+        "url": "https://in.jbl.com/TUNE305C-USB-C.html"
+      },
+      {
+        "label": "مشخصات محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/jbl-tune-305c-usb/%d8%a7%db%8c%d8%b1%d8%a8%d8%a7%d8%af-%d8%ac%db%8c-%d8%a8%db%8c-%d8%a7%d9%84-%d9%85%d8%af%d9%84-tune-305c-usb"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2024/08/jbl-tune-305c-usb-2-1.jpg"
+  },
+  {
+    "id": 93,
+    "wcId": 193522,
+    "name": "JBL Tune 310C USB-C",
+    "flow": "earbuds",
+    "wireless": false,
+    "usbc": true,
+    "silicone": true,
+    "anc": false,
+    "multipoint": false,
+    "aux": false,
+    "auxMic": null,
+    "form": "سری سیلیکونی در سه اندازه",
+    "cautions": [
+      "ANC ندارد؛ گرفتن صدای محیط به جاگیری سری در گوش هم وابسته است."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات رسمی JBL 310C",
+        "url": "https://www.jbl.com/TUNE310C-USB-C.html"
+      },
+      {
+        "label": "مشخصات محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/jbl-tune-310c-usb/%d9%87%d9%86%d8%af%d8%b2%d9%81%d8%b1%db%8c-%d8%ac%db%8c-%d8%a8%db%8c-%d8%a7%d9%84-%d9%85%d8%af%d9%84-tune-310c-usb-c"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2024/08/jbl-tune-310c-usb-25.webp"
+  },
+  {
+    "id": 8,
+    "wcId": 272477,
+    "name": "CMF Buds 2a",
+    "flow": "earbuds",
+    "wireless": true,
+    "usbc": false,
+    "silicone": true,
+    "anc": true,
+    "multipoint": true,
+    "aux": false,
+    "auxMic": null,
+    "form": "سری سیلیکونی قابل تعویض",
+    "cautions": [
+      "قابلیت‌های قابل تنظیم را در Nothing X بررسی کنید؛ راحتی و کیفیت تماس به استفاده شما وابسته است."
+    ],
+    "sources": [
+      {
+        "label": "تأیید اتصال دو دستگاه در CMF Buds 2a",
+        "url": "https://support.nothing.tech/hc/en-us/articles/34007644198161-Does-CMF-Buds-2a-support-dual-connection"
+      },
+      {
+        "label": "مشخصات محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/cmf-buds-2a/%d9%87%d9%86%d8%af%d8%b2%d9%81%d8%b1%db%8c-%d9%86%d8%a7%d8%aa%db%8c%d9%86%da%af-%d9%85%d8%af%d9%84-cmf-buds-2a"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2025/12/cmf-buds-2a-gray-1.webp"
+  },
+  {
+    "id": 9,
+    "wcId": 272476,
+    "name": "CMF Buds Pro 2",
+    "flow": "earbuds",
+    "wireless": true,
+    "usbc": false,
+    "silicone": true,
+    "anc": true,
+    "multipoint": true,
+    "aux": false,
+    "auxMic": null,
+    "form": "سری سیلیکونی قابل تعویض",
+    "cautions": [
+      "امکانات بیشتر به‌تنهایی دلیل خرید گران‌تر نیست؛ فقط برای قابلیت موردنیاز هزینه کنید."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/cmf-buds-pro-2/%d9%87%d9%86%d8%af%d8%b2%d9%81%d8%b1%db%8c-%d9%86%d8%a7%d8%aa%db%8c%d9%86%da%af-%d9%85%d8%af%d9%84-cmf-buds-pro-2"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2025/12/cmf-buds-pro-2-gray-7.webp"
+  },
+  {
+    "id": 977,
+    "wcId": 286816,
+    "name": "Baseus AirNora 2",
+    "flow": "earbuds",
+    "wireless": true,
+    "usbc": false,
+    "silicone": true,
+    "anc": true,
+    "multipoint": null,
+    "aux": false,
+    "auxMic": null,
+    "form": "سری سیلیکونی قابل تعویض",
+    "cautions": [
+      "اتصال هم‌زمان به دو دستگاه برای این مدل در این راهنما تأیید نشده است."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/baseus-airnora-2/%d9%87%d9%86%d8%af%d8%b2%d9%81%d8%b1%db%8c-%d8%a8%db%8c%d8%b3%d9%88%d8%b3-%d9%85%d8%af%d9%84-airnora-2"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2026/07/baseus-airnora-2-5.webp"
+  },
+  {
+    "id": 1130,
+    "wcId": 287214,
+    "name": "Baseus Bass BP1 NC",
+    "flow": "earbuds",
+    "wireless": true,
+    "usbc": false,
+    "silicone": true,
+    "anc": true,
+    "multipoint": null,
+    "aux": false,
+    "auxMic": null,
+    "form": "سری سیلیکونی قابل تعویض",
+    "cautions": [
+      "اتصال هم‌زمان به دو دستگاه در این راهنما تأیید نشده است."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات رسمی Baseus BP1 NC",
+        "url": "https://pl.baseus.com/products/sluchawki-bezprzewodowe-baseus-bass-bp1-nc-tws-dokanalowe-z-anc-biale"
+      },
+      {
+        "label": "مشخصات محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/baseus-bass-bp1-nc/%d9%87%d9%86%d8%af%d8%b2%d9%81%d8%b1%db%8c-%d8%a8%db%8c%d8%b3%d9%88%d8%b3-%d9%85%d8%af%d9%84-bass-bp1-nc"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2026/07/baseus-bass-bp1-nc-3.webp"
+  },
+  {
+    "id": 621,
+    "wcId": 169667,
+    "name": "Soundcore Q20i",
+    "flow": "headphones",
+    "wireless": true,
+    "usbc": false,
+    "silicone": null,
+    "anc": true,
+    "multipoint": true,
+    "aux": true,
+    "auxMic": null,
+    "form": "هدفون دور گوش",
+    "cautions": [
+      "برای استفاده طولانی، فشار پد و گرمای اطراف گوش را در نظر بگیرید."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات رسمی Soundcore Q20i",
+        "url": "https://www.soundcore.com/products/q20i-a3004z31"
+      },
+      {
+        "label": "مشخصات محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/anker-soundcore-life-q20i/%d9%87%d8%af%d9%81%d9%88%d9%86-%d8%a7%d9%86%da%a9%d8%b1-%d9%85%d8%af%d9%84-soundcore-life-q20i-a3004"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2024/02/Soundcore-Life-Q20i-black-1.jpg"
+  },
+  {
+    "id": 362,
+    "wcId": 237941,
+    "name": "Soundcore Q11i",
+    "flow": "headphones",
+    "wireless": true,
+    "usbc": false,
+    "silicone": null,
+    "anc": false,
+    "multipoint": true,
+    "aux": true,
+    "auxMic": false,
+    "form": "هدفون",
+    "cautions": [
+      "ANC ندارد. در اتصال AUX، میکروفون خود هدفون برای تماس فعال نیست."
+    ],
+    "sources": [
+      {
+        "label": "پاسخ‌های رسمی Soundcore درباره Q11i",
+        "url": "https://service.soundcore.com/article-description/soundcore-Q11i-Headphones-FAQ"
+      },
+      {
+        "label": "مشخصات محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/anker-soundcore-q11i-a3005/%d9%87%d8%af%d9%81%d9%88%d9%86-%d8%a7%d9%86%da%a9%d8%b1-%d9%85%d8%af%d9%84-soundcore-q11i-a3005"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2025/05/Anker-soundcore-Q11i-A3005-1.jpg"
+  },
+  {
+    "id": 27,
+    "wcId": 257821,
+    "name": "JBL Tune 780NC",
+    "flow": "headphones",
+    "wireless": true,
+    "usbc": false,
+    "silicone": null,
+    "anc": true,
+    "multipoint": true,
+    "aux": null,
+    "auxMic": null,
+    "form": "هدفون دور گوش",
+    "cautions": [
+      "نوع اتصال سیمی باید پیش از انتخاب برای AUX بررسی شود؛ در این مسیر پیشنهاد بلوتوثی است."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/jbl-tune-780nc/%d9%87%d8%af%d9%81%d9%88%d9%86-%d8%ac%db%8c-%d8%a8%db%8c-%d8%a7%d9%84-%d9%85%d8%af%d9%84-tune-780nc"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2025/09/jbl-tune-780nc-black-1.webp"
+  },
+  {
+    "id": 981,
+    "wcId": 286814,
+    "name": "Baseus Bowie 30 Max",
+    "flow": "headphones",
+    "wireless": true,
+    "usbc": false,
+    "silicone": null,
+    "anc": true,
+    "multipoint": true,
+    "aux": true,
+    "auxMic": null,
+    "form": "هدفون دور گوش",
+    "cautions": [
+      "برای استفاده طولانی، راحتی پد را جدا از امکانات و شارژدهی بررسی کنید."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات رسمی Baseus Bowie 30 Max",
+        "url": "https://www.baseus.com/products/bowie-30-max-noise-cancelling-headphone"
+      },
+      {
+        "label": "مشخصات محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/baseus-bowie-30-max/%d9%87%d8%af%d9%81%d9%88%d9%86-%d8%a8%db%8c%d8%b3%d9%88%d8%b3-%d9%85%d8%af%d9%84-bowie-30-max"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2026/07/baseus-bowie-30-max-1.webp"
+  },
+  {
+    "id": 842,
+    "wcId": 11474,
+    "name": "JBL Quantum 100",
+    "flow": "headphones",
+    "wireless": false,
+    "usbc": false,
+    "silicone": null,
+    "anc": false,
+    "multipoint": false,
+    "aux": true,
+    "auxMic": true,
+    "form": "هدست سیمی دور گوش",
+    "cautions": [
+      "برای میکروفون، دستگاه باید جک ترکیبی هدست داشته باشد؛ کامپیوتر با دو جک جدا ممکن است به تبدیل نیاز داشته باشد."
+    ],
+    "sources": [
+      {
+        "label": "برگه رسمی JBL Quantum 100",
+        "url": "https://www.jbl.com/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwa83c3c05/pdfs/JBL_Quantum_100_SpecSheet_English.pdf"
+      },
+      {
+        "label": "مشخصات و تصویر محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/jbl-quantum-100/%d9%87%d8%af%d9%81%d9%88%d9%86-%d8%ac%db%8c-%d8%a8%db%8c-%d8%a7%d9%84-%d9%85%d8%af%d9%84-quantum-100"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2022/11/Tehranspeaker-JBL-Quantum-100-Black-1.jpg"
+  },
+  {
+    "id": 137,
+    "wcId": 148012,
+    "name": "JBL Tune 520BT",
+    "flow": "headphones",
+    "wireless": true,
+    "usbc": false,
+    "silicone": null,
+    "anc": null,
+    "multipoint": true,
+    "aux": null,
+    "auxMic": null,
+    "form": "هدفون روی گوش",
+    "cautions": [
+      "فرم روی گوش می‌تواند روی لاله گوش فشار ایجاد کند؛ راحتی شخصی است."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات و تصویر محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/jbl-tune-520bt/%d9%87%d8%af%d9%81%d9%88%d9%86-%d8%ac%db%8c-%d8%a8%db%8c-%d8%a7%d9%84-%d9%85%d8%af%d9%84-tune-520bt"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2023/05/jbl-tune-520bt-33.webp"
+  },
+  {
+    "id": 116,
+    "wcId": 175972,
+    "name": "Nothing Ear (a)",
+    "flow": "earbuds",
+    "wireless": true,
+    "usbc": false,
+    "silicone": true,
+    "anc": true,
+    "multipoint": true,
+    "aux": false,
+    "auxMic": null,
+    "form": "داخل گوش با سری سیلیکونی",
+    "cautions": [
+      "قابلیت‌های اپ و کدک را با دستگاهت بررسی کن؛ ANC به معنی تضمین کیفیت تماس نیست."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات رسمی Nothing Ear (a)",
+        "url": "https://checkout-us.nothing.tech/products/ear-a"
+      },
+      {
+        "label": "مشخصات و تصویر محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/nothing-ear-a/%d9%87%d9%86%d8%af%d8%b2%d9%81%d8%b1%db%8c-%d9%86%d8%a7%d8%aa%db%8c%d9%86%da%af-%d9%85%d8%af%d9%84-ear-a"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2024/04/nothing-ear-a-black-1.jpg"
+  },
+  {
+    "id": 115,
+    "wcId": 175977,
+    "name": "Nothing Ear",
+    "flow": "earbuds",
+    "wireless": true,
+    "usbc": false,
+    "silicone": true,
+    "anc": true,
+    "multipoint": true,
+    "aux": false,
+    "auxMic": null,
+    "form": "داخل گوش با سری سیلیکونی",
+    "cautions": [
+      "برای استفاده از همه تنظیمات، سازگاری Nothing X با دستگاه را بررسی کن."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات رسمی Nothing Ear",
+        "url": "https://nothing.tech/products/ear"
+      },
+      {
+        "label": "تأیید رسمی اتصال هم‌زمان",
+        "url": "https://support.nothing.tech/hc/en-us/articles/23726191204113-Does-Nothing-Ear-support-Dual-Connection"
+      },
+      {
+        "label": "مشخصات و تصویر محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/nothing-ear/%d9%87%d9%86%d8%af%d8%b2%d9%81%d8%b1%db%8c-%d9%86%d8%a7%d8%aa%db%8c%d9%86%da%af-%d9%85%d8%af%d9%84-ear"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2024/04/nothing-ear-white-1.jpg"
+  },
+  {
+    "id": 79,
+    "wcId": 193884,
+    "name": "B&O Beoplay EX",
+    "flow": "earbuds",
+    "wireless": true,
+    "usbc": false,
+    "silicone": true,
+    "anc": true,
+    "multipoint": true,
+    "aux": false,
+    "auxMic": null,
+    "form": "هندزفری داخل گوش با سری قابل تعویض",
+    "cautions": [
+      "قیمت بالاتر به‌تنهایی برتری متناسب با نیاز شما را ثابت نمی‌کند؛ راحتی و امکانات موردنیاز را بررسی کن."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات رسمی Beoplay EX",
+        "url": "https://www.bang-olufsen.com/en/us/earphones/beoplay-ex"
+      },
+      {
+        "label": "مشخصات و تصویر محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/bang-olufsen-beoplay-ex/%d9%87%d9%86%d8%af%d8%b2%d9%81%d8%b1%db%8c-%d8%a8%d9%86%da%af-%d8%a7%d9%86%d8%af-%d8%a2%d9%84%d9%81%d8%b3%d9%86-%d9%85%d8%af%d9%84-beoplay-ex"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2024/08/bang-olufsen-beoplay-ex-1.jpg"
+  },
+  {
+    "id": 75,
+    "wcId": 193920,
+    "name": "B&O Beoplay H95",
+    "flow": "headphones",
+    "wireless": true,
+    "usbc": false,
+    "silicone": null,
+    "anc": true,
+    "multipoint": null,
+    "aux": true,
+    "auxMic": null,
+    "form": "هدفون دور گوش",
+    "cautions": [
+      "عملکرد میکروفون در اتصال AUX در این راهنما تأیید نشده است."
+    ],
+    "sources": [
+      {
+        "label": "مقایسه رسمی H95 و HX",
+        "url": "https://www.bang-olufsen.com/en/us/comparison/products/headphones/beoplay-h95/beoplay-hx"
+      },
+      {
+        "label": "مشخصات و تصویر محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/bang-olufsen-beoplay-h95/%d9%87%d8%af%d9%81%d9%88%d9%86-%d8%a8%d9%86%da%af-%d8%a7%d9%86%d8%af-%d8%a2%d9%84%d9%81%d8%b3%d9%86-%d9%85%d8%af%d9%84-beoplay-h95"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2024/08/bang-olufsen-beoplay-h95-19.jpg"
+  },
+  {
+    "id": 73,
+    "wcId": 193932,
+    "name": "B&O Beoplay HX",
+    "flow": "headphones",
+    "wireless": true,
+    "usbc": false,
+    "silicone": null,
+    "anc": true,
+    "multipoint": true,
+    "aux": true,
+    "auxMic": null,
+    "form": "هدفون دور گوش",
+    "cautions": [
+      "عملکرد میکروفون در اتصال AUX در این راهنما تأیید نشده است."
+    ],
+    "sources": [
+      {
+        "label": "مقایسه رسمی H95 و HX",
+        "url": "https://www.bang-olufsen.com/en/us/comparison/products/headphones/beoplay-h95/beoplay-hx"
+      },
+      {
+        "label": "مشخصات و تصویر محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/bang-olufsen-beoplay-hx/%d9%87%d8%af%d9%81%d9%88%d9%86-%d8%a8%d9%86%da%af-%d8%a7%d9%86%d8%af-%d8%a2%d9%84%d9%81%d8%b3%d9%86-%d9%85%d8%af%d9%84-beoplay-hx"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2024/09/bang-olufsen-beoplay-hx-1.webp"
+  },
+  {
+    "id": 334,
+    "wcId": 253007,
+    "name": "Mifa X17",
+    "flow": "earbuds",
+    "wireless": true,
+    "usbc": false,
+    "silicone": false,
+    "anc": null,
+    "multipoint": null,
+    "aux": false,
+    "auxMic": null,
+    "form": "بدون سری سیلیکونی؛ نیمه داخل گوش",
+    "cautions": [
+      "ANC و اتصال هم‌زمان به دو دستگاه برای این مدل در این راهنما تأیید نشده‌اند."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات و تصویر محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/mifa-x17/%d9%87%d9%86%d8%af%d8%b2%d9%81%d8%b1%db%8c-%d9%85%db%8c%d9%81%d8%a7-%d9%85%d8%af%d9%84-x17"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2025/07/mifa-x17-2.webp"
+  },
+  {
+    "id": 26,
+    "wcId": 257824,
+    "name": "JBL Tune 680NC",
+    "flow": "headphones",
+    "wireless": true,
+    "usbc": false,
+    "silicone": null,
+    "anc": true,
+    "multipoint": true,
+    "aux": null,
+    "auxMic": null,
+    "form": "هدفون روی گوش",
+    "cautions": [
+      "نوع دقیق اتصال سیمی و عملکرد میکروفون با کابل باید پیش از انتخاب بررسی شود."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات و تصویر محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/jbl-tune-680nc/%d9%87%d8%af%d9%81%d9%88%d9%86-%d8%ac%db%8c-%d8%a8%db%8c-%d8%a7%d9%84-%d9%85%d8%af%d9%84-tune-680nc"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2025/09/jbl-tune-680nc-black-1.webp"
+  },
+  {
+    "id": 25,
+    "wcId": 257826,
+    "name": "JBL Tune 730BT",
+    "flow": "headphones",
+    "wireless": true,
+    "usbc": false,
+    "silicone": null,
+    "anc": null,
+    "multipoint": true,
+    "aux": null,
+    "auxMic": null,
+    "form": "هدفون بی‌سیم",
+    "cautions": [
+      "ANC برای شنیدن در این راهنما تأیید نشده است؛ نسخه بلوتوث به‌تنهایی معیار کیفیت صدا نیست."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات و تصویر محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/jbl-tune-730bt/%d9%87%d8%af%d9%81%d9%88%d9%86-%d8%ac%db%8c-%d8%a8%db%8c-%d8%a7%d9%84-%d9%85%d8%af%d9%84-tune-730bt"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2025/09/jbl-tune-730bt-2.webp"
+  },
+  {
+    "id": 24,
+    "wcId": 257827,
+    "name": "JBL Tune 530BT",
+    "flow": "headphones",
+    "wireless": true,
+    "usbc": false,
+    "silicone": null,
+    "anc": null,
+    "multipoint": true,
+    "aux": null,
+    "auxMic": null,
+    "form": "هدفون روی گوش",
+    "cautions": [
+      "فرم روی گوش و فشار پد را برای استفاده طولانی بررسی کن؛ ANC در این راهنما تأیید نشده است."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات و تصویر محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/jbl-tune-530bt/%d9%87%d8%af%d9%81%d9%88%d9%86-%d8%ac%db%8c-%d8%a8%db%8c-%d8%a7%d9%84-%d9%85%d8%af%d9%84-tune-530bt"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2025/09/jbl-tune-530bt-black-1.webp"
+  },
+  {
+    "id": 7,
+    "wcId": 272480,
+    "name": "CMF Headphone Pro",
+    "flow": "headphones",
+    "wireless": true,
+    "usbc": false,
+    "silicone": null,
+    "anc": true,
+    "multipoint": true,
+    "aux": true,
+    "auxMic": null,
+    "form": "هدفون",
+    "cautions": [
+      "عملکرد میکروفون در حالت AUX در این راهنما تأیید نشده است."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات و تصویر محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/cmf-headphone-pro/%d9%87%d8%af%d9%81%d9%88%d9%86-%d9%86%d8%a7%d8%aa%db%8c%d9%86%da%af-%d9%85%d8%af%d9%84-cmf-headphone-pro"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2025/12/cmf-headphone-pro-10.webp"
+  },
+  {
+    "id": 186,
+    "wcId": 277999,
+    "name": "JBL Sense Lite",
+    "flow": "earbuds",
+    "wireless": true,
+    "usbc": false,
+    "silicone": false,
+    "anc": null,
+    "multipoint": true,
+    "aux": false,
+    "auxMic": null,
+    "form": "مدل Open-Ear؛ مجرای گوش باز می‌ماند",
+    "cautions": [
+      "فرم باز برای جداشدن از صدای محیط طراحی نشده است؛ ANC در این راهنما تأیید نشده است."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات و تصویر محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/jbl-sense-lite/%d9%87%d9%86%d8%af%d8%b2%d9%81%d8%b1%db%8c-%d8%ac%db%8c-%d8%a8%db%8c-%d8%a7%d9%84-%d9%85%d8%af%d9%84-sense-lite"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2026/02/JBL-Sense-Lite-Black-1.webp"
+  },
+  {
+    "id": 1026,
+    "wcId": 288358,
+    "name": "Baseus Bass BS2 Lite",
+    "flow": "earbuds",
+    "wireless": true,
+    "usbc": false,
+    "silicone": false,
+    "anc": false,
+    "multipoint": null,
+    "aux": false,
+    "auxMic": null,
+    "form": "نیمه داخل گوش؛ بدون سری سیلیکونی",
+    "cautions": [
+      "کاهش نویز مکالمه ENC را با ANC برای شنیدن اشتباه نگیر؛ اتصال دو دستگاه تأیید نشده است."
+    ],
+    "sources": [
+      {
+        "label": "مشخصات و تصویر محصول در تهران اسپیکر",
+        "url": "https://www.tehranspeaker.com/product/baseus-bass-bs2-lite/%d9%87%d9%86%d8%af%d8%b2%d9%81%d8%b1%db%8c-%d8%a8%db%8c%d8%b3%d9%88%d8%b3-%d9%85%d8%af%d9%84-bass-bs2-lite"
+      }
+    ],
+    "imageSource": "https://www.tehranspeaker.com/wp-content/uploads/2026/08/baseus-bass-bs2-lite-3.webp"
+  }
+]

@@ -1,0 +1,63 @@
+# ==========================================
+# Operating System Files
+# ==========================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ==========================================
+# Dependencies & Package Managers
+# ==========================================
+node_modules/
+jspm_packages/
+bower_components/
+.venv/
+env/
+vendor/
+
+# ==========================================
+# Build Outputs & Compiled Code
+# ==========================================
+dist/
+build/
+out/
+*.exe
+*.dll
+*.so
+*.class
+*.pyc
+
+# ==========================================
+# Logs, Caches, and Databases
+# ==========================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+.eslintcache
+.cache/
+*.sql
+*.sqlite
+
+# ==========================================
+# IDEs and Text Editors
+# ==========================================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ==========================================
+# Secrets and Local Configurations
+# ==========================================
+.env
+.env.local
+.env.production
+auth.json
