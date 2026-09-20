@@ -1,61 +1,69 @@
 <?php
 /**
- * Plugin Name: TehranSpeaker Sound Guide
- * Description: Adaptive headphone and earbud guide using amazing design tokens and current WooCommerce variation stock.
- * Version: 2.0.0
- * Requires PHP: 8.0
- * Requires Plugins: woocommerce
- * Text Domain: ts-sound-guide
- * Auther: parsa dana , Keyvan Havestin
+ * Plugin bootstrap and composition root.
+ *
+ * Only environment checks, class loading, service construction, and hook
+ * registration happen here. Business logic lives in the services.
+ *
+ * @package TSSoundGuide
  */
-defined('ABSPATH') || exit;
-require_once __DIR__.'/includes/policy.php';
-require_once __DIR__.'/includes/inventory.php';
 
-add_action('rest_api_init',static function(){
-    foreach(['recommend','validate'] as $route)register_rest_route('ts-sound/v1','/'.$route,['methods'=>'POST','callback'=>'ts_sound_api','permission_callback'=>'__return_true']);
-});
+defined( 'ABSPATH' ) || exit;
 
-add_action('wp_enqueue_scripts',static function(){
-    global $post;
-    if(!$post||!has_shortcode($post->post_content,'ts_sound_guide'))return;
-    $base=plugin_dir_url(__FILE__);
-    // Reuse the actual theme stylesheet; never use a CDN or a parallel brand palette.
-    if(!wp_style_is('amazing-theme-system','registered'))wp_register_style('amazing-theme-system',get_template_directory_uri().'/assets/css/theme-system.css',[],null);
-    wp_enqueue_style('ts-sound-tokens',$base.'assets/token-bridge.css',['amazing-theme-system'],'2.0.0');
-    wp_enqueue_style('ts-sound-guide',$base.'assets/style.css',['ts-sound-tokens'],'2.0.0');
-    wp_enqueue_script('ts-sound-guide',$base.'assets/app.js',[],'2.0.0',true);
-},1001);
+define( 'TS_SOUND_GUIDE_VERSION', '3.0.0' );
+define( 'TS_SOUND_GUIDE_FILE', __FILE__ );
+define( 'TS_SOUND_GUIDE_DIR', plugin_dir_path( __FILE__ ) );
+define( 'TS_SOUND_GUIDE_URL', plugin_dir_url( __FILE__ ) );
+define( 'TS_SOUND_GUIDE_OPTION', 'ts_sound_guide_settings' );
+define( 'TS_SOUND_GUIDE_REST_BASE', 'ts-sound/v1' );
+define( 'TS_SOUND_GUIDE_TRANSIENT_EXPIRY', 30 * MINUTE_IN_SECONDS );
 
-add_shortcode('ts_sound_guide',static function($attrs){
-    $attrs=shortcode_atts(['flow'=>'earbuds'],$attrs,'ts_sound_guide');
-    $flow=$attrs['flow']==='headphones'?'headphones':'earbuds';
-    $heroes=[];foreach(ts_sound_profiles() as $p)if(in_array($p['id'],[8,621],true))$heroes[$p['flow']]=['image'=>$p['imageSource'],'name'=>$p['name']];
-    $config=['mode'=>'live','flow'=>$flow,'endpoint'=>rest_url('ts-sound/v1'),'homeUrl'=>home_url('/'),'hero'=>$heroes];
-    wp_add_inline_script('ts-sound-guide','window.TSSoundConfig='.wp_json_encode($config,JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT).';','before');
-    $markup=file_get_contents(__DIR__.'/view.html');
-    return str_replace(['__LOGO__','__HERO__'],[esc_url(get_template_directory_uri().'/images/logo.svg'),esc_url($heroes[$flow]['image']??'')],$markup);
-});
-
-// A dedicated template avoids the default page title and Page Builder container
-// wrapping this full-width experience. It only applies to an explicit shortcode.
-add_filter('template_include',static function($template){
-    if(is_page()){$page=get_queried_object();if($page&&has_shortcode($page->post_content,'ts_sound_guide'))return __DIR__.'/templates/page.php';}
-    return $template;
-},99);
-
-// Store only a server-generated, short-lived attribution token after product selection.
-add_action('template_redirect',static function(){
-    if(!is_product()||!isset($_GET['ts_sound_ref'])||!function_exists('WC')||!WC()->session)return;
-    $token=sanitize_text_field(wp_unslash($_GET['ts_sound_ref']));
-    if(!preg_match('/^[A-Za-z0-9]{32}$/D',$token))return;
-    $data=get_transient('ts_sound_ref_'.$token);if(!is_array($data)||(int)$data['product_id']!==get_queried_object_id())return;
-    WC()->session->set('ts_sound_attribution',$data);WC()->session->set_customer_session_cookie(true);
-});
-function ts_sound_attach_order_attribution($order):void {
-    if(!function_exists('WC')||!WC()->session)return;$data=WC()->session->get('ts_sound_attribution');
-    if(!is_array($data)||time()-(int)($data['at']??0)>30*MINUTE_IN_SECONDS)return;
-    foreach($order->get_items() as $item)if((int)$item->get_product_id()===(int)$data['product_id']&&(int)$item->get_variation_id()===(int)$data['variation_id']){$order->update_meta_data('_ts_sound_guide',$data);break;}
+/**
+ * Minimal PSR-4 class autoloader for the TSSoundGuide namespace.
+ *
+ * @param string $class Fully qualified class name.
+ */
+function ts_sound_guide_autoload( string $class ): void {
+	if ( ! str_starts_with( $class, 'TSSoundGuide\\' ) ) {
+		return;
+	}
+	$relative = substr( $class, strlen( 'TSSoundGuide\\' ) );
+	$file     = __DIR__ . '/includes/src/' . str_replace( '\\', '/', $relative ) . '.php';
+	if ( is_file( $file ) ) {
+		require_once $file;
+	}
 }
-add_action('woocommerce_checkout_create_order','ts_sound_attach_order_attribution',20,1);
-add_action('woocommerce_store_api_checkout_update_order_from_request','ts_sound_attach_order_attribution',20,1);
+spl_autoload_register( 'ts_sound_guide_autoload' );
+
+register_activation_hook( __FILE__, static function (): void {
+	// Activation writes nothing: no product edits, no pages, no options rows
+	// beyond defaults written on first read (get_option default path).
+	ts_sound_guide_environment_ready();
+} );
+
+/**
+ * Whether the runtime supports the plugin (PHP and WooCommerce presence).
+ *
+ * @return bool True when WooCommerce is active with a compatible runtime.
+ */
+function ts_sound_guide_environment_ready(): bool {
+	$php_ok = version_compare( PHP_VERSION, '8.0', '>=' );
+	$wc_ok  = class_exists( 'WooCommerce' ) || ( function_exists( 'is_plugin_active' ) && is_plugin_active( 'woocommerce/woocommerce.php' ) );
+	return $php_ok && $wc_ok;
+}
+
+/**
+ * Compose and register services.
+ *
+ * @return TSSoundGuide\App The application container.
+ */
+function ts_sound_guide(): TSSoundGuide\App {
+	static $app = null;
+	if ( null === $app ) {
+		$app = new TSSoundGuide\App();
+		$app->register( $GLOBALS['wp_filter'] ?? [] );
+	}
+	return $app;
+}
+
+add_action( 'plugins_loaded', 'ts_sound_guide', 5 );

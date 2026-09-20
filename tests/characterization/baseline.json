@@ -1,0 +1,2659 @@
+{
+    "generated_at": "2026-09-20T15:49:02+00:00",
+    "scenarios": {
+        "earbuds-commute-noise-wireless-silicone": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "commute",
+                "pain": "noise",
+                "connection": "wireless",
+                "fit": "silicone",
+                "budget": 6000000,
+                "flex": false
+            },
+            "public_picks": [
+                {
+                    "id": 90,
+                    "wcId": 1090,
+                    "name": "Tie Beta",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": true,
+                    "multipoint": true,
+                    "silicone": true,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/90"
+                        }
+                    ],
+                    "url": "https://store.example/product/90",
+                    "image": null,
+                    "price": 6000000,
+                    "reasons": [
+                        "کاهش صدای محیط با ANC",
+                        "سری سیلیکونی قابل تعویض",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "پیشنهاد اصلی",
+                    "variants": [
+                        {
+                            "id": 901,
+                            "price": 6000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                }
+            ],
+            "notices": [],
+            "total": 2,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "anc"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "anc"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection"
+                },
+                {
+                    "id": 160,
+                    "reason": "anc"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection"
+                }
+            ]
+        },
+        "earbuds-work-switch-wireless-any": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "work",
+                "pain": "switch",
+                "connection": "wireless",
+                "fit": "any",
+                "budget": 6000000,
+                "flex": false
+            },
+            "public_picks": [
+                {
+                    "id": 160,
+                    "wcId": 1160,
+                    "name": "Silence Unknown ANC",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": null,
+                    "multipoint": true,
+                    "silicone": true,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/160"
+                        }
+                    ],
+                    "url": "https://store.example/product/160",
+                    "image": null,
+                    "price": 5000000,
+                    "reasons": [
+                        "اتصال هم‌زمان گوشی و لپ‌تاپ",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "پیشنهاد اصلی",
+                    "variants": [
+                        {
+                            "id": 1601,
+                            "price": 5000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                },
+                {
+                    "id": 80,
+                    "wcId": 1080,
+                    "name": "Tie Alpha",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": true,
+                    "multipoint": true,
+                    "silicone": true,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/80"
+                        }
+                    ],
+                    "url": "https://store.example/product/80",
+                    "image": null,
+                    "price": 6000000,
+                    "reasons": [
+                        "اتصال هم‌زمان گوشی و لپ‌تاپ",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "گزینه جایگزین",
+                    "variants": [
+                        {
+                            "id": 801,
+                            "price": 6000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                }
+            ],
+            "notices": [],
+            "total": 3,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "multipoint"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "multipoint"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection"
+                }
+            ]
+        },
+        "earbuds-music-balanced-usbc-device": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "music",
+                "pain": "balanced",
+                "connection": "usbc",
+                "device": "usbc",
+                "fit": "silicone",
+                "budget": 6000000,
+                "flex": false
+            },
+            "public_picks": [],
+            "notices": [
+                "USB-C بودن درگاه به‌تنهایی کافی نیست؛ پشتیبانی صوتی مدل دستگاه را پیش از خرید بررسی کنید."
+            ],
+            "total": 0,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "device"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "fit"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "device"
+                },
+                {
+                    "id": 80,
+                    "reason": "device"
+                },
+                {
+                    "id": 90,
+                    "reason": "device"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "device"
+                },
+                {
+                    "id": 160,
+                    "reason": "device"
+                },
+                {
+                    "id": 170,
+                    "reason": "device"
+                }
+            ]
+        },
+        "headphones-work-calls-aux-quiet": {
+            "answers_normalized": {
+                "flow": "headphones",
+                "use": "work",
+                "pain": "calls",
+                "connection": "aux",
+                "calls": "quiet",
+                "budget": 6000000,
+                "flex": false
+            },
+            "public_picks": [
+                {
+                    "id": 50,
+                    "wcId": 1050,
+                    "name": "Stage AUX Pro",
+                    "flow": "headphones",
+                    "wireless": false,
+                    "usbc": null,
+                    "aux": true,
+                    "auxMic": true,
+                    "anc": null,
+                    "multipoint": false,
+                    "silicone": null,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/50"
+                        }
+                    ],
+                    "url": "https://store.example/product/50",
+                    "image": null,
+                    "price": 3000000,
+                    "reasons": [
+                        "ورودی AUX تأییدشده",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "پیشنهاد اصلی",
+                    "variants": [
+                        {
+                            "id": 501,
+                            "price": 3000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                }
+            ],
+            "notices": [],
+            "total": 1,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "category"
+                },
+                {
+                    "id": 20,
+                    "reason": "category"
+                },
+                {
+                    "id": 30,
+                    "reason": "category"
+                },
+                {
+                    "id": 40,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "budget"
+                },
+                {
+                    "id": 70,
+                    "reason": "category"
+                },
+                {
+                    "id": 80,
+                    "reason": "category"
+                },
+                {
+                    "id": 90,
+                    "reason": "category"
+                },
+                {
+                    "id": 100,
+                    "reason": "category"
+                },
+                {
+                    "id": 110,
+                    "reason": "category"
+                },
+                {
+                    "id": 120,
+                    "reason": "category"
+                },
+                {
+                    "id": 130,
+                    "reason": "category"
+                },
+                {
+                    "id": 140,
+                    "reason": "category"
+                },
+                {
+                    "id": 150,
+                    "reason": "category"
+                },
+                {
+                    "id": 160,
+                    "reason": "category"
+                },
+                {
+                    "id": 170,
+                    "reason": "category"
+                }
+            ]
+        },
+        "headphones-work-calls-aux-noisy": {
+            "answers_normalized": {
+                "flow": "headphones",
+                "use": "work",
+                "pain": "calls",
+                "connection": "aux",
+                "calls": "noisy",
+                "budget": 6000000,
+                "flex": false
+            },
+            "public_picks": [
+                {
+                    "id": 50,
+                    "wcId": 1050,
+                    "name": "Stage AUX Pro",
+                    "flow": "headphones",
+                    "wireless": false,
+                    "usbc": null,
+                    "aux": true,
+                    "auxMic": true,
+                    "anc": null,
+                    "multipoint": false,
+                    "silicone": null,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/50"
+                        }
+                    ],
+                    "url": "https://store.example/product/50",
+                    "image": null,
+                    "price": 3000000,
+                    "reasons": [
+                        "ورودی AUX تأییدشده",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "پیشنهاد اصلی",
+                    "variants": [
+                        {
+                            "id": 501,
+                            "price": 3000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                }
+            ],
+            "notices": [
+                "کیفیت میکروفون در محیط شلوغ به تست نیاز دارد؛ ANC تضمین کیفیت تماس نیست."
+            ],
+            "total": 1,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "category"
+                },
+                {
+                    "id": 20,
+                    "reason": "category"
+                },
+                {
+                    "id": 30,
+                    "reason": "category"
+                },
+                {
+                    "id": 40,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "budget"
+                },
+                {
+                    "id": 70,
+                    "reason": "category"
+                },
+                {
+                    "id": 80,
+                    "reason": "category"
+                },
+                {
+                    "id": 90,
+                    "reason": "category"
+                },
+                {
+                    "id": 100,
+                    "reason": "category"
+                },
+                {
+                    "id": 110,
+                    "reason": "category"
+                },
+                {
+                    "id": 120,
+                    "reason": "category"
+                },
+                {
+                    "id": 130,
+                    "reason": "category"
+                },
+                {
+                    "id": 140,
+                    "reason": "category"
+                },
+                {
+                    "id": 150,
+                    "reason": "category"
+                },
+                {
+                    "id": 160,
+                    "reason": "category"
+                },
+                {
+                    "id": 170,
+                    "reason": "category"
+                }
+            ]
+        },
+        "earbuds-gaming-wireless": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "gaming",
+                "pain": "balanced",
+                "connection": "wireless",
+                "fit": "any",
+                "budget": 6000000,
+                "flex": false
+            },
+            "public_picks": [],
+            "notices": [
+                "برای بازی با تأخیر حساس، در سبد فعلی اتصال بی‌سیم آزموده‌شده نداریم؛ مسیر سیمی را بررسی کنید."
+            ],
+            "total": 0,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "gaming_latency"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "gaming_latency"
+                },
+                {
+                    "id": 80,
+                    "reason": "gaming_latency"
+                },
+                {
+                    "id": 90,
+                    "reason": "gaming_latency"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection"
+                },
+                {
+                    "id": 160,
+                    "reason": "gaming_latency"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection"
+                }
+            ]
+        },
+        "headphones-music-noise-wireless": {
+            "answers_normalized": {
+                "flow": "headphones",
+                "use": "music",
+                "pain": "noise",
+                "connection": "wireless",
+                "budget": 6000000,
+                "flex": false
+            },
+            "public_picks": [],
+            "notices": [],
+            "total": 0,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "category"
+                },
+                {
+                    "id": 20,
+                    "reason": "category"
+                },
+                {
+                    "id": 30,
+                    "reason": "category"
+                },
+                {
+                    "id": 40,
+                    "reason": "category"
+                },
+                {
+                    "id": 50,
+                    "reason": "connection"
+                },
+                {
+                    "id": 60,
+                    "reason": "budget"
+                },
+                {
+                    "id": 70,
+                    "reason": "category"
+                },
+                {
+                    "id": 80,
+                    "reason": "category"
+                },
+                {
+                    "id": 90,
+                    "reason": "category"
+                },
+                {
+                    "id": 100,
+                    "reason": "category"
+                },
+                {
+                    "id": 110,
+                    "reason": "category"
+                },
+                {
+                    "id": 120,
+                    "reason": "category"
+                },
+                {
+                    "id": 130,
+                    "reason": "category"
+                },
+                {
+                    "id": 140,
+                    "reason": "category"
+                },
+                {
+                    "id": 150,
+                    "reason": "category"
+                },
+                {
+                    "id": 160,
+                    "reason": "category"
+                },
+                {
+                    "id": 170,
+                    "reason": "category"
+                }
+            ]
+        },
+        "earbuds-fit-open-noise": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "music",
+                "pain": "noise",
+                "connection": "wireless",
+                "fit": "open",
+                "budget": 6000000,
+                "flex": false
+            },
+            "public_picks": [],
+            "notices": [],
+            "total": 0,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "anc"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "anc"
+                },
+                {
+                    "id": 80,
+                    "reason": "fit"
+                },
+                {
+                    "id": 90,
+                    "reason": "fit"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection"
+                },
+                {
+                    "id": 160,
+                    "reason": "anc"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection"
+                }
+            ]
+        },
+        "earbuds-music-balanced-wireless-any-unavailable-paths": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "music",
+                "pain": "balanced",
+                "connection": "wireless",
+                "fit": "any",
+                "budget": 6000000,
+                "flex": false
+            },
+            "public_picks": [
+                {
+                    "id": 70,
+                    "wcId": 1070,
+                    "name": "Mystery Buds",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": null,
+                    "multipoint": null,
+                    "silicone": null,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/70"
+                        }
+                    ],
+                    "url": "https://store.example/product/70",
+                    "image": null,
+                    "price": 4000000,
+                    "reasons": [
+                        "نوع اتصال مطابق انتخاب شما",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "پیشنهاد اصلی",
+                    "variants": [
+                        {
+                            "id": 701,
+                            "price": 4000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                },
+                {
+                    "id": 20,
+                    "wcId": 1020,
+                    "name": "Nova Bass Buds",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": false,
+                    "multipoint": false,
+                    "silicone": true,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/20"
+                        }
+                    ],
+                    "url": "https://store.example/product/20",
+                    "image": null,
+                    "price": 5000000,
+                    "reasons": [
+                        "نوع اتصال مطابق انتخاب شما",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "گزینه جایگزین",
+                    "variants": [
+                        {
+                            "id": 201,
+                            "price": 5000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                }
+            ],
+            "notices": [],
+            "total": 5,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection"
+                }
+            ]
+        },
+        "earbuds-aux-calls-quiet": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "work",
+                "pain": "calls",
+                "connection": "aux",
+                "fit": "any",
+                "calls": "quiet",
+                "budget": 6000000,
+                "flex": false
+            },
+            "public_picks": [
+                {
+                    "id": 150,
+                    "wcId": 1150,
+                    "name": "AUX Talk Nano",
+                    "flow": "earbuds",
+                    "wireless": false,
+                    "usbc": null,
+                    "aux": true,
+                    "auxMic": true,
+                    "anc": null,
+                    "multipoint": null,
+                    "silicone": null,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/150"
+                        }
+                    ],
+                    "url": "https://store.example/product/150",
+                    "image": null,
+                    "price": 1800000,
+                    "reasons": [
+                        "ورودی AUX تأییدشده",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "پیشنهاد اصلی",
+                    "variants": [
+                        {
+                            "id": 1501,
+                            "price": 1800000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                }
+            ],
+            "notices": [],
+            "total": 1,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "connection"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "connection"
+                },
+                {
+                    "id": 80,
+                    "reason": "connection"
+                },
+                {
+                    "id": 90,
+                    "reason": "connection"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 160,
+                    "reason": "connection"
+                },
+                {
+                    "id": 170,
+                    "reason": "wired_microphone"
+                }
+            ]
+        },
+        "earbuds-aux-calls-unknown-mic": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "work",
+                "pain": "calls",
+                "connection": "aux",
+                "fit": "any",
+                "calls": "quiet",
+                "budget": 3000000,
+                "flex": false
+            },
+            "public_picks": [
+                {
+                    "id": 150,
+                    "wcId": 1150,
+                    "name": "AUX Talk Nano",
+                    "flow": "earbuds",
+                    "wireless": false,
+                    "usbc": null,
+                    "aux": true,
+                    "auxMic": true,
+                    "anc": null,
+                    "multipoint": null,
+                    "silicone": null,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/150"
+                        }
+                    ],
+                    "url": "https://store.example/product/150",
+                    "image": null,
+                    "price": 1800000,
+                    "reasons": [
+                        "ورودی AUX تأییدشده",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "پیشنهاد اصلی",
+                    "variants": [
+                        {
+                            "id": 1501,
+                            "price": 1800000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                }
+            ],
+            "notices": [],
+            "total": 1,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "budget"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "budget"
+                },
+                {
+                    "id": 80,
+                    "reason": "budget"
+                },
+                {
+                    "id": 90,
+                    "reason": "budget"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 160,
+                    "reason": "budget"
+                },
+                {
+                    "id": 170,
+                    "reason": "wired_microphone"
+                }
+            ]
+        },
+        "headphones-music-noise-wireless-bigbudget": {
+            "answers_normalized": {
+                "flow": "headphones",
+                "use": "music",
+                "pain": "noise",
+                "connection": "wireless",
+                "budget": 20000000,
+                "flex": false
+            },
+            "public_picks": [
+                {
+                    "id": 60,
+                    "wcId": 1060,
+                    "name": "Metro ANC Headphone",
+                    "flow": "headphones",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": true,
+                    "multipoint": true,
+                    "silicone": null,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/60"
+                        }
+                    ],
+                    "url": "https://store.example/product/60",
+                    "image": null,
+                    "price": 15000000,
+                    "reasons": [
+                        "کاهش صدای محیط با ANC",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "پیشنهاد اصلی",
+                    "variants": [
+                        {
+                            "id": 601,
+                            "price": 15000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        },
+                        {
+                            "id": 602,
+                            "price": 16500000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                }
+            ],
+            "notices": [],
+            "total": 1,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "category"
+                },
+                {
+                    "id": 20,
+                    "reason": "category"
+                },
+                {
+                    "id": 30,
+                    "reason": "category"
+                },
+                {
+                    "id": 40,
+                    "reason": "category"
+                },
+                {
+                    "id": 50,
+                    "reason": "connection"
+                },
+                {
+                    "id": 70,
+                    "reason": "category"
+                },
+                {
+                    "id": 80,
+                    "reason": "category"
+                },
+                {
+                    "id": 90,
+                    "reason": "category"
+                },
+                {
+                    "id": 100,
+                    "reason": "category"
+                },
+                {
+                    "id": 110,
+                    "reason": "category"
+                },
+                {
+                    "id": 120,
+                    "reason": "category"
+                },
+                {
+                    "id": 130,
+                    "reason": "category"
+                },
+                {
+                    "id": 140,
+                    "reason": "category"
+                },
+                {
+                    "id": 150,
+                    "reason": "category"
+                },
+                {
+                    "id": 160,
+                    "reason": "category"
+                },
+                {
+                    "id": 170,
+                    "reason": "category"
+                }
+            ]
+        },
+        "earbuds-commute-balanced-wireless-any-bigbudget": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "commute",
+                "pain": "balanced",
+                "connection": "wireless",
+                "fit": "any",
+                "budget": 20000000,
+                "flex": false
+            },
+            "public_picks": [
+                {
+                    "id": 90,
+                    "wcId": 1090,
+                    "name": "Tie Beta",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": true,
+                    "multipoint": true,
+                    "silicone": true,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/90"
+                        }
+                    ],
+                    "url": "https://store.example/product/90",
+                    "image": null,
+                    "price": 6000000,
+                    "reasons": [
+                        "کاهش صدای محیط با ANC",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "پیشنهاد اصلی",
+                    "variants": [
+                        {
+                            "id": 901,
+                            "price": 6000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                },
+                {
+                    "id": 70,
+                    "wcId": 1070,
+                    "name": "Mystery Buds",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": null,
+                    "multipoint": null,
+                    "silicone": null,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/70"
+                        }
+                    ],
+                    "url": "https://store.example/product/70",
+                    "image": null,
+                    "price": 4000000,
+                    "reasons": [
+                        "نوع اتصال مطابق انتخاب شما",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "هزینه کمتر",
+                    "variants": [
+                        {
+                            "id": 701,
+                            "price": 4000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                },
+                {
+                    "id": 30,
+                    "wcId": 1030,
+                    "name": "Open Air One",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": true,
+                    "multipoint": false,
+                    "silicone": false,
+                    "form": "بدون سری سیلیکونی",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/30"
+                        }
+                    ],
+                    "url": "https://store.example/product/30",
+                    "image": null,
+                    "price": 12000000,
+                    "reasons": [
+                        "کاهش صدای محیط با ANC",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "گزینه جایگزین",
+                    "variants": [
+                        {
+                            "id": 301,
+                            "price": 12000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        },
+                        {
+                            "id": 302,
+                            "price": 13000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                }
+            ],
+            "notices": [],
+            "total": 8,
+            "rejected_ids": [
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection"
+                }
+            ]
+        },
+        "earbuds-music-balanced-usbc-any": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "music",
+                "pain": "balanced",
+                "connection": "usbc",
+                "device": "usbc",
+                "fit": "any",
+                "budget": 6000000,
+                "flex": false
+            },
+            "public_picks": [
+                {
+                    "id": 40,
+                    "wcId": 1040,
+                    "name": "Wire Studio USB-C",
+                    "flow": "earbuds",
+                    "wireless": false,
+                    "usbc": true,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": false,
+                    "multipoint": null,
+                    "silicone": false,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/40"
+                        }
+                    ],
+                    "url": "https://store.example/product/40",
+                    "image": null,
+                    "price": 2500000,
+                    "reasons": [
+                        "اتصال سیمی USB-C؛ بدون نیاز به شارژ",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "پیشنهاد اصلی",
+                    "variants": [
+                        {
+                            "id": 401,
+                            "price": 2500000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                }
+            ],
+            "notices": [
+                "USB-C بودن درگاه به‌تنهایی کافی نیست؛ پشتیبانی صوتی مدل دستگاه را پیش از خرید بررسی کنید."
+            ],
+            "total": 1,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "device"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "device"
+                },
+                {
+                    "id": 80,
+                    "reason": "device"
+                },
+                {
+                    "id": 90,
+                    "reason": "device"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "device"
+                },
+                {
+                    "id": 160,
+                    "reason": "device"
+                },
+                {
+                    "id": 170,
+                    "reason": "device"
+                }
+            ]
+        },
+        "budget-min-exact": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "music",
+                "pain": "balanced",
+                "connection": "wireless",
+                "fit": "any",
+                "budget": 500000,
+                "flex": false
+            },
+            "public_picks": [],
+            "notices": [],
+            "total": 0,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "budget"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "budget"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "budget"
+                },
+                {
+                    "id": 80,
+                    "reason": "budget"
+                },
+                {
+                    "id": 90,
+                    "reason": "budget"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "budget"
+                },
+                {
+                    "id": 160,
+                    "reason": "budget"
+                },
+                {
+                    "id": 170,
+                    "reason": "budget"
+                }
+            ]
+        },
+        "budget-below-clamped": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "music",
+                "pain": "balanced",
+                "connection": "wireless",
+                "fit": "any",
+                "budget": 500000,
+                "flex": false
+            },
+            "public_picks": [],
+            "notices": [],
+            "total": 0,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "budget"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "budget"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "budget"
+                },
+                {
+                    "id": 80,
+                    "reason": "budget"
+                },
+                {
+                    "id": 90,
+                    "reason": "budget"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "budget"
+                },
+                {
+                    "id": 160,
+                    "reason": "budget"
+                },
+                {
+                    "id": 170,
+                    "reason": "budget"
+                }
+            ]
+        },
+        "budget-above-clamped": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "music",
+                "pain": "balanced",
+                "connection": "wireless",
+                "fit": "any",
+                "budget": 500000000,
+                "flex": false
+            },
+            "public_picks": [
+                {
+                    "id": 70,
+                    "wcId": 1070,
+                    "name": "Mystery Buds",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": null,
+                    "multipoint": null,
+                    "silicone": null,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/70"
+                        }
+                    ],
+                    "url": "https://store.example/product/70",
+                    "image": null,
+                    "price": 4000000,
+                    "reasons": [
+                        "نوع اتصال مطابق انتخاب شما",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "پیشنهاد اصلی",
+                    "variants": [
+                        {
+                            "id": 701,
+                            "price": 4000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                },
+                {
+                    "id": 20,
+                    "wcId": 1020,
+                    "name": "Nova Bass Buds",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": false,
+                    "multipoint": false,
+                    "silicone": true,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/20"
+                        }
+                    ],
+                    "url": "https://store.example/product/20",
+                    "image": null,
+                    "price": 5000000,
+                    "reasons": [
+                        "نوع اتصال مطابق انتخاب شما",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "گزینه جایگزین",
+                    "variants": [
+                        {
+                            "id": 201,
+                            "price": 5000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                }
+            ],
+            "notices": [],
+            "total": 9,
+            "rejected_ids": [
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection"
+                }
+            ]
+        },
+        "budget-invalid-default": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "music",
+                "pain": "balanced",
+                "connection": "wireless",
+                "fit": "any",
+                "budget": 6000000,
+                "flex": false
+            },
+            "public_picks": [
+                {
+                    "id": 70,
+                    "wcId": 1070,
+                    "name": "Mystery Buds",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": null,
+                    "multipoint": null,
+                    "silicone": null,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/70"
+                        }
+                    ],
+                    "url": "https://store.example/product/70",
+                    "image": null,
+                    "price": 4000000,
+                    "reasons": [
+                        "نوع اتصال مطابق انتخاب شما",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "پیشنهاد اصلی",
+                    "variants": [
+                        {
+                            "id": 701,
+                            "price": 4000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                },
+                {
+                    "id": 20,
+                    "wcId": 1020,
+                    "name": "Nova Bass Buds",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": false,
+                    "multipoint": false,
+                    "silicone": true,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/20"
+                        }
+                    ],
+                    "url": "https://store.example/product/20",
+                    "image": null,
+                    "price": 5000000,
+                    "reasons": [
+                        "نوع اتصال مطابق انتخاب شما",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "گزینه جایگزین",
+                    "variants": [
+                        {
+                            "id": 201,
+                            "price": 5000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                }
+            ],
+            "notices": [],
+            "total": 5,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection"
+                }
+            ]
+        },
+        "flex-cap-inside": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "music",
+                "pain": "balanced",
+                "connection": "wireless",
+                "fit": "any",
+                "budget": 6000000,
+                "flex": true
+            },
+            "public_picks": [
+                {
+                    "id": 70,
+                    "wcId": 1070,
+                    "name": "Mystery Buds",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": null,
+                    "multipoint": null,
+                    "silicone": null,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/70"
+                        }
+                    ],
+                    "url": "https://store.example/product/70",
+                    "image": null,
+                    "price": 4000000,
+                    "reasons": [
+                        "نوع اتصال مطابق انتخاب شما",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "پیشنهاد اصلی",
+                    "variants": [
+                        {
+                            "id": 701,
+                            "price": 4000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                },
+                {
+                    "id": 20,
+                    "wcId": 1020,
+                    "name": "Nova Bass Buds",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": false,
+                    "multipoint": false,
+                    "silicone": true,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/20"
+                        }
+                    ],
+                    "url": "https://store.example/product/20",
+                    "image": null,
+                    "price": 5000000,
+                    "reasons": [
+                        "نوع اتصال مطابق انتخاب شما",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "گزینه جایگزین",
+                    "variants": [
+                        {
+                            "id": 201,
+                            "price": 5000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                }
+            ],
+            "notices": [],
+            "total": 6,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection"
+                }
+            ]
+        },
+        "flex-cap-outside": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "music",
+                "pain": "balanced",
+                "connection": "wireless",
+                "fit": "any",
+                "budget": 5900000,
+                "flex": true
+            },
+            "public_picks": [
+                {
+                    "id": 70,
+                    "wcId": 1070,
+                    "name": "Mystery Buds",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": null,
+                    "multipoint": null,
+                    "silicone": null,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/70"
+                        }
+                    ],
+                    "url": "https://store.example/product/70",
+                    "image": null,
+                    "price": 4000000,
+                    "reasons": [
+                        "نوع اتصال مطابق انتخاب شما",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "پیشنهاد اصلی",
+                    "variants": [
+                        {
+                            "id": 701,
+                            "price": 4000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                },
+                {
+                    "id": 20,
+                    "wcId": 1020,
+                    "name": "Nova Bass Buds",
+                    "flow": "earbuds",
+                    "wireless": true,
+                    "usbc": null,
+                    "aux": null,
+                    "auxMic": null,
+                    "anc": false,
+                    "multipoint": false,
+                    "silicone": true,
+                    "form": "فرم تست",
+                    "cautions": [
+                        "مشخصات این مدل از فهرست فروشگاه خوانده شده است؛ سازگاری دستگاه و راحتی را پیش از خرید بررسی کن."
+                    ],
+                    "sources": [
+                        {
+                            "label": "مشخصات ثبت‌شده در فروشگاه",
+                            "url": "https://store.example/product/20"
+                        }
+                    ],
+                    "url": "https://store.example/product/20",
+                    "image": null,
+                    "price": 5000000,
+                    "reasons": [
+                        "نوع اتصال مطابق انتخاب شما",
+                        "در محدوده بودجه شما"
+                    ],
+                    "overBudget": false,
+                    "role": "گزینه جایگزین",
+                    "variants": [
+                        {
+                            "id": 201,
+                            "price": 5000000,
+                            "attributes": [
+                                {
+                                    "name": "رنگ",
+                                    "slug": "pa_color",
+                                    "option": "مشکی"
+                                }
+                            ],
+                            "label": "مشکی · ۶ ماه",
+                            "image": null
+                        }
+                    ]
+                }
+            ],
+            "notices": [],
+            "total": 5,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection"
+                }
+            ]
+        },
+        "usbc-device-lightning": {
+            "answers_normalized": {
+                "flow": "earbuds",
+                "use": "music",
+                "pain": "balanced",
+                "connection": "usbc",
+                "device": "lightning",
+                "fit": "any",
+                "budget": 6000000,
+                "flex": false
+            },
+            "public_picks": [],
+            "notices": [],
+            "total": 0,
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "device"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "device"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "device"
+                },
+                {
+                    "id": 80,
+                    "reason": "device"
+                },
+                {
+                    "id": 90,
+                    "reason": "device"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "device"
+                },
+                {
+                    "id": 160,
+                    "reason": "device"
+                },
+                {
+                    "id": 170,
+                    "reason": "device"
+                }
+            ]
+        }
+    }
+}
