@@ -6,6 +6,7 @@
  * Requires PHP: 8.0
  * Requires Plugins: woocommerce
  * Text Domain: ts-sound-guide
+ * Auther: parsa dana , Keyvan Havestin
  */
 defined('ABSPATH') || exit;
 require_once __DIR__.'/includes/policy.php';
