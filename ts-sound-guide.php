@@ -1,5 +1,13 @@
 <?php
 /**
+ * Plugin Name: TehranSpeaker Sound Guide
+ * Description: Adaptive headphone and earbud guide using live WooCommerce products and the amazing theme.
+ * Version: 3.0.0
+ * Requires PHP: 8.0
+ * Requires Plugins: woocommerce
+ * Text Domain: ts-sound-guide
+ * Author: Parsa Dana, Keyvan Havestin
+ *
  * Plugin bootstrap and composition root.
  *
  * Only environment checks, class loading, service construction, and hook

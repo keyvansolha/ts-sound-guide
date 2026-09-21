@@ -83,7 +83,10 @@ final class RecommendController extends Controller {
 			if ( $body instanceof WP_REST_Response ) {
 				return $body;
 			}
-			if ( ! is_array( $body['answers'] ?? null ) ) {
+			if ( ! $this->valid_body_keys( $body, [ 'answers' ] ) ) {
+				return $this->error( 'Invalid request', 400 );
+			}
+			if ( ! $this->valid_answers( $body['answers'] ?? null ) ) {
 				return $this->error( 'Invalid answers', 400 );
 			}
 			$answers = $this->engine->normalize( $body['answers'] );
@@ -97,11 +100,7 @@ final class RecommendController extends Controller {
 				return $this->error( 'Incomplete device/fit', 400 );
 			}
 
-			$health = apply_filters( 'ts_sound_inventory_health', null );
-			if ( is_array( $health )
-				&& ( ( $health['healthy'] ?? false ) !== true
-					|| ! isset( $health['expires_at'] )
-					|| (int) $health['expires_at'] <= time() ) ) {
+			if ( ! $this->inventory_healthy() ) {
 				return $this->error( 'Inventory sync unavailable', 503 );
 			}
 

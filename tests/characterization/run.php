@@ -1,70 +1,47 @@
 <?php
 /**
- * Legacy-engine characterization snapshot runner.
+ * Frozen legacy characterization baseline integrity check.
  *
- * Runs the CURRENT (pre-refactor) includes/policy.php + includes/inventory.php
- * logic over the synthetic fixtures and prints JSON. The refactored engine must
- * reproduce these outcomes exactly (same picks, roles, reasons, notices,
- * rejections, ordering, prices, and public DTO shape) — this file is the
- * execution record proving the baseline, not part of the shipped plugin.
+ * The legacy policy implementation was intentionally removed from production
+ * after its outcomes were captured in baseline.json. This command verifies
+ * that the snapshot still covers every named fixture scenario and retains the
+ * complete comparison shape consumed by tests/unit/parity.php.
  *
- * Usage: php tests/characterization/run.php > baseline.json
+ * Usage: php tests/characterization/run.php
  */
 
 declare(strict_types=1);
 
-define('ABSNAME', 'characterization'); // allow includes to pass the ABSPATH guard
-
 require __DIR__ . '/fixtures.php';
-require __DIR__ . '/../../includes/policy.php';
-// includes/inventory.php maps WooCommerce objects; the pure selection code
-// under test lives in policy.php. The public-DTO strip is re-implemented here
-// from the shipped ts_sound_public_product() allow-list so snapshots include
-// the exact public shape without a database.
 
-/**
- * Mirror of the shipped allow-list strip (includes/inventory.php).
- *
- * @param array<string, mixed> $p matched product
- * @return array<string, mixed> public DTO
- */
-function characterize_public( array $p ): array {
-	$keys = [ 'id', 'wcId', 'name', 'flow', 'url', 'image', 'price', 'wireless', 'usbc', 'aux', 'auxMic', 'silicone', 'anc', 'multipoint', 'form', 'cautions', 'sources', 'reasons', 'role', 'overBudget', 'upgradeReason' ];
-	$dto  = array_intersect_key( $p, array_flip( $keys ) );
-	$dto['variants'] = array_map(
-		static fn( array $v ): array => array_intersect_key( $v, array_flip( [ 'id', 'price', 'attributes', 'label', 'image' ] ) ),
-		$p['variants']
-	);
-	return $dto;
+$baseline = json_decode( (string) file_get_contents( __DIR__ . '/baseline.json' ), true );
+if ( ! is_array( $baseline ) || ! is_array( $baseline['scenarios'] ?? null ) ) {
+	fwrite( STDERR, "baseline.json missing or invalid\n" );
+	exit( 1 );
 }
 
-$catalog   = ts_sound_fixtures_catalog();
-$scenarios = ts_sound_fixtures_scenarios();
+$expected_names = array_keys( ts_sound_fixtures_scenarios() );
+$actual_names   = array_keys( $baseline['scenarios'] );
+sort( $expected_names );
+sort( $actual_names );
 
-$out = [ 'generated_at' => gmdate( 'c' ), 'scenarios' => [] ];
-foreach ( $scenarios as $name => $answers ) {
-	$result              = ts_sound_select( $answers, $catalog );
-	$public              = array_map( 'characterize_public', $result['picks'] );
-	$out['scenarios'][ $name ] = [
-		'answers_normalized' => $result['answers'],
-		'public_picks'       => $public,
-		'notices'            => $result['notices'],
-		'total'              => $result['total'],
-		'rejected_ids'       => array_map(
-			static fn( array $r ): array => [ 'id' => $r['id'], 'reason' => $r['reason'] ],
-			$result['rejected']
-		),
-	];
+$failures = 0;
+if ( $expected_names !== $actual_names ) {
+	fwrite( STDERR, "baseline scenario names do not match fixtures\n" );
+	$failures++;
 }
 
-echo wp_json_legacy( $out );
-
-/**
- * Minimal wp_json_encode replacement for the snapshot runner (no WP loaded).
- *
- * @param mixed $data data to encode
- * @return string|false JSON or false on failure
- */
-function wp_json_legacy( $data ) {
-	return json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT );
+$required_fields = [ 'answers_normalized', 'public_picks', 'notices', 'total', 'rejected_ids' ];
+foreach ( $baseline['scenarios'] as $name => $scenario ) {
+	if ( ! is_array( $scenario ) || array_diff( $required_fields, array_keys( $scenario ) ) ) {
+		fwrite( STDERR, "baseline scenario has incomplete shape: {$name}\n" );
+		$failures++;
+	}
 }
+
+if ( $failures ) {
+	fwrite( STDERR, "CHARACTERIZATION FAILURES: {$failures}\n" );
+	exit( 1 );
+}
+
+echo 'CHARACTERIZATION OK: ' . count( $actual_names ) . " frozen legacy scenarios\n";

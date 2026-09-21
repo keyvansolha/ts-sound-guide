@@ -97,9 +97,7 @@ const createState = ( root, config ) => {
 			$( 'ss-hero-label' ).textContent = '';
 		}
 		root.querySelector( '.ss-stage-number' ).textContent = flow === 'headphones' ? '02 / 02' : '01 / 02';
-		$( 'ss-category-link' ).href = flow === 'headphones'
-			? config.homeUrl + 'product-category/headphone/'
-			: config.homeUrl + 'product-category/headphone/handsfree/';
+		$( 'ss-category-link' ).href = config.categoryUrls?.[ flow ] || config.homeUrl;
 	};
 
 	const start = ( preset ) => {
@@ -248,7 +246,7 @@ const createState = ( root, config ) => {
 	const compare = () => {
 		const ps = result.picks;
 		const rows = [
-			[ 'فرم', ( p ) => p.form ],
+			[ 'فرم', ( p ) => p.form || 'ثبت نشده' ],
 			[ 'اتصال', ( p ) => p.usbc ? 'سیمی USB-C' : p.aux === true ? ( p.wireless ? 'بلوتوث و AUX' : 'سیمی AUX' ) : p.wireless ? 'بلوتوث' : 'تأیید نشده' ],
 			[ 'ANC برای شنیدن', ( p ) => p.anc === true ? 'دارد' : p.anc === false ? 'ندارد' : 'تأیید نشده' ],
 			[ 'اتصال دو دستگاه', ( p ) => p.multipoint === true ? 'دارد' : p.multipoint === false ? 'ندارد' : 'تأیید نشده' ],
@@ -270,6 +268,9 @@ const createState = ( root, config ) => {
 		answers[ q.key ] = val;
 		if ( [ 'use', 'pain' ].includes( q.key ) ) {
 			delete answers.calls;
+		}
+		if ( q.key === 'pain' && answers.flow === 'headphones' ) {
+			delete answers.fit;
 		}
 		if ( q.key === 'connection' ) {
 			delete answers.device;

@@ -125,4 +125,18 @@ final class App {
 		add_action( 'woocommerce_checkout_create_order', [ $this->attribution, 'attach_order_attribution' ], 20, 1 );
 		add_action( 'woocommerce_store_api_checkout_update_order_from_request', [ $this->attribution, 'attach_order_attribution' ], 20, 1 );
 	}
+
+	/**
+	 * Explain a missing runtime dependency to administrators without affecting
+	 * public requests.
+	 */
+	public function render_environment_notice(): void {
+		if ( ! current_user_can( 'manage_options' ) || ts_sound_guide_environment_ready() ) {
+			return;
+		}
+		$message = version_compare( PHP_VERSION, '8.0', '<' )
+			? 'TehranSpeaker Sound Guide requires PHP 8.0 or newer.'
+			: 'TehranSpeaker Sound Guide requires WooCommerce to be active.';
+		echo '<div class="notice notice-error"><p>' . esc_html( $message ) . '</p></div>';
+	}
 }

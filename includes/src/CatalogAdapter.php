@@ -81,6 +81,39 @@ final class CatalogAdapter {
 	}
 
 	/**
+	 * Build the admin health snapshot, including relevant products that are
+	 * deliberately excluded from the recommendation catalog.
+	 *
+	 * @return array<int, array{product:array<string,mixed>,issues:array<int,array<string,string>>}>
+	 * @throws RuntimeException When WooCommerce is unavailable, the query fails, or the currency is unsupported.
+	 */
+	public function health_catalog(): array {
+		if ( ! $this->woo_available() ) {
+			throw new RuntimeException( 'WooCommerce unavailable' );
+		}
+		$currency = $this->currency();
+		if ( null === $currency ) {
+			throw new RuntimeException( 'Unsupported currency' );
+		}
+
+		$rows = [];
+		foreach ( $this->query_products( false ) as $product ) {
+			$issues = $this->commerce_issues( $product, $currency );
+			$mapped = $issues ? null : $this->map_product( $product, $currency );
+			$rows[] = [
+				'product' => $mapped ?? [
+					'id'   => (int) $product->get_id(),
+					'wcId' => (int) $product->get_id(),
+					'name' => wp_strip_all_tags( (string) $product->get_name() ),
+					'flow' => $this->product_flow( $product ) ?? 'unknown',
+				],
+				'issues'  => $issues,
+			];
+		}
+		return $rows;
+	}
+
+	/**
 	 * Current store currency resolved to the internal toman representation or
 	 * null when unsupported.
 	 *
@@ -109,7 +142,7 @@ final class CatalogAdapter {
 	 * @return array<int, \WC_Product> Products keyed by ID.
 	 * @throws RuntimeException On query failure.
 	 */
-	private function query_products(): array {
+	private function query_products( bool $recommendation_only = true ): array {
 		$term_ids = array_values( array_filter( $this->settings->category_terms() ) );
 		if ( ! $term_ids ) {
 			return [];
@@ -129,15 +162,18 @@ final class CatalogAdapter {
 		$products = [];
 		$page     = 1;
 		do {
-			$result = wc_get_products( [
-				'status'       => 'publish',
+			$args = [
+				'status'       => $recommendation_only ? 'publish' : [ 'publish', 'private', 'draft', 'pending', 'future' ],
 				'type'         => [ 'simple', 'variable' ],
-				'category'     => $all_terms,
+				'product_category_id' => $all_terms,
 				'limit'        => 100,
 				'page'         => $page,
 				'paginate'     => true,
-				'stock_status' => 'instock',
-			] );
+			];
+			if ( $recommendation_only ) {
+				$args['stock_status'] = 'instock';
+			}
+			$result = wc_get_products( $args );
 			if ( ! is_object( $result ) || ! isset( $result->products, $result->total_pages ) ) {
 				throw new RuntimeException( 'Catalog query failed' );
 			}
@@ -151,6 +187,57 @@ final class CatalogAdapter {
 		} while ( $page <= (int) $result->total_pages );
 
 		return $products;
+	}
+
+	/**
+	 * Explain why a relevant product cannot enter the recommendation catalog.
+	 *
+	 * @param \WC_Product                   $product Product object.
+	 * @param array{code:string,factor:float} $currency Currency metadata.
+	 * @return array<int, array<string, string>> Blocking issues.
+	 */
+	private function commerce_issues( $product, array $currency ): array {
+		$id     = (int) $product->get_id();
+		$issues = [];
+		$add    = static function ( string $capability, string $field, string $help ) use ( &$issues ): void {
+			$issues[] = [ 'severity' => 'error', 'capability' => $capability, 'field' => $field, 'help' => $help ];
+		};
+
+		if ( 'publish' !== $product->get_status() ) {
+			$add( 'publication', 'وضعیت انتشار محصول', 'محصول باید منتشرشده باشد.' );
+		}
+		if ( 'hidden' === $product->get_catalog_visibility() ) {
+			$add( 'visibility', 'نمایش در کاتالوگ WooCommerce', 'محصول مخفی از راهنمای عمومی کنار گذاشته می‌شود.' );
+		}
+		if ( 'stop' === (string) get_post_meta( $id, 'product-status', true ) ) {
+			$add( 'lifecycle', 'فیلد product-status', 'محصول با وضعیت stop قابل پیشنهاد نیست.' );
+		}
+		if ( ! $product->is_in_stock() ) {
+			$add( 'stock', 'وضعیت موجودی WooCommerce', 'محصول باید در WooCommerce موجود باشد.' );
+		}
+		if ( ! $product->is_purchasable() ) {
+			$add( 'purchasable', 'قابلیت خرید محصول', 'محصول باید توسط WooCommerce قابل خرید باشد.' );
+		}
+		if ( null === $this->product_flow( $product ) ) {
+			$add( 'category', 'دسته‌بندی محصول', 'محصول باید در یکی از دو دسته‌بندی تنظیم‌شده باشد.' );
+		}
+		if ( $issues ) {
+			return $issues;
+		}
+
+		$variation_ids = $product->is_type( 'variable' ) ? $product->get_children() : [ $id ];
+		foreach ( $variation_ids as $variation_id ) {
+			$variation = wc_get_product( $variation_id );
+			if ( $variation && null !== $this->map_variation( $variation, $product, $currency ) ) {
+				return [];
+			}
+		}
+		$add(
+			'availability',
+			'واریانت‌ها: وضعیت، قیمت، موجودی، بک‌اوردر، رنگ و گارانتی',
+			'هیچ واریانت قابل خریدی وجود ندارد؛ قیمت، موجودی، فعال‌بودن، بک‌اوردر و ویژگی‌های رنگ و گارانتی را بررسی کنید.'
+		);
+		return $issues;
 	}
 
 	/**
@@ -212,7 +299,7 @@ final class CatalogAdapter {
 			'flow'        => $flow,
 			'url'         => (string) get_permalink( $id ),
 			'image'       => wp_get_attachment_image_url( (int) $product->get_image_id(), 'woocommerce_single' ) ?: null,
-			'form'        => $this->form_label( $product, $flow ),
+			'form'        => $this->form_label( $product ),
 			'capabilities' => $caps,
 			'variants'    => $variants,
 			'status'      => 'publish',
@@ -372,15 +459,14 @@ final class CatalogAdapter {
 	 * Human-readable form-factor label.
 	 *
 	 * @param \WC_Product $product Product.
-	 * @param string      $flow    Product flow.
-	 * @return string
+	 * @return string|null
 	 */
-	private function form_label( $product, string $flow ): string {
+	private function form_label( $product ): ?string {
 		$form = trim( wp_strip_all_tags( (string) $product->get_attribute( 'pa_headphones-type' ) ) );
 		if ( '' !== $form ) {
 			return $form;
 		}
-		return 'earbuds' === $flow ? 'هندزفری' : 'هدفون';
+		return null;
 	}
 
 	/**

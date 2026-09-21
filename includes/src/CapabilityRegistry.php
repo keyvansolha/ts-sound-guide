@@ -78,7 +78,7 @@ final class CapabilityRegistry {
 			'anc'        => [
 				'attribute' => 'pa_noise-cancellation',
 				'yes'       => [ 'ANC', 'Active Noise', 'Adaptive Noise', 'حذف نویز فعال', 'حذف نویز تطبیقی' ],
-				'no'        => [ 'ندارد', 'فاقد', 'بدون', 'ENC' ],
+				'no'        => [ 'ندارد', 'فاقد', 'بدون' ],
 				'label'     => 'ANC برای شنیدن',
 				'field'     => 'ویژگی «حذف نویز» محصول (ANC فعال برای شنیدن؛ ENC مربوط به تماس است)',
 			],
@@ -134,16 +134,21 @@ final class CapabilityRegistry {
 		if ( '' === $value ) {
 			return self::UNKNOWN;
 		}
-		$has_yes = $this->contains_any( $value, $def['yes'] );
 		$has_no  = $this->contains_any( $value, $def['no'] );
-		if ( $has_yes && $has_no ) {
-			return self::UNKNOWN; // Contradictory.
+		if ( $has_no ) {
+			// Negative Persian phrases often contain affirmative fragments
+			// ("ندارد" contains "دارد"), while phrases such as "بدون ANC"
+			// retain the capability name. Treat an explicit negative as no unless
+			// a separate positive assertion remains after removing the negatives.
+			$without_no = str_ireplace( $def['no'], ' ', $value );
+			if ( $this->contains_any( $without_no, [ 'دارد', 'yes', 'supported', 'پشتیبانی می‌کند' ] ) ) {
+				return self::UNKNOWN;
+			}
+			return self::NO;
 		}
+		$has_yes = $this->contains_any( $value, $def['yes'] );
 		if ( $has_yes ) {
 			return self::YES;
-		}
-		if ( $has_no ) {
-			return self::NO;
 		}
 		return self::UNKNOWN;
 	}

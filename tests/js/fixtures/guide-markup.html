@@ -1,72 +1,7 @@
-<?php
-/**
- * Guide view component: renders the guide markup from bootstrap config.
- *
- * @package TSSoundGuide
- */
-
-namespace TSSoundGuide;
-
-defined( 'ABSPATH' ) || exit;
-
-/**
- * Componentized PHP view. No product name, ID, image, URL, or recommendation
- * is hardcoded here; dynamic values are escaped for their output context.
- */
-final class GuideView {
-
-	/**
-	 * Bootstrap configuration (public only).
-	 *
-	 * @var array<string, mixed>
-	 */
-	private array $config;
-
-	/**
-	 * Heroes per flow.
-	 *
-	 * @var array<string, array{name:string,image:string}|null>
-	 */
-	private array $heroes;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param array<string, mixed>                          $config Public bootstrap config.
-	 * @param array<string, array{name:string,image:string}|null> $heroes  Heroes.
-	 */
-	public function __construct( array $config, array $heroes ) {
-		$this->config = $config;
-		$this->heroes = $heroes;
-	}
-
-	/**
-	 * Render the guide.
-	 *
-	 * @return string Escaped HTML.
-	 */
-	public function render(): string {
-		$hero_earbuds   = $this->heroes['earbuds'] ?? null;
-		$hero_headphones = $this->heroes['headphones'] ?? null;
-		$logo           = esc_url( get_template_directory_uri() . '/images/logo.svg' );
-		$initial        = 'headphones' === ( $this->config['flow'] ?? 'earbuds' ) ? 'headphones' : 'earbuds';
-		$initial_hero   = 'headphones' === $initial ? $hero_headphones : $hero_earbuds;
-		$hero_img       = $initial_hero ? esc_url( $initial_hero['image'] ) : '';
-		$hero_name      = $initial_hero ? esc_attr( $initial_hero['name'] ) : '';
-		$hero_alt       = $initial_hero ? esc_attr( $initial_hero['name'] ) : '';
-		$category_urls  = is_array( $this->config['categoryUrls'] ?? null ) ? $this->config['categoryUrls'] : [];
-		$initial_category_url = (string) ( $category_urls[ $initial ] ?? $this->config['homeUrl'] ?? home_url( '/' ) );
-		$headphone_category_url = (string) ( $category_urls['headphones'] ?? $this->config['homeUrl'] ?? home_url( '/' ) );
-
-		$config_json = wp_json_encode( $this->config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
-		$config_json = false === $config_json ? '{}' : $config_json;
-
-		ob_start();
-		?>
-<div class="ts-sound" id="ts-sound" dir="rtl" lang="fa">
+<!doctype html><html><body><div class="ts-sound" id="ts-sound" dir="rtl" lang="fa">
 	<a class="ss-skip" href="#ss-quiz">رفتن به راهنمای انتخاب</a>
 	<header class="ss-nav ss-wrap">
-		<a class="ss-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>، صفحه اصلی"><img src="<?php echo $logo; ?>" width="40" height="40" alt=""><span><strong><?php echo esc_html( get_bloginfo( 'name' ) ); ?></strong><small lang="en" dir="ltr">TEHRAN SPEAKER</small></span></a>
+		<a class="ss-brand" href="https://store.example/" aria-label="تهران اسپیکر، صفحه اصلی"><img src="https://store.example/wp-content/themes/amazing/images/logo.svg" width="40" height="40" alt=""><span><strong>تهران اسپیکر</strong><small lang="en" dir="ltr">TEHRAN SPEAKER</small></span></a>
 		<span class="ss-nav-label">راهنمای انتخاب شخصی</span>
 		<button class="ss-text-button" id="ss-motion" aria-pressed="false">توقف حرکت‌ها <span aria-hidden="true">Ⅱ</span></button>
 	</header>
@@ -76,16 +11,16 @@ final class GuideView {
 				<div class="ss-eyebrow"><span class="ss-signal" aria-hidden="true"></span> هر روز تو. صدای تو.</div>
 				<h1 id="ss-title">دنیات رو<br><em>روی صدای خودت</em><br>تنظیم کن.</h1>
 				<p class="ss-lead">از شلوغی مسیر تا پلی‌لیست آخر شب.<br>هدفون یا هندزفری‌ای پیدا کن که به زندگی تو می‌خورد.</p>
-				<div class="ss-flow" role="group" aria-label="نوع محصول"><button data-flow="earbuds" aria-pressed="<?php echo 'earbuds' === $initial ? 'true' : 'false'; ?>">هندزفری</button><button data-flow="headphones" aria-pressed="<?php echo 'headphones' === $initial ? 'true' : 'false'; ?>">هدفون</button></div>
+				<div class="ss-flow" role="group" aria-label="نوع محصول"><button data-flow="earbuds" aria-pressed="true">هندزفری</button><button data-flow="headphones" aria-pressed="false">هدفون</button></div>
 				<button class="ss-primary ss-start" id="ss-start">انتخاب من رو پیدا کن <span class="ss-arrow" aria-hidden="true">←</span></button>
 				<div class="ss-under-cta">چند سؤال کوتاه · دلیل روشن برای هر پیشنهاد</div>
 			</div>
 			<div class="ss-stage" aria-label="تصویر محصولات هدفون و هندزفری">
 				<div class="ss-orbit ss-orbit-one" aria-hidden="true"></div><div class="ss-orbit ss-orbit-two" aria-hidden="true"></div>
-				<div class="ss-stage-number" aria-hidden="true"><?php echo 'headphones' === $initial ? '02 / 02' : '01 / 02'; ?></div>
-				<div class="ss-stage-disc"><?php if ( '' !== $hero_img ) : ?><img id="ss-hero-product" src="<?php echo $hero_img; ?>" alt="<?php echo $hero_alt; ?>" width="520" height="520" fetchpriority="high"><?php else : ?><span class="ss-hero-placeholder" aria-hidden="true"></span><?php endif; ?></div>
+				<div class="ss-stage-number" aria-hidden="true">01 / 02</div>
+				<div class="ss-stage-disc"><img id="ss-hero-product" src="https://store.example/img.webp" alt="Test Hero" width="520" height="520" fetchpriority="high"></div>
 				<div class="ss-stage-tag"><span class="ss-equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span>با ریتم خودت زندگی کن</span></div>
-				<div class="ss-stage-foot"><span id="ss-hero-label" dir="ltr"><?php echo $hero_name; ?></span><span>انتخاب با توست ↖</span></div>
+				<div class="ss-stage-foot"><span id="ss-hero-label" dir="ltr">Test Hero</span><span>انتخاب با توست ↖</span></div>
 			</div>
 		</section>
 		<div class="ss-wrap"><div class="ss-usecases" aria-label="شروع بر اساس کاربرد"><span>از کجا شروع کنیم؟</span><button data-preset="commute"><span data-icon="commute"></span> رفت‌وآمد</button><button data-preset="music"><span data-icon="music"></span> موسیقی</button><button data-preset="work"><span data-icon="work"></span> کار و تماس</button><button data-preset="gaming"><span data-icon="gaming"></span> بازی</button></div></div>
@@ -102,7 +37,7 @@ final class GuideView {
 			<div class="ss-stock-status" id="ss-stock-status" aria-live="polite"></div><div id="ss-notices"></div>
 			<div id="ss-results-grid" class="ss-results-grid"></div>
 			<div class="ss-empty" id="ss-empty" hidden></div>
-			<div class="ss-result-actions"><button id="ss-compare" class="ss-outline">مقایسه همین انتخاب‌ها</button><button id="ss-retry" class="ss-outline" hidden>تلاش دوباره برای بررسی موجودی</button><a href="<?php echo esc_url( $initial_category_url ); ?>" id="ss-category-link">دیدن همه محصولات دسته‌بندی ↗</a></div>
+			<div class="ss-result-actions"><button id="ss-compare" class="ss-outline">مقایسه همین انتخاب‌ها</button><button id="ss-retry" class="ss-outline" hidden>تلاش دوباره برای بررسی موجودی</button><a href="https://store.example/product-category/headphone/handsfree/" id="ss-category-link">دیدن همه محصولات دسته‌بندی ↗</a></div>
 			<div class="ss-compare" id="ss-compare-table" hidden></div>
 		</section>
 		<section class="ss-editorial ss-wrap" aria-labelledby="ss-editorial-title">
@@ -117,11 +52,8 @@ final class GuideView {
 			<details><summary>اگر یکی از رنگ‌ها ناموجود شود چه؟</summary><p>در نسخه متصل به فروشگاه، فقط ترکیب رنگ و گارانتی قابل خرید پیشنهاد می‌شود. موجودی و قیمت پیش از رفتن به صفحه خرید دوباره بررسی می‌شوند.</p></details>
 		</div></section>
 	</div>
-	<footer class="ss-footer ss-wrap"><span><?php echo esc_html( get_bloginfo( 'name' ) ); ?></span><span>صدایی که با تو جور است.</span><a href="<?php echo esc_url( $headphone_category_url ); ?>">هدفون و هندزفری ↗</a></footer>
+	<footer class="ss-footer ss-wrap"><span>تهران اسپیکر</span><span>صدایی که با تو جور است.</span><a href="https://store.example/product-category/headphone/">هدفون و هندزفری ↗</a></footer>
 	<div class="ss-sr" id="ss-announcement" role="status" aria-live="polite"></div>
 </div>
-<script type="application/json" id="ts-sound-config"><?php echo $config_json; ?></script>
-		<?php
-		return (string) ob_get_clean();
-	}
-}
+<script type="application/json" id="ts-sound-config">{"mode":"live","flow":"earbuds","endpoint":"https://store.example/wp-json/ts-sound/v1","homeUrl":"https://store.example/","categoryUrls":{"earbuds":"https://store.example/custom-earbuds/","headphones":"https://store.example/custom-headphones/"},"hero":{"earbuds":{"name":"Test Hero","image":"https://store.example/img.webp"},"headphones":null}}</script>
+		</body></html>

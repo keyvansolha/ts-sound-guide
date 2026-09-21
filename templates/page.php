@@ -10,7 +10,9 @@ defined( 'ABSPATH' ) || exit;
 get_header();
 
 echo '<main id="site-main" class="ts-sound-page">';
-echo wp_kses_post( ts_sound_guide()->landing_page->render( ts_sound_guide_initial_flow() ) );
+// GuideView escapes every dynamic value and JSON-hex-encodes its bootstrap.
+// A second wp_kses_post() pass would strip the required application/json tag.
+echo ts_sound_guide()->landing_page->render( ts_sound_guide_initial_flow() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 echo '</main>';
 
 // Keep existing global commerce navigation owned by the amazing theme.

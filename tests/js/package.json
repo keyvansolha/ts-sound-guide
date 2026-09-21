@@ -1,0 +1,9 @@
+{
+  "name": "ts-sound-guide-tests",
+  "private": true,
+  "type": "module",
+  "description": "Test-only dependencies for the Sound Guide JS suites (jsdom). Not shipped.",
+  "dependencies": {
+    "jsdom": "^26.0.0"
+  }
+}

@@ -85,7 +85,10 @@ final class ValidateController extends Controller {
 			if ( $body instanceof WP_REST_Response ) {
 				return $body;
 			}
-			if ( ! is_array( $body['answers'] ?? null ) ) {
+			if ( ! $this->valid_body_keys( $body, [ 'answers', 'productId', 'variationId', 'price' ] ) ) {
+				return $this->error( 'Invalid request', 400 );
+			}
+			if ( ! $this->valid_answers( $body['answers'] ?? null ) ) {
 				return $this->error( 'Invalid answers', 400 );
 			}
 			$answers = $this->engine->normalize( $body['answers'] );
@@ -99,16 +102,29 @@ final class ValidateController extends Controller {
 				return $this->error( 'Incomplete device/fit', 400 );
 			}
 
-			$product_id  = isset( $body['productId'] ) && is_numeric( $body['productId'] ) ? (int) $body['productId'] : 0;
-			$variation_id = isset( $body['variationId'] ) && is_numeric( $body['variationId'] ) ? (int) $body['variationId'] : 0;
+			$product_id  = isset( $body['productId'] ) && is_int( $body['productId'] ) ? $body['productId'] : 0;
+			$variation_id = isset( $body['variationId'] ) && is_int( $body['variationId'] ) ? $body['variationId'] : 0;
 			$price       = $body['price'] ?? null;
-			if ( $product_id < 1 || $variation_id < 1 || ! is_numeric( $price ) ) {
+			if ( $product_id < 1
+				|| $variation_id < 1
+				|| ( ! is_int( $price ) && ! is_float( $price ) )
+				|| ! is_finite( (float) $price ) ) {
 				return $this->error( 'Invalid request', 400 );
 			}
+			if ( ! $this->inventory_healthy() ) {
+				return $this->error( 'Inventory sync unavailable', 503 );
+			}
 
-			$catalog = $this->catalog->catalog();
-			$chosen  = $catalog[ $product_id ] ?? null;
-			if ( null === $chosen || empty( $this->engine->available_variants( $chosen ) ) ) {
+			$catalog   = $this->catalog->catalog();
+			$selection = $this->engine->select( $answers, $catalog );
+			$chosen    = null;
+			foreach ( $selection['picks'] as $pick ) {
+				if ( (int) $pick['id'] === $product_id ) {
+					$chosen = $pick;
+					break;
+				}
+			}
+			if ( null === $chosen ) {
 				return $this->error( 'Stock or price changed', 409 );
 			}
 			$variant = null;
@@ -120,6 +136,10 @@ final class ValidateController extends Controller {
 			}
 			if ( null === $variant || abs( (float) $variant['price'] - (float) $price ) > 0.01 ) {
 				return $this->error( 'Stock or price changed', 409 );
+			}
+
+			if ( ! $this->valid_purchase_url( (string) $chosen['url'] ) ) {
+				return $this->error( 'Inventory unavailable', 503 );
 			}
 
 			$token = $this->attribution->issue_token( (int) $chosen['wcId'], $variation_id, $answers );

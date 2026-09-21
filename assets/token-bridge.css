@@ -1,132 +1,91 @@
-/* Scoped fallback tokens derived from KEYVAN-TS/tehranspeaker.com-amazing
+/* Theme-token bridge derived from KEYVAN-TS/tehranspeaker.com-amazing
  * @ 61f53b026522e7c671837b000f4e644d19311188 assets/css/theme-system.css.
- * Fallbacks only: the amazing theme owns appearance through :root and
- * body.dark tokens in theme-system.css. The theme stylesheet may load before
- * or after this bridge; when its tokens exist they win through normal
- * cascade resolution on the same custom property names. The guide follows the
- * theme's tsThemeMode / tsMode / body.dark / data-theme state and never
- * stores its own preference. */
+ *
+ * The guide never redeclares the theme's semantic variables. Its --ss-*
+ * aliases consume inherited theme values when present and supply scoped
+ * defaults only when the theme token layer is unavailable. Theme runtime
+ * state remains owned by tsThemeMode / tsMode / body.dark / data-theme. */
 
 .ts-sound {
-	--brand-navy: #002864;
-	--brand-lime: #b6e30c;
-	--brand-navy-ink: #061f38;
-	--surface-page: #ffffff;
-	--surface-card: #ffffff;
-	--surface-raised: #f7f9fa;
-	--surface-subtle: #f0f3f5;
-	--surface-navigation: var(--brand-navy);
-	--surface-control: #f3f6f8;
-	--surface-control-hover: #e9eef1;
-	--text-strong: #102a43;
-	--text-body: #334e68;
-	--text-muted: #5f7283;
-	--text-on-brand: #f7fbff;
-	--text-on-accent: #09213a;
-	--border-subtle: #dce3e8;
-	--border-control: #c8d3db;
-	--content-heading-color: var(--brand-navy);
-	--content-link-color: #315a7d;
-	--content-link-hover-color: var(--brand-navy);
-	--theme-accent: var(--brand-lime);
-	--focus-ring: #6f8900;
-	--state-danger: #c92b55;
-	--state-danger-surface: #fff0f4;
-	--state-success: #21762a;
-	--state-success-surface: #eaf7eb;
-	--state-warning: #a85f00;
-	--state-warning-surface: #fff5e7;
-	--state-info: #176a9b;
-	--state-info-surface: #eaf4fa;
-	--state-purple: #7442a8;
-	--state-purple-surface: #f4edfb;
-	--state-neutral: #526674;
-	--state-neutral-surface: #edf1f3;
-	--surface-overlay: rgb(0 20 40 / 0.56);
-	--shadow-color: rgb(16 42 67 / 0.12);
-	--shadow-soft: 0 14px 42px var(--shadow-color);
-	--commerce-page: var(--surface-page);
-	--commerce-panel: var(--surface-card);
-	--commerce-raised: var(--surface-raised);
-	--commerce-subtle: var(--surface-subtle);
-	--commerce-control: var(--surface-control);
-	--commerce-control-hover: var(--surface-control-hover);
-	--commerce-navigation: var(--surface-navigation);
-	--commerce-heading: var(--content-heading-color);
-	--commerce-text: var(--text-body);
-	--commerce-muted: var(--text-muted);
-	--commerce-border: var(--border-subtle);
-	--commerce-border-control: var(--border-control);
-	--commerce-accent: var(--theme-accent);
-	--commerce-on-navigation: var(--text-on-brand);
-	--commerce-on-accent: var(--text-on-accent);
-	--tooltip-background: #ffffff;
-	--tooltip-border: #d7dfe4;
-	--tooltip-text: #263846;
-	--reading-text: #2f3d46;
-	--reading-heading: #12344c;
-	--reading-muted: #687983;
-	--reading-link: #17618f;
-	--reading-link-hover: #003f68;
-	--reading-surface: #ffffff;
-	--reading-surface-raised: #f5f8f9;
-	--reading-border: #dbe4e8;
-	--reading-separator: #d9e2e6;
-	--reading-quote-surface: #f3f7f9;
-	--reading-quote-border: #7897aa;
-	--reading-code-surface: #edf2f4;
-	--reading-code-text: #1d4358;
-	--reading-table-head: #eaf0f3;
-	--reading-table-row: #ffffff;
-	--reading-table-row-alt: #f7f9fa;
-	--reading-selection-background: #dceab4;
-	--reading-selection-text: #102a43;
-	--reading-font-size: 16px;
-	--reading-line-height: 2.15;
-	--reading-radius: 14px;
-	--theme-motion-duration: 320ms;
-	--theme-motion-ease: cubic-bezier(0.2, 0.7, 0.3, 1);
-	--ss-product-paper: #ffffff;
+	--ss-brand-navy: var(--brand-navy, #002864);
+	--ss-theme-accent: var(--theme-accent, #b6e30c);
+	--ss-surface-page: var(--surface-page, #ffffff);
+	--ss-surface-card: var(--surface-card, #ffffff);
+	--ss-surface-raised: var(--surface-raised, #f7f9fa);
+	--ss-surface-subtle: var(--surface-subtle, #f0f3f5);
+	--ss-surface-control: var(--surface-control, #f3f6f8);
+	--ss-surface-control-hover: var(--surface-control-hover, #e9eef1);
+	--ss-text-strong: var(--text-strong, #102a43);
+	--ss-text-body: var(--text-body, #334e68);
+	--ss-text-muted: var(--text-muted, #5f7283);
+	--ss-text-on-brand: var(--text-on-brand, #f7fbff);
+	--ss-text-on-accent: var(--text-on-accent, #09213a);
+	--ss-border-subtle: var(--border-subtle, #dce3e8);
+	--ss-border-control: var(--border-control, #c8d3db);
+	--ss-content-link-color: var(--content-link-color, #315a7d);
+	--ss-focus-ring: var(--focus-ring, #6f8900);
+	--ss-state-success: var(--state-success, #21762a);
+	--ss-state-warning: var(--state-warning, #a85f00);
+	--ss-state-warning-surface: var(--state-warning-surface, #fff5e7);
+	--ss-shadow-soft: var(--shadow-soft, 0 14px 42px rgb(16 42 67 / 0.12));
+	--ss-theme-motion-duration: var(--theme-motion-duration, 320ms);
+	--ss-theme-motion-ease: var(--theme-motion-ease, cubic-bezier(0.2, 0.7, 0.3, 1));
+	--ss-product-paper: var(--surface-card, #ffffff);
+}
+
+/* A data-theme-only host still gets the correct scoped fallback. When the
+ * amazing runtime also adds body.dark, the theme-owned values below win. */
+html[data-theme="dark"] .ts-sound,
+body[data-theme="dark"] .ts-sound {
+	--ss-brand-navy: var(--brand-navy, #002864);
+	--ss-theme-accent: var(--theme-accent, #b6e30c);
+	--ss-surface-page: var(--surface-page, #07121d);
+	--ss-surface-card: var(--surface-card, #0d1d29);
+	--ss-surface-raised: var(--surface-raised, #132634);
+	--ss-surface-subtle: var(--surface-subtle, #192d3c);
+	--ss-surface-control: var(--surface-control, #152c3b);
+	--ss-surface-control-hover: var(--surface-control-hover, #1b3748);
+	--ss-text-strong: var(--text-strong, #edf4f7);
+	--ss-text-body: var(--text-body, #c8d4da);
+	--ss-text-muted: var(--text-muted, #92a4ae);
+	--ss-text-on-brand: var(--text-on-brand, #f7fbff);
+	--ss-text-on-accent: var(--text-on-accent, #09213a);
+	--ss-border-subtle: var(--border-subtle, #29404f);
+	--ss-border-control: var(--border-control, #365265);
+	--ss-content-link-color: var(--content-link-color, #9dcce8);
+	--ss-focus-ring: var(--focus-ring, #b6e30c);
+	--ss-state-success: var(--state-success, #8dd697);
+	--ss-state-warning: var(--state-warning, #f2bd68);
+	--ss-state-warning-surface: var(--state-warning-surface, #3a2a16);
+	--ss-shadow-soft: var(--shadow-soft, 0 14px 42px rgb(0 0 0 / 0.32));
+	--ss-product-paper: var(--surface-card, #0d1d29);
 }
 
 body.dark .ts-sound {
-	--surface-page: #07121d;
-	--surface-card: #0d1d29;
-	--surface-raised: #132634;
-	--surface-subtle: #192d3c;
-	--surface-navigation: var(--brand-navy-ink);
-	--surface-control: #152c3b;
-	--surface-control-hover: #1b3748;
-	--text-strong: #edf4f7;
-	--text-body: #c8d4da;
-	--text-muted: #92a4ae;
-	--border-subtle: #29404f;
-	--border-control: #365265;
-	--content-heading-color: #edf4f7;
-	--content-link-color: #9dcce8;
-	--content-link-hover-color: #c6e4f2;
-	--theme-accent: var(--brand-lime);
-	--focus-ring: var(--brand-lime);
-	--state-danger: #ff7597;
-	--state-danger-surface: #3a1825;
-	--state-success: #8dd697;
-	--state-success-surface: #173421;
-	--state-warning: #f2bd68;
-	--state-warning-surface: #3a2a16;
-	--state-info: #8ac9ee;
-	--state-info-surface: #142f42;
-	--state-purple: #c5a0e8;
-	--state-purple-surface: #2c2039;
-	--state-neutral: #b4c1c8;
-	--state-neutral-surface: #253640;
-	--surface-overlay: rgb(0 0 0 / 0.68);
-	--shadow-color: rgb(0 0 0 / 0.32);
-	--tooltip-background: var(--surface-raised);
-	--tooltip-border: var(--border-control);
-	--tooltip-text: #edf4f7;
-	--ss-product-paper: var(--surface-card);
+	--ss-brand-navy: var(--brand-navy, #002864);
+	--ss-theme-accent: var(--theme-accent, #b6e30c);
+	--ss-surface-page: var(--surface-page, #07121d);
+	--ss-surface-card: var(--surface-card, #0d1d29);
+	--ss-surface-raised: var(--surface-raised, #132634);
+	--ss-surface-subtle: var(--surface-subtle, #192d3c);
+	--ss-surface-control: var(--surface-control, #152c3b);
+	--ss-surface-control-hover: var(--surface-control-hover, #1b3748);
+	--ss-text-strong: var(--text-strong, #edf4f7);
+	--ss-text-body: var(--text-body, #c8d4da);
+	--ss-text-muted: var(--text-muted, #92a4ae);
+	--ss-text-on-brand: var(--text-on-brand, #f7fbff);
+	--ss-text-on-accent: var(--text-on-accent, #09213a);
+	--ss-border-subtle: var(--border-subtle, #29404f);
+	--ss-border-control: var(--border-control, #365265);
+	--ss-content-link-color: var(--content-link-color, #9dcce8);
+	--ss-focus-ring: var(--focus-ring, #b6e30c);
+	--ss-state-success: var(--state-success, #8dd697);
+	--ss-state-warning: var(--state-warning, #f2bd68);
+	--ss-state-warning-surface: var(--state-warning-surface, #3a2a16);
+	--ss-shadow-soft: var(--shadow-soft, 0 14px 42px rgb(0 0 0 / 0.32));
+	--ss-product-paper: var(--surface-card, #0d1d29);
 }
 
 /* Neutral hero fallback: never a broken image when a flow has no eligible hero. */
-.ts-sound .ss-hero-placeholder { display: block; width: 100%; aspect-ratio: 1; border-radius: 50%; background: linear-gradient(135deg, var(--surface-control) 0%, var(--surface-subtle) 100%); border: 1px solid var(--border-subtle); }
+.ts-sound .ss-hero-placeholder { display: block; width: 100%; aspect-ratio: 1; border-radius: 50%; background: linear-gradient(135deg, var(--ss-surface-control) 0%, var(--ss-surface-subtle) 100%); border: 1px solid var(--ss-border-subtle); }
 .ts-sound .ss-stage-disc img[hidden] { display: none; }

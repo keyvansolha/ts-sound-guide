@@ -62,7 +62,7 @@ final class CatalogHealth {
 		}
 
 		try {
-			$catalog = $this->catalog->catalog();
+			$catalog = $this->catalog->health_catalog();
 		} catch ( \Throwable $e ) {
 			return [
 				'ok'      => false,
@@ -73,23 +73,28 @@ final class CatalogHealth {
 			];
 		}
 
-		$engine = new RecommendationEngine();
 		$issues = [];
-		foreach ( $catalog as $p ) {
-			$product_issues = $this->product_issues( $p, $engine );
+		foreach ( $catalog as $row ) {
+			$p              = $row['product'];
+			$product_issues = $row['issues'];
+			if ( $product_issues ) {
+				$groups['unusable'][] = $this->summary_row( $p );
+				$summary['unusable']++;
+				foreach ( $product_issues as $issue ) {
+					$issue['product'] = $this->summary_row( $p );
+					$issues[]         = $issue;
+				}
+				continue;
+			}
+
+			$product_issues = $this->product_issues( $p );
 			if ( ! $product_issues ) {
 				$groups['ready'][] = $this->summary_row( $p );
 				$summary['ready']++;
 				continue;
 			}
-			$blocking = (bool) array_filter( $product_issues, static fn( array $i ): bool => 'error' === $i['severity'] );
-			if ( $blocking ) {
-				$groups['unusable'][] = $this->summary_row( $p );
-				$summary['unusable']++;
-			} else {
-				$groups['incomplete'][] = $this->summary_row( $p );
-				$summary['incomplete']++;
-			}
+			$groups['incomplete'][] = $this->summary_row( $p );
+			$summary['incomplete']++;
 			foreach ( $product_issues as $issue ) {
 				$issue['product'] = $this->summary_row( $p );
 				$issues[]         = $issue;
@@ -106,23 +111,15 @@ final class CatalogHealth {
 	 * products are not in the mapped catalog at all).
 	 *
 	 * @param array<string, mixed>    $p      Mapped product.
-	 * @param RecommendationEngine    $engine Engine for eligibility checks.
 	 * @return array<int, array<string, mixed>>
 	 */
-	private function product_issues( array $p, RecommendationEngine $engine ): array {
-		$issues = [];
-		if ( ! $engine->available_variants( $p ) ) {
-			$issues[] = [
-				'severity'   => 'error',
-				'capability' => 'availability',
-				'field'      => 'موجودی قابل خرید واریانت‌ها (WooCommerce)',
-				'help'       => 'هیچ واریانت قابل خریدی برای این محصول وجود ندارد؛ بررسی کنید قیمت، موجودی، فعال‌بودن و رنگ/گارانتی ثبت شده باشند.',
-			];
-			return $issues;
-		}
-
-		$required = [ 'wireless' => 'earbuds', 'silicone' => 'earbuds', 'anc' => 'earbuds', 'multipoint' => 'earbuds', 'usbc' => 'earbuds', 'aux' => 'earbuds', 'auxMic' => 'earbuds' ];
-		foreach ( $p['capabilities'] as $capability => $value ) {
+	private function product_issues( array $p ): array {
+		$issues     = [];
+		$applicable = 'earbuds' === $p['flow']
+			? [ 'wireless', 'usbc', 'anc', 'multipoint', 'silicone' ]
+			: [ 'wireless', 'aux', 'auxMic', 'anc', 'multipoint' ];
+		foreach ( $applicable as $capability ) {
+			$value = $p['capabilities'][ $capability ] ?? null;
 			if ( null === $value ) {
 				$issues[] = [
 					'severity'   => 'warning',
@@ -131,6 +128,14 @@ final class CatalogHealth {
 					'help'       => $this->capability_hint( $capability ),
 				];
 			}
+		}
+		if ( ! is_string( $p['form'] ?? null ) || '' === trim( $p['form'] ) ) {
+			$issues[] = [
+				'severity'   => 'warning',
+				'capability' => 'form',
+				'field'      => 'ویژگی «نوع هدفون» محصول',
+				'help'       => 'فرم محصول ثبت نشده است؛ ویژگی pa_headphones-type را با مقدار دقیق و قابل نمایش تکمیل کنید.',
+			];
 		}
 		return $issues;
 	}

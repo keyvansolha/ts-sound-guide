@@ -7,10 +7,11 @@ const track = ( root, name, data = {} ) => {
 	const entry = { name, ...data };
 	events.push( entry );
 	events = events.slice( -60 );
-	if ( window._paq && typeof window._paq.push === 'function' ) {
-		window._paq.push( [ 'trackEvent', 'TS Sound Guide', name, JSON.stringify( data ) ] );
+	const view = root?.ownerDocument?.defaultView;
+	if ( view?._paq && typeof view._paq.push === 'function' ) {
+		view._paq.push( [ 'trackEvent', 'TS Sound Guide', name, JSON.stringify( data ) ] );
 	}
-	root.dispatchEvent( new CustomEvent( 'ts:sound:event', { detail: entry } ) );
+	root?.dispatchEvent?.( new ( view ?? globalThis ).CustomEvent( 'ts:sound:event', { detail: entry } ) );
 };
 
 /** Recently captured events (for tests). */

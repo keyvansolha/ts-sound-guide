@@ -102,8 +102,13 @@ final class Attribution {
 			return;
 		}
 		foreach ( $order->get_items() as $item ) {
-			if ( (int) $item->get_product_id() === (int) $data['product_id']
-				&& (int) $item->get_variation_id() === (int) $data['variation_id'] ) {
+			$product_id       = (int) $data['product_id'];
+			$variation_id     = (int) $data['variation_id'];
+			$item_product_id  = (int) $item->get_product_id();
+			$item_variation_id = (int) $item->get_variation_id();
+			$is_simple_match  = 0 === $item_variation_id && $variation_id === $product_id;
+			if ( $item_product_id === $product_id
+				&& ( $item_variation_id === $variation_id || $is_simple_match ) ) {
 				$order->update_meta_data( self::ORDER_META, $data );
 				break;
 			}

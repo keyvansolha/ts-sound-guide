@@ -42,14 +42,14 @@ function register_activation_hook( string $file, callable $callback ): void {
 /**
  * Stub the SPL autoloader registration of the plugin bootstrap.
  */
-function add_action( string $hook, callable $callback, int $priority = 10, int $args = 1 ): void {
+function add_action( string $hook, $callback, int $priority = 10, int $args = 1 ): void {
 	$GLOBALS['ts_test_actions'][ $hook ][] = [ $callback, $priority ];
 }
 
 /**
  * add_filter alias in the shim environment.
  */
-function add_filter( string $hook, callable $callback, int $priority = 10, int $args = 1 ): void {
+function add_filter( string $hook, $callback, int $priority = 10, int $args = 1 ): void {
 	add_action( $hook, $callback, $priority, $args );
 }
 

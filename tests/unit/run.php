@@ -62,10 +62,12 @@ check( 'normalize drops calls without work/calls pain', ! array_key_exists( 'cal
 $registry = new CapabilityRegistry();
 
 check( 'ANC yes from explicit ANC value', true === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'ANC دارد' ] ) );
-check( 'ANC treated as explicit no from ENC value (legacy parity)', false === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'ENC دارد' ] ) );
+check( 'ANC stays unknown from ENC-only value', null === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'ENC دارد' ] ) );
 check( 'ANC no from explicit ندارد', false === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'ندارد' ] ) );
 check( 'ANC unknown when absent', null === $registry->resolve( 'anc', [] ) );
 check( 'ANC unknown on contradictory value', null === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'ANC دارد ولی ندارد' ] ) );
+check( 'wireless no from explicit ندارد', false === $registry->resolve( 'wireless', [ 'pa_bluetooth' => 'ندارد' ] ) );
+check( 'wireless contradictory yes/no stays unknown', null === $registry->resolve( 'wireless', [ 'pa_bluetooth' => 'دارد ولی ندارد' ] ) );
 check( 'USB-C yes only from audio-capable value', true === $registry->resolve( 'usbc', [ 'pa_connection' => 'USB-C audio' ] ) );
 check( 'USB-C unknown from generic charging port text', null === $registry->resolve( 'usbc', [ 'pa_connection' => 'درگاه شارژ' ] ) );
 check( 'AUX mic yes from explicit AUX-mic value', true === $registry->resolve( 'auxMic', [ 'pa_aux-microphone' => 'میکروفون دارد' ] ) );

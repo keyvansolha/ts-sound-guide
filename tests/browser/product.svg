@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 520" role="img" aria-labelledby="title">
+  <title id="title">Test headphones</title>
+  <defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#17395c"/><stop offset="1" stop-color="#061f38"/></linearGradient></defs>
+  <path fill="none" stroke="url(#g)" stroke-width="42" stroke-linecap="round" d="M130 278v-48c0-92 54-152 130-152s130 60 130 152v48"/>
+  <rect x="88" y="246" width="92" height="164" rx="42" fill="url(#g)"/>
+  <rect x="340" y="246" width="92" height="164" rx="42" fill="url(#g)"/>
+  <path fill="none" stroke="#b6e30c" stroke-width="14" stroke-linecap="round" d="M118 324h32m220 0h32"/>
+</svg>

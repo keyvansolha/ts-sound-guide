@@ -73,13 +73,8 @@ final class LandingPage {
 		if ( $this->current_configured_page() > 0 ) {
 			return TS_SOUND_GUIDE_DIR . 'templates/page.php';
 		}
-		// Legacy shortcode pages keep the scoped template.
-		if ( is_page() ) {
-			$page = get_queried_object();
-			if ( $page && has_shortcode( $page->post_content, 'ts_sound_guide' ) ) {
-				return TS_SOUND_GUIDE_DIR . 'templates/page.php';
-			}
-		}
+		// Compatibility shortcode pages remain inside their normal theme/page
+		// template; only the administrator-selected page is fully replaced.
 		return $template;
 	}
 
@@ -124,11 +119,12 @@ final class LandingPage {
 
 		$heroes = $this->heroes();
 		$config = [
-			'mode'     => 'live',
-			'flow'     => 'headphones' === $flow ? 'headphones' : 'earbuds',
-			'endpoint' => rest_url( TS_SOUND_GUIDE_REST_BASE ),
-			'homeUrl'  => home_url( '/' ),
-			'hero'     => $heroes,
+			'mode'         => 'live',
+			'flow'         => 'headphones' === $flow ? 'headphones' : 'earbuds',
+			'endpoint'     => rest_url( TS_SOUND_GUIDE_REST_BASE ),
+			'homeUrl'      => home_url( '/' ),
+			'categoryUrls' => $this->category_urls(),
+			'hero'         => $heroes,
 		];
 
 		$view = new GuideView( $config, $heroes );
@@ -166,5 +162,24 @@ final class LandingPage {
 			// Catalog unavailable at render time: heroes fall back to neutral.
 		}
 		return $heroes;
+	}
+
+	/**
+	 * Public archive URLs for the administrator-selected category terms.
+	 *
+	 * @return array{earbuds:string,headphones:string}
+	 */
+	private function category_urls(): array {
+		$urls = [ 'earbuds' => home_url( '/' ), 'headphones' => home_url( '/' ) ];
+		foreach ( $this->settings->category_terms() as $flow => $term_id ) {
+			if ( $term_id < 1 ) {
+				continue;
+			}
+			$url = get_term_link( $term_id, 'product_cat' );
+			if ( is_string( $url ) && '' !== $url ) {
+				$urls[ $flow ] = $url;
+			}
+		}
+		return $urls;
 	}
 }
