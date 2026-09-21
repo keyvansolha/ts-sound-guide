@@ -174,17 +174,17 @@ final class CatalogAdapter {
 				$args['stock_status'] = 'instock';
 			}
 			$result = wc_get_products( $args );
-			if ( ! is_object( $result ) || ! isset( $result->products, $result->total_pages ) ) {
+			if ( ! is_object( $result ) || ! isset( $result->products, $result->max_num_pages ) ) {
 				throw new RuntimeException( 'Catalog query failed' );
 			}
 			foreach ( $result->products as $product ) {
 				$products[ $product->get_id() ] = $product;
 			}
 			$page++;
-			if ( $page > 50 && $page <= (int) $result->total_pages ) {
+			if ( $page > 50 && $page <= (int) $result->max_num_pages ) {
 				throw new RuntimeException( 'Catalog limit exceeded' );
 			}
-		} while ( $page <= (int) $result->total_pages );
+		} while ( $page <= (int) $result->max_num_pages );
 
 		return $products;
 	}

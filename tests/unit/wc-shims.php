@@ -116,7 +116,11 @@ function wc_get_products( array $args ) {
 		if ( isset( $args['category'] ) ) { continue; } // WooCommerce interprets this field as slugs, never fixture IDs.
 		$out[] = ts_wc_make( $id, $props );
 	}
-	return $args['paginate'] ?? false ? (object) [ 'products' => $out, 'total_pages' => 1 ] : $out;
+	return $args['paginate'] ?? false ? (object) [
+		'products'      => $out,
+		'total'         => count( $out ),
+		'max_num_pages' => 1,
+	] : $out;
 }
 function wc_get_product( $id ) {
 	$id = (int) $id;
