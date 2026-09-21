@@ -84,6 +84,21 @@ final class AdminScreens {
 		$woo     = $this->catalog->woo_available();
 		$currency = $this->catalog->currency();
 		$health  = $this->health->report();
+		$selected_heroes = $this->settings->hero_products();
+		$hero_products = [ 'earbuds' => [], 'headphones' => [] ];
+		try {
+			foreach ( $this->catalog->catalog() as $product ) {
+				if ( ! empty( $product['image'] ) && isset( $hero_products[ $product['flow'] ] ) ) {
+					$hero_products[ $product['flow'] ][] = $product;
+				}
+			}
+			foreach ( $hero_products as &$products ) {
+				usort( $products, static fn( array $a, array $b ): int => strnatcasecmp( (string) $a['name'], (string) $b['name'] ) );
+			}
+			unset( $products );
+		} catch ( \Throwable $e ) {
+			// Keep automatic-only selectors when the live catalog is unavailable.
+		}
 
 		$pages = get_pages( [ 'sort_column' => 'post_title', 'hierarchical' => 0 ] );
 		?>
@@ -123,6 +138,20 @@ final class AdminScreens {
 				<td>
 					<?php $this->term_select( 'headphones_term', (int) $terms['headphones'] ); ?>
 					<p class="description">پیش‌فرض: دسته‌بندی موجود «headphone».</p>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="ts-sound-hero-earbuds">محصول تصویر هندزفری</label></th>
+				<td>
+					<?php $this->hero_select( 'earbuds', 'hero_earbuds_product', (int) $selected_heroes['earbuds'], $hero_products['earbuds'] ); ?>
+					<p class="description">محصولی که داخل دایرهٔ بخش آغازین نمایش داده می‌شود. حالت خودکار، ارزان‌ترین محصول واجد شرایط و دارای تصویر را انتخاب می‌کند.</p>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="ts-sound-hero-headphones">محصول تصویر هدفون</label></th>
+				<td>
+					<?php $this->hero_select( 'headphones', 'hero_headphones_product', (int) $selected_heroes['headphones'], $hero_products['headphones'] ); ?>
+					<p class="description">فقط محصولات واجد شرایط، موجود و دارای تصویر این دسته نمایش داده می‌شوند.</p>
 				</td>
 			</tr>
 		</table>
@@ -183,6 +212,25 @@ final class AdminScreens {
 <select id="ts-sound-<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( TS_SOUND_GUIDE_OPTION ); ?>[<?php echo esc_attr( $key ); ?>]">
 			<?php foreach ( $terms as $term ) : ?>
 	<option value="<?php echo esc_attr( (string) $term->term_id ); ?>" <?php selected( $value, (int) $term->term_id ); ?>><?php echo esc_html( $term->name ); ?> (#<?php echo (int) $term->term_id; ?>)</option>
+			<?php endforeach; ?>
+</select>
+		<?php
+	}
+
+	/**
+	 * Render an eligible-product selector for one hero flow.
+	 *
+	 * @param string                         $flow     Product flow.
+	 * @param string                         $key      Settings key.
+	 * @param int                            $value    Current product ID.
+	 * @param array<int,array<string,mixed>> $products Eligible products.
+	 */
+	private function hero_select( string $flow, string $key, int $value, array $products ): void {
+		?>
+<select id="ts-sound-hero-<?php echo esc_attr( $flow ); ?>" name="<?php echo esc_attr( TS_SOUND_GUIDE_OPTION ); ?>[<?php echo esc_attr( $key ); ?>]">
+	<option value="0" <?php selected( $value, 0 ); ?>>— انتخاب خودکار —</option>
+			<?php foreach ( $products as $product ) : ?>
+	<option value="<?php echo esc_attr( (string) $product['id'] ); ?>" <?php selected( $value, (int) $product['id'] ); ?>><?php echo esc_html( $product['name'] ); ?> (#<?php echo (int) $product['id']; ?>)</option>
 			<?php endforeach; ?>
 </select>
 		<?php

@@ -18,8 +18,9 @@ Activation does not create pages or options, and never changes products, variati
 2. Create and publish the WordPress page that should host the guide. Its builder content and default title will be replaced on the frontend.
 3. Open **Settings → راهنمای انتخاب صدا**.
 4. Select the landing page, the earbud product category, and the headphone product category. The category defaults resolve the existing `handsfree` and `headphone` slugs when available.
-5. Save settings and review the WooCommerce, currency, REST-route, and catalog-health diagnostics on the same screen.
-6. Purge the selected page from page/CDN caches after configuration changes.
+5. Optionally select the hero earbud and hero headphone shown inside the landing-page circle. **Automatic** selects the cheapest eligible product with an image; an unavailable or stale selection safely falls back to automatic mode.
+6. Save settings and review the WooCommerce, currency, REST-route, and catalog-health diagnostics on the same screen.
+7. Purge the selected page from page/CDN caches after configuration changes.
 
 The configured landing page is the preferred path. It keeps the theme header and footer while the plugin owns the content between them, and the guide renders once even if the page also contains the shortcode.
 
@@ -100,7 +101,7 @@ Classic checkout and Store API checkout are supported. Attribution contains coar
 
 ## Appearance and frontend behavior
 
-The amazing theme owns appearance through its existing `body.dark`, `data-theme`, `tsThemeMode`, and `tsMode` state. The plugin does not create a second theme preference or toggle. `assets/token-bridge.css` provides scoped fallbacks while preserving the theme's semantic token contract.
+The amazing theme owns appearance through its existing `body.dark`, `data-theme`, `tsThemeMode`, and `tsMode` state. The plugin does not create a second theme preference or toggle. `assets/token-bridge.css` provides scoped fallbacks while preserving the theme's semantic token contract. Hero artwork keeps its original colors over the branded accent circle.
 
 The frontend is split into ES modules under `assets/js/`; there is no build step and no hidden browser catalog. WordPress supplies only public bootstrap configuration.
 
@@ -122,6 +123,7 @@ php tests/unit/catalog.php usd
 php tests/unit/rest.php
 php tests/unit/attribution.php
 php tests/unit/landing.php
+php tests/unit/admin.php
 find . -path './tests/js/node_modules' -prune -o -name '*.php' -type f -print0 | xargs -0 -n1 php -l
 ```
 

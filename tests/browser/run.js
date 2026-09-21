@@ -109,6 +109,10 @@ try {
 			await page.addStyleTag( { content: '*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}' } );
 			const background = await page.locator( '#ts-sound' ).evaluate( ( node ) => getComputedStyle( node ).backgroundColor );
 			check( `${ viewportName } ${ theme } computed theme`, theme === 'dark' ? background === 'rgb(7, 18, 29)' : background === 'rgb(255, 255, 255)', background );
+			if ( viewportName === 'desktop' && theme === 'light' ) {
+				const blendMode = await page.locator( '#ss-hero-product' ).evaluate( ( node ) => getComputedStyle( node ).mixBlendMode );
+				check( 'hero product image preserves its original colors', blendMode === 'normal', blendMode );
+			}
 			const noOverflow = await page.evaluate( () => document.documentElement.scrollWidth <= document.documentElement.clientWidth );
 			check( `${ viewportName } ${ theme } has no horizontal overflow`, noOverflow );
 			await compareScreenshot( page.locator( '.ss-hero' ), `hero-${ viewportName }-${ theme }` );

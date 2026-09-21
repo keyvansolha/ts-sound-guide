@@ -13,7 +13,13 @@ require __DIR__ . '/wp-shims.php';
 require __DIR__ . '/wc-shims.php';
 
 $GLOBALS['ts_test_option'] = [
-	'ts_sound_guide_settings' => [ 'page_id' => 0, 'earbuds_term' => 0, 'headphones_term' => 0 ],
+	'ts_sound_guide_settings' => [
+		'page_id'                  => 0,
+		'earbuds_term'             => 0,
+		'headphones_term'          => 0,
+		'hero_earbuds_product'     => 0,
+		'hero_headphones_product'  => 0,
+	],
 ];
 $GLOBALS['ts_test_page_id'] = 9;
 $GLOBALS['ts_test_has_shortcode'] = false;
@@ -39,6 +45,20 @@ function wp_kses_post( string $html ): string {
 
 require __DIR__ . '/../../ts-sound-guide.php';
 
+/* Eligible hero fixtures: automatic mode chooses the cheapest per flow. */
+ts_wc_product( 201, [
+	'type' => 'simple', 'name' => 'Automatic Earbud', 'cats' => [ 11 ],
+	'price' => 3000000, 'image_id' => 61,
+] );
+ts_wc_product( 202, [
+	'type' => 'simple', 'name' => 'Selected Earbud', 'cats' => [ 11 ],
+	'price' => 5000000, 'image_id' => 62,
+] );
+ts_wc_product( 203, [
+	'type' => 'simple', 'name' => 'Automatic Headphone', 'cats' => [ 21 ],
+	'price' => 4000000, 'image_id' => 63,
+] );
+
 $landing = ts_sound_guide()->landing_page;
 $GLOBALS['ts_test_has_shortcode'] = true;
 $shortcode_template = $landing->template( '/theme/page.php' );
@@ -55,6 +75,31 @@ ob_start();
 require __DIR__ . '/../../templates/page.php';
 $output = (string) ob_get_clean();
 
+$GLOBALS['ts_test_option']['ts_sound_guide_settings']['hero_earbuds_product'] = 202;
+$selected_settings = new TSSoundGuide\Settings();
+$selected_landing = new TSSoundGuide\LandingPage(
+	$selected_settings,
+	new TSSoundGuide\CatalogAdapter( $selected_settings, new TSSoundGuide\CapabilityRegistry() )
+);
+$selected_output = $selected_landing->render();
+
+$GLOBALS['ts_test_option']['ts_sound_guide_settings']['hero_earbuds_product'] = 999;
+$fallback_settings = new TSSoundGuide\Settings();
+$fallback_landing = new TSSoundGuide\LandingPage(
+	$fallback_settings,
+	new TSSoundGuide\CatalogAdapter( $fallback_settings, new TSSoundGuide\CapabilityRegistry() )
+);
+$fallback_output = $fallback_landing->render();
+
+$GLOBALS['ts_test_option']['ts_sound_guide_settings']['hero_earbuds_product'] = 202;
+$sanitized = $selected_settings->sanitize( [
+	'page_id'                 => 9,
+	'earbuds_term'            => 11,
+	'headphones_term'         => 21,
+	'hero_earbuds_product'    => 201,
+	'hero_headphones_product' => 203,
+] );
+
 $checks = [
 	'application registers only callable WordPress callbacks' => array_reduce(
 		$GLOBALS['ts_test_actions'] ?? [],
@@ -70,6 +115,10 @@ $checks = [
 	'bootstrap exposes configured category URLs' => str_contains( $output, 'custom-category/11/' ) && str_contains( $output, 'custom-category/21/' ),
 	'view uses configured earbud URL for the initial category CTA' => str_contains( $output, 'href="https://store.example/custom-category/11/" id="ss-category-link"' ),
 	'view uses configured headphone URL in its footer' => str_contains( $output, 'href="https://store.example/custom-category/21/"' ),
+	'automatic hero chooses the cheapest eligible product with an image' => str_contains( $output, 'Automatic Earbud' ) && str_contains( $output, 'img/61.webp' ),
+	'configured eligible product overrides the automatic hero' => str_contains( $selected_output, 'Selected Earbud' ) && str_contains( $selected_output, 'img/62.webp' ),
+	'invalid configured product safely falls back to automatic hero' => str_contains( $fallback_output, 'Automatic Earbud' ) && ! str_contains( $fallback_output, 'Selected Earbud' ),
+	'hero product IDs survive settings sanitization' => 201 === ( $sanitized['hero_earbuds_product'] ?? null ) && 203 === ( $sanitized['hero_headphones_product'] ?? null ),
 ];
 
 $pass = 0;

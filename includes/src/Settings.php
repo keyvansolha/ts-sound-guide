@@ -10,8 +10,9 @@ namespace TSSoundGuide;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Stores one plugin option with the landing page ID and the two product
- * category term IDs. Registered through the WordPress Settings API.
+ * Stores one plugin option with the landing page, product-category terms,
+ * and optional hero-product selections. Registered through the WordPress
+ * Settings API.
  */
 final class Settings {
 
@@ -32,9 +33,11 @@ final class Settings {
 	 */
 	public function defaults(): array {
 		$defaults = [
-			'page_id'         => 0,
-			'earbuds_term'    => 0,
-			'headphones_term' => 0,
+			'page_id'                 => 0,
+			'earbuds_term'            => 0,
+			'headphones_term'         => 0,
+			'hero_earbuds_product'    => 0,
+			'hero_headphones_product' => 0,
 		];
 		if ( ! function_exists( 'get_term_by' ) ) {
 			return $defaults;
@@ -93,7 +96,7 @@ final class Settings {
 	public function sanitize( $input ): array {
 		$clean = [];
 		$all   = $this->all();
-		foreach ( [ 'page_id', 'earbuds_term', 'headphones_term' ] as $key ) {
+		foreach ( [ 'page_id', 'earbuds_term', 'headphones_term', 'hero_earbuds_product', 'hero_headphones_product' ] as $key ) {
 			$value = is_array( $input ) ? ( $input[ $key ] ?? null ) : null;
 			if ( is_numeric( $value ) ) {
 				$clean[ $key ] = max( 0, (int) $value );
@@ -172,6 +175,20 @@ final class Settings {
 		return [
 			'earbuds'    => $this->get( 'earbuds_term' ),
 			'headphones' => $this->get( 'headphones_term' ),
+		];
+	}
+
+	/**
+	 * Optional administrator-selected hero product IDs by flow.
+	 *
+	 * Zero keeps the deterministic automatic selection.
+	 *
+	 * @return array<string, int>
+	 */
+	public function hero_products(): array {
+		return [
+			'earbuds'    => $this->get( 'hero_earbuds_product' ),
+			'headphones' => $this->get( 'hero_headphones_product' ),
 		];
 	}
 }

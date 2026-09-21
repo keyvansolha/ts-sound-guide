@@ -134,8 +134,10 @@ final class LandingPage {
 	/**
 	 * Deterministic heroes for both flows from eligible WooCommerce products.
 	 *
-	 * The cheapest eligible product with an image wins per flow; a flow with
-	 * no eligible hero renders a neutral fallback (no broken image).
+	 * An eligible administrator-selected product wins per flow. Automatic mode
+	 * (or an invalid/stale selection) falls back to the cheapest eligible
+	 * product with an image. A flow with no eligible hero renders a neutral
+	 * fallback (no broken image).
 	 *
 	 * @return array<string, array{name:string,image:string}|null>
 	 */
@@ -144,6 +146,7 @@ final class LandingPage {
 		try {
 			$catalog = $this->catalog->catalog();
 			$by_flow = [ 'earbuds' => [], 'headphones' => [] ];
+			$selected = $this->settings->hero_products();
 			foreach ( $catalog as $p ) {
 				if ( ! empty( $p['image'] ) ) {
 					$by_flow[ $p['flow'] ][] = $p;
@@ -151,10 +154,15 @@ final class LandingPage {
 			}
 			foreach ( $by_flow as $flow => $products ) {
 				usort( $products, static fn( array $a, array $b ): int => ( (float) $a['variants'][0]['price'] ) <=> ( (float) $b['variants'][0]['price'] ) ?: ( (int) $a['id'] <=> (int) $b['id'] ) );
-				if ( $products ) {
+				$selected_id = (int) ( $selected[ $flow ] ?? 0 );
+				$product = $selected_id > 0 && isset( $catalog[ $selected_id ] )
+					&& $flow === $catalog[ $selected_id ]['flow'] && ! empty( $catalog[ $selected_id ]['image'] )
+					? $catalog[ $selected_id ]
+					: ( $products[0] ?? null );
+				if ( $product ) {
 					$heroes[ $flow ] = [
-						'name'  => (string) $products[0]['name'],
-						'image' => (string) $products[0]['image'],
+						'name'  => (string) $product['name'],
+						'image' => (string) $product['image'],
 					];
 				}
 			}
