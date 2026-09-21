@@ -54,7 +54,7 @@ window.fetch = async (url) => {
 	if (action === 'validate') return {ok:true,status:200,json:async()=>({url:`${location.origin}/product/10/?ts_sound_ref=Ab9x`,productId:10,variationId:101,price:5000000,checkedAt:new Date().toISOString()})};
 	recommendCalls++;
 	const picks = scenario === 'empty' ? [] : [product(10,5000000,true),product(20,6200000,false)];
-	return {ok:true,status:200,json:async()=>({picks,notices:[],total:picks.length,version:'3.1.0',source:'woocommerce',checkedAt:new Date().toISOString(),expiresAt:new Date(Date.now()+45000).toISOString()})};
+	return {ok:true,status:200,json:async()=>({picks,notices:[],total:picks.length,version:'3.1.1',source:'woocommerce',checkedAt:new Date().toISOString(),expiresAt:new Date(Date.now()+45000).toISOString()})};
 };
 </script>
 <script type="module" src="../../assets/js/entry.js"></script>

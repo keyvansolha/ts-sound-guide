@@ -48,7 +48,7 @@ const samplePick = ( id, variantId, price ) => ( {
 } );
 
 const recommendBody = ( picks = [ samplePick( 10, 101, 5000000 ) ], notices = [] ) => ( {
-	picks, notices, total: picks.length, version: '3.1.0', source: 'woocommerce',
+	picks, notices, total: picks.length, version: '3.1.1', source: 'woocommerce',
 	checkedAt: new Date().toISOString(), expiresAt: new Date( Date.now() + 45000 ).toISOString(),
 } );
 

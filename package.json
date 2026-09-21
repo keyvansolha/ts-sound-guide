@@ -1,6 +1,6 @@
 {
 	"name": "ts-sound-guide",
-	"version": "3.1.0",
+	"version": "3.1.1",
 	"private": true,
 	"type": "module",
 	"description": "TehranSpeaker Sound Guide WordPress plugin (module type for the split browser script and node tests).",

@@ -101,7 +101,7 @@ Classic checkout and Store API checkout are supported. Attribution contains coar
 
 ## Appearance and frontend behavior
 
-The amazing theme owns appearance through its existing `body.dark`, `data-theme`, `tsThemeMode`, and `tsMode` state. The plugin does not create a second theme preference or toggle. `assets/token-bridge.css` provides scoped fallbacks while preserving the theme's semantic token contract. Hero artwork keeps its original colors over the branded accent circle.
+The amazing theme owns appearance through its existing `body.dark`, `data-theme`, `tsThemeMode`, and `tsMode` state. The plugin does not create a second theme preference or toggle. `assets/token-bridge.css` provides scoped fallbacks while preserving the theme's semantic token contract. Hero artwork uses the branded accent blend inside the product circle.
 
 The frontend is split into ES modules under `assets/js/`; there is no build step and no hidden browser catalog. WordPress supplies only public bootstrap configuration.
 
