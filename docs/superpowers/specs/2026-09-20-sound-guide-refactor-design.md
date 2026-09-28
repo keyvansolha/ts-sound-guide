@@ -12,7 +12,7 @@ The plugin must let an administrator select an existing WordPress page as the gu
 - The selected landing page is configured through WordPress administration and does not require a shortcode.
 - WooCommerce is the only product-data source. No JSON product profile catalog or parallel product database remains.
 - Products, variations, prices, images, availability, and recommendation capabilities are read from existing WooCommerce records at request time.
-- Unknown product capabilities are never guessed. They are reported to administrators and exclude a product only from recommendation paths that require the unknown capability.
+- Unknown product capabilities are never guessed. Categories may authoritatively grant a capability, a missing attribute means the product does not have it, and anything the store's own attribute text contradicts is reported to administrators as a data-quality issue.
 - The guide follows the amazing theme's existing light/dark preference and control without maintaining a second preference.
 - Recommendation policy, WooCommerce mapping, REST endpoints, rendering, frontend state, and attribution are separated into focused, testable units.
 - Automated tests cover the business rules, failure behavior, browser workflow, dark mode, and visual parity.
@@ -106,11 +106,29 @@ Prices are represented internally in toman. IRR display prices are divided by te
 
 ### Capability Mapping
 
-Recommendation capabilities use a tri-state value:
+Recommendation capabilities use a tri-state value resolved in a fixed
+precedence order:
 
-- `yes`: explicitly supported by an existing WooCommerce attribute;
-- `no`: explicitly unsupported by an existing WooCommerce attribute;
-- `unknown`: absent, empty, contradictory, or not safely interpretable.
+1. **Category authority — `yes`.** A product in a category whose name declares
+   the capability («هندزفری نویز کنسلینگ»، «هدفون بی‌سیم»، «جک AUX» …) has that
+   capability. Category authority outranks attributes, including an attribute
+   whose value says otherwise; such a disagreement is reported in catalog
+   health rather than silently winning.
+2. **Explicit attribute value — `yes`/`no`.** An existing WooCommerce attribute
+   value answers directly.
+3. **Category negation — `no`.** A category that excludes the capability
+   («هدفون سیمی») forces `no`.
+4. **Absence policy — `no` by default.** A missing or empty attribute means the
+   store has not listed the feature, so the product is treated as not having
+   it. Absence is never `unknown`.
+5. **`unknown`.** Reserved for attribute text that is present but
+   contradictory or not interpretable by the registry.
+
+Category signals and negations are declared in the same registry and are
+filterable through `ts_sound_guide_category_signals` and
+`ts_sound_guide_category_negations`, so a store can add its own category
+vocabulary (names or slugs) without code changes. Ancestor categories count:
+a product in «هدفون بی‌سیم گیمینگ» inherits the «هدفون بی‌سیم» signal.
 
 The initial mapped capabilities are:
 
@@ -131,7 +149,13 @@ The mapping layer will define the exact existing WooCommerce attribute keys and 
 - AUX microphone support from the presence of a microphone;
 - wireless, fit, or compatibility from product names or marketing prose.
 
-Missing facts remain `unknown`. A product with an unknown capability remains eligible for recommendation paths that do not depend on that capability. It is excluded when the user's selected path requires that capability to be confirmed.
+Because absence resolves to `no`, a capability can only be `unknown` when the
+store's own attribute text is contradictory or unreadable. Such products remain
+eligible for recommendation paths that do not depend on the capability and are
+excluded from paths that require it to be confirmed. Consequence to keep in
+mind: a capability that resolves to `no` is displayed to shoppers as «ندارد»,
+so the category tree and attributes must be maintained for the storefront to
+make claims it can stand behind.
 
 ### Catalog Health
 
@@ -139,8 +163,10 @@ The catalog-health service runs the same catalog mapping rules used by recommend
 
 The administration report groups relevant products into:
 
-- **Ready:** sufficient valid data for all applicable recommendation paths;
-- **Incomplete:** sellable but missing or ambiguous recommendation capabilities;
+- **Ready:** every category-applicable capability resolved without an unknown
+  or a category/attribute disagreement, and a displayable form factor;
+- **Incomplete:** sellable but holding an unknown capability (contradictory or
+  unreadable attribute text) or a category/attribute disagreement;
 - **Unusable:** cannot be safely offered because core commerce data is invalid or unavailable.
 
 Each issue includes:
@@ -287,7 +313,7 @@ Classes will use the plugin namespace and WordPress coding conventions. WordPres
 - A changed product, variation, price, or availability produces `409` during final validation.
 - A stale recommendation disables purchase actions until refreshed.
 - A failed network request keeps the visitor on the guide, explains that availability could not be verified, and offers a retry.
-- Unknown recommendation capabilities never become affirmative claims.
+- Unknown recommendation capabilities never become affirmative claims; a capability is only shown as present when a category grants it or an attribute states it.
 - Missing hero imagery never creates a broken image element.
 
 ## Security and Privacy

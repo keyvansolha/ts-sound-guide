@@ -282,15 +282,18 @@ final class CatalogAdapter {
 		}
 
 		$raw_attributes = $this->raw_attributes( $product );
-		$caps = [
-			'wireless'   => $this->capabilities->resolve( 'wireless', $raw_attributes ),
-			'usbc'       => $this->capabilities->resolve( 'usbc', $raw_attributes ),
-			'aux'        => $this->capabilities->resolve( 'aux', $raw_attributes ),
-			'auxMic'     => $this->capabilities->resolve( 'auxMic', $raw_attributes ),
-			'anc'        => $this->capabilities->resolve( 'anc', $raw_attributes ),
-			'multipoint' => $this->capabilities->resolve( 'multipoint', $raw_attributes ),
-			'silicone'   => $this->capabilities->resolve( 'silicone', $raw_attributes ),
-		];
+		$categories     = $this->product_categories( $product );
+		$caps           = [];
+		foreach ( array_keys( $this->capabilities->capabilities() ) as $capability ) {
+			$caps[ $capability ] = $this->capabilities->resolve( $capability, $raw_attributes, $categories );
+		}
+		$conflicts = [];
+		foreach ( array_keys( $caps ) as $capability ) {
+			$kind = $this->capabilities->conflict( $capability, $raw_attributes, $categories );
+			if ( null !== $kind ) {
+				$conflicts[ $capability ] = $kind;
+			}
+		}
 
 		return [
 			'id'          => $id,
@@ -301,6 +304,8 @@ final class CatalogAdapter {
 			'image'       => wp_get_attachment_image_url( (int) $product->get_image_id(), 'woocommerce_single' ) ?: null,
 			'form'        => $this->form_label( $product ),
 			'capabilities' => $caps,
+			'conflicts'   => $conflicts,
+			'categories'  => $categories,
 			'variants'    => $variants,
 			'status'      => 'publish',
 			'lifecycle'   => 'stop' === (string) get_post_meta( $id, 'product-status', true ) ? 'stop' : 'active',
@@ -417,6 +422,51 @@ final class CatalogAdapter {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * The product's category rows (assigned terms plus their ancestors) as
+	 * [name, slug] pairs. Category names drive capability authority, so an
+	 * ancestor category such as «هدفون بی‌سیم» counts for its children too.
+	 *
+	 * @param \WC_Product $product Product.
+	 * @return array<int, array<string, string>>
+	 */
+	private function product_categories( $product ): array {
+		$id    = (int) $product->get_id();
+		$terms = function_exists( 'wp_get_post_terms' ) ? wp_get_post_terms( $id, 'product_cat' ) : [];
+		if ( ! is_array( $terms ) ) {
+			return [];
+		}
+		$rows = [];
+		foreach ( $terms as $term ) {
+			$term_id = (int) ( $term->term_id ?? 0 );
+			if ( $term_id < 1 ) {
+				continue;
+			}
+			$rows[ $term_id ] = [
+				'id'   => (string) $term_id,
+				'name' => (string) ( $term->name ?? '' ),
+				'slug' => (string) ( $term->slug ?? '' ),
+			];
+			if ( function_exists( 'get_ancestors' ) ) {
+				foreach ( array_map( 'intval', (array) get_ancestors( $term_id, 'product_cat' ) ) as $ancestor_id ) {
+					if ( isset( $rows[ $ancestor_id ] ) ) {
+						continue;
+					}
+					$ancestor  = function_exists( 'get_term' ) ? get_term( $ancestor_id, 'product_cat' ) : null;
+					$is_error  = ( $ancestor && function_exists( 'is_wp_error' ) ) ? is_wp_error( $ancestor ) : false;
+					if ( $ancestor && ! $is_error ) {
+						$rows[ $ancestor_id ] = [
+							'id'   => (string) $ancestor_id,
+							'name' => (string) ( $ancestor->name ?? '' ),
+							'slug' => (string) ( $ancestor->slug ?? '' ),
+						];
+					}
+				}
+			}
+		}
+		return array_values( $rows );
 	}
 
 	/**

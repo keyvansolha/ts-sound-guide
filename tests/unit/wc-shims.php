@@ -157,6 +157,118 @@ function get_term_by( $field, $value, $taxonomy = '' ) {
 }
 
 /* ----- WP shims for the adapter ----- */
+/**
+ * Term registry for category-authority tests: id => [name, slug, parent].
+ *
+ * @return array<int, array{name:string,slug:string,parent:int}>
+ */
+function ts_wc_terms(): array {
+	return $GLOBALS['ts_wc_term_map'] ?? [
+		11 => [ 'name' => 'هندزفری', 'slug' => 'handsfree', 'parent' => 0 ],
+		12 => [ 'name' => 'هندزفری نویز کنسلینگ', 'slug' => 'handsfree-noise-cancelling', 'parent' => 11 ],
+		13 => [ 'name' => 'هندزفری بی‌سیم', 'slug' => 'handsfree-wireless', 'parent' => 11 ],
+		21 => [ 'name' => 'هدفون', 'slug' => 'headphone', 'parent' => 0 ],
+		22 => [ 'name' => 'هدفون بی‌سیم', 'slug' => 'headphone-wireless', 'parent' => 21 ],
+		23 => [ 'name' => 'هدفون سیمی', 'slug' => 'headphone-wired', 'parent' => 21 ],
+		24 => [ 'name' => 'هدفون بی‌سیم گیمینگ', 'slug' => 'headphone-wireless-gaming', 'parent' => 22 ],
+	];
+}
+
+/**
+ * All descendants of a term (any depth), mirroring get_term_children().
+ */
+function get_term_children( $term_id, $taxonomy = 'product_cat' ) {
+	$terms  = ts_wc_terms();
+	$parent = (int) $term_id;
+	$out    = [];
+	$queue  = [ $parent ];
+	$guard  = 0;
+	while ( $queue && $guard < 50 ) {
+		$current = (int) array_shift( $queue );
+		foreach ( $terms as $id => $term ) {
+			if ( (int) $term['parent'] === $current && ! in_array( $id, $out, true ) ) {
+				$out[]   = $id;
+				$queue[] = $id;
+			}
+		}
+		$guard++;
+	}
+	sort( $out );
+	return $out;
+}
+
+/**
+ * Assigned product categories as term objects.
+ */
+function wp_get_post_terms( $post_id, $taxonomy = 'product_cat', $args = [] ) {
+	$cats = [];
+	foreach ( $GLOBALS['ts_wc_products'] as $pid => $entry ) {
+		if ( (int) $pid === (int) $post_id ) {
+			$cats = (array) ( $entry['props']['cats'] ?? [] );
+			break;
+		}
+	}
+	$terms = ts_wc_terms();
+	$out   = [];
+	foreach ( $cats as $cat_id ) {
+		$cat_id = (int) $cat_id;
+		if ( isset( $terms[ $cat_id ] ) ) {
+			$out[] = (object) [
+				'term_id' => $cat_id,
+				'name'    => $terms[ $cat_id ]['name'],
+				'slug'    => $terms[ $cat_id ]['slug'],
+			];
+		}
+	}
+	return $out;
+}
+
+/**
+ * Ancestor chain (nearest first) for a term.
+ */
+function get_ancestors( $term_id, $taxonomy = 'product_cat', $resource = '' ) {
+	$terms   = ts_wc_terms();
+	$current = (int) $term_id;
+	$out     = [];
+	$guard   = 0;
+	while ( isset( $terms[ $current ] ) && $terms[ $current ]['parent'] > 0 && $guard < 10 ) {
+		$parent = (int) $terms[ $current ]['parent'];
+		$out[]  = $parent;
+		$current = $parent;
+		$guard++;
+	}
+	return $out;
+}
+
+/**
+ * Fetch a term object by ID.
+ */
+function get_term( $term_id, $taxonomy = 'product_cat' ) {
+	$terms  = ts_wc_terms();
+	$id     = (int) $term_id;
+	if ( ! isset( $terms[ $id ] ) ) {
+		return null;
+	}
+	return (object) [
+		'term_id' => $id,
+		'name'    => $terms[ $id ]['name'],
+		'slug'    => $terms[ $id ]['slug'],
+		'parent'  => $terms[ $id ]['parent'],
+	];
+}
+
+/**
+ * WP_Error test shim (fixtures never return errors).
+ */
+function is_wp_error( $thing ) {
+	return $thing instanceof WP_Error_Shim;
+}
+
+/**
+ * Minimal WP_Error stand-in so is_wp_error() can be exercised.
+ */
+class WP_Error_Shim {}
+
 function get_post_meta( $id, $key, $single = false ) {
 	foreach ( $GLOBALS['ts_wc_products'] as $pid => $entry ) {
 		if ( (int) $pid === (int) $id ) {
@@ -182,8 +294,4 @@ function has_term( $terms, $taxonomy, $id ) {
 		}
 	}
 	return false;
-}
-function get_term_children( $id, $taxonomy ) {
-	// earbuds term 11 has child 12 in fixtures.
-	return 11 === (int) $id ? [ 12 ] : [];
 }

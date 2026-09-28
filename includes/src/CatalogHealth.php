@@ -105,30 +105,42 @@ final class CatalogHealth {
 	}
 
 	/**
-	 * Diagnostics for one mapped product. Ready = sufficient valid data for
-	 * all applicable recommendation paths; missing/ambiguous capabilities are
-	 * warnings; unusable commerce data never reaches this method (those
-	 * products are not in the mapped catalog at all).
+	 * Diagnostics for one mapped product.
 	 *
-	 * @param array<string, mixed>    $p      Mapped product.
+	 * Under the category-authority rules a capability is false when absent, so
+	 * "unknown" can only come from contradictory or unreadable attribute text.
+	 * Both that and a category/attribute disagreement are reported here as
+	 * data-quality warnings; Ready means no warnings at all.
+	 *
+	 * @param array<string, mixed> $p Mapped product.
 	 * @return array<int, array<string, mixed>>
 	 */
 	private function product_issues( array $p ): array {
-		$issues     = [];
-		$applicable = 'earbuds' === $p['flow']
-			? [ 'wireless', 'usbc', 'anc', 'multipoint', 'silicone' ]
-			: [ 'wireless', 'aux', 'auxMic', 'anc', 'multipoint' ];
-		foreach ( $applicable as $capability ) {
-			$value = $p['capabilities'][ $capability ] ?? null;
+		$issues = [];
+
+		$conflicts = is_array( $p['conflicts'] ?? null ) ? $p['conflicts'] : [];
+		foreach ( $conflicts as $capability => $kind ) {
+			$issues[] = [
+				'severity'   => 'contradiction' === $kind || 'category_conflict' === $kind ? 'warning' : 'notice',
+				'capability' => (string) $capability,
+				'kind'       => (string) $kind,
+				'field'      => $this->field_hint( (string) $capability ),
+				'help'       => $this->conflict_hint( (string) $capability, (string) $kind ),
+			];
+		}
+
+		foreach ( (array) $p['capabilities'] as $capability => $value ) {
 			if ( null === $value ) {
 				$issues[] = [
 					'severity'   => 'warning',
-					'capability' => $capability,
-					'field'      => $this->field_hint( $capability ),
-					'help'       => $this->capability_hint( $capability ),
+					'capability' => (string) $capability,
+					'kind'       => 'unknown',
+					'field'      => $this->field_hint( (string) $capability ),
+					'help'       => $this->capability_hint( (string) $capability ),
 				];
 			}
 		}
+
 		if ( ! is_string( $p['form'] ?? null ) || '' === trim( $p['form'] ) ) {
 			$issues[] = [
 				'severity'   => 'warning',
@@ -138,6 +150,26 @@ final class CatalogHealth {
 			];
 		}
 		return $issues;
+	}
+
+	/**
+	 * Plain-language explanation for a category/attribute conflict.
+	 *
+	 * @param string $capability Capability key.
+	 * @param string $kind       Conflict kind.
+	 * @return string
+	 */
+	private function conflict_hint( string $capability, string $kind ): string {
+		$registry = new CapabilityRegistry();
+		$defs     = $registry->capabilities();
+		$label    = (string) ( $defs[ $capability ]['label'] ?? $capability );
+		if ( 'category_conflict' === $kind ) {
+			return 'دسته‌بندی می‌گوید «' . $label . '» دارد، اما مقدار ویژگی محصول خلاف آن است. دسته‌بندی اولویت دارد؛ برای رفع تناقض، مقدار ویژگی را اصلاح کنید یا محصول را از دسته‌بندی حذف کنید.';
+		}
+		if ( 'unreadable' === $kind ) {
+			return 'مقدار ویژگی «' . $label . '» قابل تفسیر نیست (نه «دارد» و نه «ندارد»). برای بررسی در مسیرهای پیشنهاد، مقدار صریح ثبت کنید.';
+		}
+		return 'مقدار ویژگی «' . $label . '» هم‌زمان مثبت و منفی است و قابل اتکا نیست؛ مقدار صریح «دارد» یا «ندارد» ثبت کنید.';
 	}
 
 	/**

@@ -123,12 +123,47 @@ ts_wc_product( 108, [
 	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
 ], [] );
 
+/* A9-A11: category authority fixtures (rule 1 and rule 3). */
+// A9: sits in «هندزفری نویز کنسلینگ» with NO ANC attribute -> anc must be true.
+ts_wc_product( 109, [
+	'name' => 'Category ANC Buds', 'cats' => [ 12 ], 'price' => 5200000,
+	'attributes' => [ 'pa_bluetooth' => 'دارد', 'pa_inside-the-box' => 'سری سیلیکونی' ],
+	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
+], [] );
+
+// A10: in a grandchild of «هدفون بی‌سیم» with no bluetooth attribute ->
+//      wireless must be true through the ancestor category (rule 1).
+ts_wc_product( 110, [
+	'name' => 'Ancestor Wireless Headphone', 'cats' => [ 24 ], 'price' => 11000000,
+	'attributes' => [ 'pa_headphones-type' => 'روی گوش' ],
+	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
+], [] );
+
+// A11: in «هدفون سیمی» with no bluetooth attribute -> wireless false (rule 3).
+ts_wc_product( 111, [
+	'name' => 'Wired Headphone', 'cats' => [ 23 ], 'price' => 2200000,
+	'attributes' => [ 'pa_headphones-type' => 'روی گوش' ],
+	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
+], [] );
+
+// A12: category says ANC but the attribute explicitly says ندارد -> category
+//      wins (true) and the disagreement is reported as a conflict.
+ts_wc_product( 112, [
+	'name' => 'Conflicted ANC Buds', 'cats' => [ 12 ], 'price' => 4800000,
+	'attributes' => [
+		'pa_bluetooth' => 'دارد',
+		'pa_noise-cancellation' => 'ندارد',
+		'pa_inside-the-box' => 'سری سیلیکونی',
+	],
+	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
+], [] );
+
 /* ---------- adapter behavior ---------- */
 $catalog = $adapter->catalog();
-check( 'catalog queries WooCommerce categories by term ID', [ 11, 12, 21 ] === ( $GLOBALS['ts_wc_last_query']['product_category_id'] ?? null ) );
+check( 'catalog queries WooCommerce categories by term ID + descendants', [ 11, 12, 13, 21, 22, 23, 24 ] === ( $GLOBALS['ts_wc_last_query']['product_category_id'] ?? null ) );
 $ids = array_keys( $catalog );
 sort( $ids );
-check( 'catalog includes only eligible products', [ 101, 106, 108 ] === $ids );
+check( 'catalog includes only eligible products', [ 101, 106, 108, 109, 110, 111, 112 ] === $ids );
 check( 'stop product excluded', ! isset( $catalog[103] ) );
 check( 'hidden visibility excluded', ! isset( $catalog[104] ) );
 check( 'backordered-only product excluded', ! isset( $catalog[102] ) );
@@ -141,8 +176,18 @@ check( 'price carried in toman (IRT 1:1)', 8000000.0 === $v[0]['price'] );
 check( 'variation query includes color+guarantee', isset( $v[0]['query']['attribute_pa_color'] ) && isset( $v[0]['query']['attribute_pa_guarantee'] ) );
 
 check( 'explicit attributes map to confirmed capabilities', true === $catalog[101]['capabilities']['anc'] && true === $catalog[101]['capabilities']['wireless'] && true === $catalog[101]['capabilities']['multipoint'] && true === $catalog[101]['capabilities']['silicone'] );
-check( 'absent attributes stay unknown', null === $catalog[106]['capabilities']['anc'] && null === $catalog[106]['capabilities']['usbc'] );
+check( 'absent attributes resolve to false (absence policy)', false === $catalog[106]['capabilities']['anc'] && false === $catalog[106]['capabilities']['usbc'] );
 check( 'missing form factor is not replaced with an inferred label', null === $catalog[106]['form'] );
+
+/* ---------- category authority (rule 1) and negation (rule 3) ---------- */
+check( 'category names the capability -> true without any attribute', true === $catalog[109]['capabilities']['anc'] );
+check( 'ancestor category implies capability for its children', true === $catalog[110]['capabilities']['wireless'] );
+check( 'wireless stays false for an absent attribute without a category signal', false === $catalog[111]['capabilities']['wireless'] );
+check( 'category negation forces false', false === $catalog[111]['capabilities']['wireless'] );
+check( 'category authority beats an explicit negative attribute', true === $catalog[112]['capabilities']['anc'] );
+check( 'category/attribute disagreement is reported as a conflict', 'category_conflict' === ( $catalog[112]['conflicts']['anc'] ?? null ) );
+check( 'unconflicted product reports no conflicts', [] === $catalog[109]['conflicts'] );
+check( 'silicone from a plain form-factor name is not a conflict', ! isset( $catalog[110]['conflicts']['silicone'] ) );
 
 /* ---------- catalog health sees products filtered out of recommendations ---------- */
 $health = ( new CatalogHealth( $adapter ) )->report();
@@ -150,12 +195,12 @@ $unusable_ids = array_column( $health['groups']['unusable'], 'id' );
 sort( $unusable_ids );
 $issue_ids = array_unique( array_map( static fn( array $issue ): int => (int) $issue['product']['id'], $health['issues'] ) );
 sort( $issue_ids );
-check( 'health report includes every mapped or unusable relevant product', 8 === array_sum( $health['summary'] ) );
+check( 'health report includes every mapped or unusable relevant product', 12 === array_sum( $health['summary'] ) );
 check( 'health report groups filtered commerce failures as unusable', [ 102, 103, 104, 105, 107 ] === $unusable_ids );
 check( 'health report attaches actionable issues to unusable products', [] === array_diff( [ 102, 103, 104, 105, 107 ], $issue_ids ) );
 $ready_ids = array_column( $health['groups']['ready'], 'id' );
 sort( $ready_ids );
-check( 'health applies only flow-relevant capabilities', [ 101, 108 ] === $ready_ids );
+check( 'health applies only flow-relevant capabilities', [ 101, 108, 110, 111 ] === $ready_ids );
 $mystery_capabilities = array_values( array_map(
 	static fn( array $issue ): string => (string) $issue['capability'],
 	array_filter( $health['issues'], static fn( array $issue ): bool => 106 === (int) $issue['product']['id'] )

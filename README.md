@@ -47,18 +47,26 @@ Prices are normalized internally to toman:
 
 ## Recommendation attributes
 
-Capabilities are tri-state: explicit **yes**, explicit **no**, or **unknown**. Missing, empty, contradictory, and unrecognized values remain unknown. Unknown values are shown in catalog health; they exclude a product only when the shopper's selected path requires that capability.
+Capabilities are tri-state and resolve in a fixed precedence order:
 
-| Capability | WooCommerce attribute |
-| --- | --- |
-| Bluetooth/wireless | `pa_bluetooth` |
-| USB-C audio | `pa_connection` |
-| AUX | `pa_aux` |
-| Microphone while using AUX | `pa_aux-microphone` |
-| Listening ANC | `pa_noise-cancellation` |
-| Multipoint | `pa_qip5asto9pe6c2dzxq` |
-| Silicone/open fit | `pa_inside-the-box`, then `pa_headphones-type` |
-| Human-readable form factor | `pa_headphones-type` |
+1. **Category authority — `yes`.** A product in a category whose name declares the capability gets it, even when an attribute says otherwise. «هندزفری نویز کنسلینگ» grants ANC; «هدفون بی‌سیم» grants wireless; «هدفون سیمی» denies it. Ancestor categories count, and both category names and slugs are matched.
+2. **Explicit attribute value — `yes`/`no`.**
+3. **Category negation — `no`.**
+4. **Absence — `no`.** A missing or empty attribute means the store has not listed the feature, so the product is treated as not having it. Absence is never `unknown`.
+5. **`unknown`.** Only when the store's own attribute text is present but contradictory or unreadable. Reported in catalog health with the field to correct.
+
+Category vocabulary lives in the same registry and is filterable with `ts_sound_guide_category_signals` and `ts_sound_guide_category_negations`, so you can teach the guide new category names or slugs without touching plugin code.
+
+| Capability | WooCommerce attribute | Category examples that grant it |
+| --- | --- | --- |
+| Bluetooth/wireless | `pa_bluetooth` | «هدفون بی‌سیم»، «بلوتوث» (denied by «سیمی») |
+| USB-C audio | `pa_connection` | «USB-C»، «تایپ سی» |
+| AUX | `pa_aux` | «AUX»، «جک ۳.۵» |
+| Microphone while using AUX | `pa_aux-microphone` | «میکروفون AUX» only |
+| Listening ANC | `pa_noise-cancellation` | «نویز کنسلینگ»، «حذف نویز» |
+| Multipoint | `pa_qip5asto9pe6c2dzxq` | «اتصال هم‌زمان»، «دو دستگاه» |
+| Silicone/open fit | `pa_inside-the-box`, then `pa_headphones-type` | «سیلیکونی» (denied by «اوپن ایر») |
+| Human-readable form factor | `pa_headphones-type` | — |
 
 Use explicit values that match the registry in `includes/src/CapabilityRegistry.php`. In particular:
 
@@ -66,6 +74,9 @@ Use explicit values that match the registry in `includes/src/CapabilityRegistry.
 - ENC or generic noise-reduction language does not prove listening ANC;
 - a product microphone does not prove microphone support over AUX;
 - product names and marketing prose are never used to infer compatibility.
+
+A capability that resolves to `no` is displayed to shoppers as «ندارد», so the category tree and the attributes are the storefront's claim: keep both accurate. When a category and an attribute disagree, the category wins and catalog health flags the product so the data can be fixed.
+
 
 The read-only catalog-health report groups products as ready, incomplete, or unusable and links directly to each affected WooCommerce product. Correct the named WooCommerce field; the plugin never writes the correction itself.
 
