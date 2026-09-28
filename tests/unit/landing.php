@@ -100,6 +100,12 @@ $sanitized = $selected_settings->sanitize( [
 	'hero_headphones_product' => 203,
 ] );
 
+$boot_json = '';
+if ( preg_match( '#<script type="application/json" id="ts-sound-config">(.*?)</script>#s', $output, $boot_match ) ) {
+	$boot_json = (string) $boot_match[1];
+}
+$boot_config = json_decode( $boot_json, true );
+
 $checks = [
 	'application registers only callable WordPress callbacks' => array_reduce(
 		$GLOBALS['ts_test_actions'] ?? [],
@@ -112,6 +118,11 @@ $checks = [
 	'configured page keeps theme footer' => str_contains( $output, 'data-theme-footer' ),
 	'configured page renders the guide once' => 1 === substr_count( $output, 'id="ts-sound"' ),
 	'configured page preserves JSON bootstrap for ES modules' => 1 === substr_count( $output, 'id="ts-sound-config"' ),
+	'bootstrap exposes the live price span for the budget field' => is_array( $boot_config )
+		&& 3000000.0 === (float) ( $boot_config['prices']['min'] ?? 0 )
+		&& 5000000.0 === (float) ( $boot_config['prices']['max'] ?? 0 ),
+	'bootstrap exposes a per-flow price span' => 4000000.0 === (float) ( $boot_config['prices']['byFlow']['headphones']['min'] ?? 0 )
+		&& 4000000.0 === (float) ( $boot_config['prices']['byFlow']['headphones']['max'] ?? 0 ),
 	'bootstrap exposes configured category URLs' => str_contains( $output, 'custom-category/11/' ) && str_contains( $output, 'custom-category/21/' ),
 	'view uses configured earbud URL for the initial category CTA' => str_contains( $output, 'href="https://store.example/custom-category/11/" id="ss-category-link"' ),
 	'view uses configured headphone URL in its footer' => str_contains( $output, 'href="https://store.example/custom-category/21/"' ),

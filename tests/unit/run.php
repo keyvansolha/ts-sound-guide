@@ -156,5 +156,34 @@ check( 'unknown required ANC excludes from that path', 0 === $result['total'] &&
 $result = $engine->select( [ 'flow' => 'earbuds', 'use' => 'music', 'pain' => 'balanced', 'connection' => 'wireless', 'fit' => 'silicone', 'budget' => 20000000 ], [ $unknown_anc ] );
 check( 'unknown irrelevant capability still recommendable', 1 === $result['total'] );
 
+/* ---------------- ANC only exists while the product runs wirelessly ---------------- */
+// Hybrid headphones: ANC plus an AUX jack. Plug the cable in and the
+// noise-cancelling circuit switches off, so a wired path can never satisfy an
+// ANC priority - the engine must reject it instead of promising it.
+$hybrid = [
+	'id' => 900, 'wcId' => 900, 'name' => 'Hybrid ANC Headphones', 'flow' => 'headphones',
+	'status' => 'publish', 'lifecycle' => 'active', 'inStock' => true, 'purchasable' => true,
+	'capabilities' => [ 'wireless' => true, 'usbc' => false, 'aux' => true, 'auxMic' => true, 'anc' => true, 'multipoint' => true, 'silicone' => false ],
+	'variants' => [ [ 'id' => 9001, 'price' => 5000000.0 ] ],
+];
+
+$result = $engine->select( [ 'flow' => 'headphones', 'use' => 'music', 'pain' => 'noise', 'connection' => 'aux', 'budget' => 6000000 ], [ $hybrid ] );
+check( 'ANC priority on a wired path rejects the model', 0 === $result['total'] && 'anc_wired' === ( $result['rejected'][0]['reason'] ?? '' ) );
+check( 'ANC priority on a wired path explains why', false !== mb_strpos( implode( ' ', $result['notices'] ), 'ANC' ) );
+
+$result = $engine->select( [ 'flow' => 'headphones', 'use' => 'music', 'pain' => 'noise', 'connection' => 'wireless', 'budget' => 6000000 ], [ $hybrid ] );
+check( 'ANC priority on a wireless path keeps the model', 1 === $result['total'] );
+check( 'ANC is credited as a reason only on a wireless path', in_array( 'کاهش صدای محیط با ANC', $result['picks'][0]['reasons'], true ) );
+
+// use=commute nudges towards ANC: that nudge must not appear on a wired path.
+$result = $engine->select( [ 'flow' => 'headphones', 'use' => 'commute', 'pain' => 'balanced', 'connection' => 'aux', 'budget' => 6000000 ], [ $hybrid ] );
+check( 'commute never credits ANC on a wired path', 1 === $result['total'] && ! in_array( 'کاهش صدای محیط با ANC', $result['picks'][0]['reasons'], true ) );
+
+// An ANC claim without a wireless mode cannot be offered as an ANC pick.
+$anc_only = $hybrid;
+$anc_only['capabilities']['wireless'] = false;
+$result = $engine->select( [ 'flow' => 'headphones', 'use' => 'music', 'pain' => 'noise', 'connection' => 'wireless', 'budget' => 6000000 ], [ $anc_only ] );
+check( 'ANC without a wireless mode is never offered for an ANC priority', 0 === $result['total'] );
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit( $fail ? 1 : 0 );

@@ -26,6 +26,16 @@ const phonesNoFit = questions( { flow: 'headphones' } );
 check( 'headphones without fit pain skip fit', ! phonesNoFit.some( ( q ) => q.key === 'fit' ) );
 check( 'headphone connection options are wireless/aux only', questions( { flow: 'headphones' } )[ 2 ].options.every( ( o ) => [ 'wireless', 'aux' ].includes( o[ 0 ] ) ) );
 
+/* ANC runs only wirelessly: asking for it must not offer a cable. */
+const ancPhones = questions( { flow: 'headphones', pain: 'noise' } );
+check( 'ANC priority withholds the wired option for headphones', ancPhones[ 2 ].options.length === 1 && ancPhones[ 2 ].options[ 0 ][ 0 ] === 'wireless' );
+check( 'ANC priority explains why the cable is withheld', /ANC/.test( ancPhones[ 2 ].help ) && /بی.?سیم/.test( ancPhones[ 2 ].help ) );
+const ancBuds = questions( { flow: 'earbuds', pain: 'noise' } );
+check( 'ANC priority withholds USB-C for earbuds', ancBuds[ 2 ].options.length === 1 && ancBuds[ 2 ].options[ 0 ][ 0 ] === 'wireless' );
+const chargeBuds = questions( { flow: 'earbuds', pain: 'charge' } );
+check( 'a priority other than ANC keeps the wired option', chargeBuds[ 2 ].options.some( ( o ) => o[ 0 ] === 'usbc' ) );
+check( 'headphone flow without ANC keeps AUX', questions( { flow: 'headphones', pain: 'balanced' } )[ 2 ].options.some( ( o ) => o[ 0 ] === 'aux' ) );
+
 /* budget parsing (Persian and Arabic digits, separators) */
 check( 'parse Persian digits', parseDigits( '۶۰۰۰۰۰۰' ) === 6000000 );
 check( 'parse Arabic digits', parseDigits( '٦٠٠٠٠٠٠' ) === 6000000 );

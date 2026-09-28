@@ -119,7 +119,12 @@ final class RecommendationEngine {
 			} elseif ( 'aux' === $conn && true !== $caps['aux'] ) {
 				$reason = 'connection';
 			} elseif ( 'noise' === $pain && true !== $caps['anc'] ) {
-			 $reason = 'anc';
+				$reason = 'anc';
+			} elseif ( 'noise' === $pain && ( true !== $caps['wireless'] || 'wireless' !== $conn ) ) {
+				// ANC only runs while the product is used wirelessly: on a
+				// wired connection the circuit is inactive even on hybrid
+				// models, so a wired path can never satisfy an ANC priority.
+				$reason = 'anc_wired';
 			} elseif ( 'switch' === $pain && true !== $caps['multipoint'] ) {
 				$reason = 'multipoint';
 			} elseif ( 'open' === $fit && false !== $caps['silicone'] ) {
@@ -141,8 +146,11 @@ final class RecommendationEngine {
 			$price  = $vs[0]['price'];
 			$score  = 50;
 			$reasons = [];
+			// ANC is a wireless-mode feature: never credit it on a wired path,
+			// where the circuit is off and no cable can turn it on.
+			$anc_active = 'wireless' === $conn && true === $caps['anc'];
 
-			if ( 'noise' === $pain && true === $caps['anc'] ) {
+			if ( 'noise' === $pain && $anc_active ) {
 				$score   += 25;
 				$reasons[] = self::FEATURES['anc'];
 			}
@@ -150,7 +158,7 @@ final class RecommendationEngine {
 				$score   += 25;
 				$reasons[] = self::FEATURES['multipoint'];
 			}
-			if ( 'commute' === $use && true === $caps['anc'] ) {
+			if ( 'commute' === $use && $anc_active ) {
 				$score   += 12;
 				if ( ! in_array( self::FEATURES['anc'], $reasons, true ) ) {
 					$reasons[] = self::FEATURES['anc'];
@@ -313,6 +321,9 @@ final class RecommendationEngine {
 	 */
 	private function notices( array $a, string $use, string $pain, string $conn, string $fit ): array {
 		$notices = [];
+		if ( 'noise' === $pain && 'wireless' !== $conn ) {
+			$notices[] = 'حذف نویز فعال (ANC) فقط در حالت بی‌سیم کار می‌کند؛ روی کابل مدار ANC خاموش است، پس برای این اولویت مدل سیمی پیشنهاد نمی‌شود.';
+		}
 		if ( ( $a['calls'] ?? '' ) === 'noisy' ) {
 			$notices[] = 'کیفیت میکروفون در محیط شلوغ به تست نیاز دارد؛ ANC تضمین کیفیت تماس نیست.';
 		}

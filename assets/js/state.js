@@ -37,7 +37,7 @@ const createState = ( root, config ) => {
 		$( 'ss-trail' ).innerHTML = qs.slice( 0, step ).filter( ( x ) => answers[ x.key ] ).map( ( x ) => `<button data-edit="${ x.key }">${ esc( x.options?.find( ( o ) => o[ 0 ] === answers[ x.key ] )?.[ 1 ] || answers[ x.key ] ) }</button>` ).join( '' );
 		if ( q.key === 'budget' ) {
 			if ( ! answers.budget ) {
-				answers.budget = answers.flow === 'headphones' ? 9000000 : 6000000;
+				answers.budget = defaultBudget( priceBounds() );
 			}
 			renderBudget();
 			$( 'ss-next' ).disabled = false;
@@ -52,22 +52,69 @@ const createState = ( root, config ) => {
 		track( root, 'question_view', { question: q.key, position: step + 1 } );
 	};
 
+	/* ---------- budget field ---------- */
+
+	/**
+	 * Budget bounds from the live catalog: the cheapest product price is the
+	 * floor and the most expensive the ceiling, never outside the documented
+	 * public range (500,000 .. 500,000,000 toman) that the REST boundary
+	 * enforces. The per-flow span wins over the overall span.
+	 */
+	const priceBounds = () => {
+		const prices = config.prices || {};
+		const flow = ( prices.byFlow || {} )[ answers.flow ] || {};
+		const floor = Number( flow.min ) || Number( prices.min ) || 500000;
+		const ceiling = Number( flow.max ) || Number( prices.max ) || 500000000;
+		const min = Math.max( 500000, Math.floor( floor ) );
+		const max = Math.min( 500000000, Math.max( Math.ceil( ceiling ), min + 100000 ) );
+		const span = max - min;
+		const step = span > 50000000 ? 1000000 : ( span > 10000000 ? 500000 : 100000 );
+		return { min, max, step };
+	};
+
+	/** Default budget, always inside the catalog span. */
+	const defaultBudget = ( b ) => Math.min( Math.max( answers.flow === 'headphones' ? 9000000 : 6000000, b.min ), b.max );
+
+	/** Four in-range presets, rounded to something readable. */
+	const budgetPresets = ( b ) => {
+		const span = b.max - b.min;
+		const round = span > 20000000 ? 500000 : 100000;
+		const presets = [];
+		[ 0, 0.33, 0.66, 1 ].forEach( ( ratio ) => {
+			const value = Math.min( Math.max( Math.round( ( b.min + span * ratio ) / round ) * round, b.min ), b.max );
+			if ( ! presets.includes( value ) ) {
+				presets.push( value );
+			}
+		} );
+		return presets;
+	};
+
+	/** Compact preset label: میلیون for round millions, هزار otherwise. */
+	const budgetLabel = ( n ) => ( n % 1000000 === 0 ? `${ fa( n / 1000000 ) } میلیون` : `${ fa( n / 1000 ) } هزار` );
+
 	const renderBudget = () => {
-		$( 'ss-options' ).innerHTML = `<div class="ss-budget"><label for="ss-budget-range">سقف بودجه</label><div class="ss-budget-value"><strong id="ss-budget-number">${ fa( answers.budget ) }</strong><span>تومان</span></div><input id="ss-budget-range" type="range" min="500000" max="20000000" step="100000" value="${ Math.min( answers.budget, 20000000 ) }" aria-valuetext="${ fa( answers.budget ) } تومان"><div class="ss-budget-presets">${ [ 4000000, 6000000, 9000000, 16000000 ].map( ( n ) => `<button data-budget="${ n }">${ fa( n / 1000000 ) } میلیون</button>` ).join( '' ) }</div><label class="ss-budget-exact" for="ss-budget-exact">مبلغ دلخواه (تومان)<input id="ss-budget-exact" inputmode="numeric" type="text" value="${ answers.budget }" maxlength="12"></label><label><input id="ss-flex" type="checkbox" ${ answers.flex ? 'checked' : '' }>اگر تفاوت کاربردی دارد، تا ۲۰٪ بیشتر هم بررسی کن.</label></div>`;
+		const b = priceBounds();
+		answers.budget = Math.min( Math.max( Number( answers.budget ) || defaultBudget( b ), b.min ), b.max );
+		$( 'ss-options' ).innerHTML = `<div class="ss-budget"><label for="ss-budget-range">سقف بودجه</label><div class="ss-budget-value"><strong id="ss-budget-number">${ fa( answers.budget ) }</strong><span>تومان</span></div><input id="ss-budget-range" type="range" min="${ b.min }" max="${ b.max }" step="${ b.step }" value="${ answers.budget }" aria-valuetext="${ fa( answers.budget ) } تومان"><div class="ss-budget-presets">${ budgetPresets( b ).map( ( n ) => `<button data-budget="${ n }">${ budgetLabel( n ) }</button>` ).join( '' ) }</div><label class="ss-budget-exact" for="ss-budget-exact">مبلغ دلخواه (تومان)<input id="ss-budget-exact" inputmode="numeric" type="text" value="${ answers.budget }" maxlength="12"></label><label><input id="ss-flex" type="checkbox" ${ answers.flex ? 'checked' : '' }>اگر تفاوت کاربردی دارد، تا ۲۰٪ بیشتر هم بررسی کن.</label></div>`;
 	};
 
 	/** Validate + store a budget value; returns ok. */
 	const budget = ( value ) => {
+		const b = priceBounds();
 		const n = parseDigits( value );
-		const ok = Number.isFinite( n ) && n >= 500000 && n <= 500000000;
+		const ok = Number.isFinite( n ) && n >= b.min && n <= b.max;
 		$( 'ss-next' ).disabled = ! ok;
 		if ( ! ok ) {
-			$( 'ss-feedback' ).textContent = 'مبلغی بین ۵۰۰ هزار تا ۵۰۰ میلیون تومان وارد کن.';
+			$( 'ss-feedback' ).textContent = `مبلغی بین ${ fa( b.min ) } تا ${ fa( b.max ) } تومان وارد کن؛ همین بازه، بازه واقعی محصولات است.`;
 			return false;
 		}
 		answers.budget = n;
 		$( 'ss-budget-number' ).textContent = fa( n );
-		$( 'ss-budget-range' ).setAttribute( 'aria-valuetext', fa( n ) + ' تومان' );
+		const range = $( 'ss-budget-range' );
+		if ( range ) {
+			range.value = String( Math.min( Math.max( n, b.min ), b.max ) );
+			range.setAttribute( 'aria-valuetext', fa( n ) + ' تومان' );
+		}
 		$( 'ss-feedback' ).textContent = 'سقف انتخاب: ' + fa( n * ( answers.flex ? 1.2 : 1 ) ) + ' تومان';
 		return true;
 	};
@@ -366,6 +413,7 @@ const createState = ( root, config ) => {
 		setFlow, start, refresh, buy, compare, answer, setPreset, editQuestion,
 		close, next, back, toggleMotion, setFlex, budget, selectVariant,
 		isVisible, hasResult, currentAnswers, currentStep, renderQuestion,
+		priceBounds, budgetPresets,
 	};
 };
 

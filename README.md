@@ -49,7 +49,7 @@ Prices are normalized internally to toman:
 
 Capabilities are tri-state and resolve in a fixed precedence order:
 
-1. **Category authority — `yes`.** A product in a category whose name declares the capability gets it, even when an attribute says otherwise. «هندزفری نویز کنسلینگ» grants ANC; «هدفون بی‌سیم» grants wireless; «هدفون سیمی» denies it. Ancestor categories count, and both category names and slugs are matched.
+1. **Category authority — `yes`.** A product in a category whose name declares the capability gets it, even when an attribute says otherwise. `151` «نویز کنسلینگ» grants ANC; `144` «بی سیم \| بلوتوث» and `119` «هدفون بی سیم» grant wireless; `34745` «با سیم \| سیمی» denies it. Ancestor categories count, and both category names and slugs are matched.
 2. **Explicit attribute value — `yes`/`no`.**
 3. **Category negation — `no`.**
 4. **Absence — `no`.** A missing or empty attribute means the store has not listed the feature, so the product is treated as not having it. Absence is never `unknown`.
@@ -78,6 +78,20 @@ Use explicit values that match the registry in `includes/src/CapabilityRegistry.
 - product names and marketing prose are never used to infer compatibility.
 
 A capability that resolves to `no` is displayed to shoppers as «ندارد», so the category tree and the attributes are the storefront's claim: keep both accurate. When a category and an attribute disagree, the category wins and catalog health flags the product so the data can be fixed.
+
+### ANC is a wireless-mode feature
+
+Active noise cancelling runs off the product's own power; on a wired connection the circuit is off even on models that support both modes. The guide therefore treats ANC as usable only while the product is used wirelessly:
+
+- an ANC priority (`pain=noise`) requires a wireless product — a wired path rejects with reason `anc_wired` and a notice, because no cable can satisfy that priority;
+- ANC is never credited as a scoring reason or as a shown feature on `aux` or `usbc` paths;
+- the question flow withholds the wired connection option once ANC is the priority, and says why.
+
+Content consequence: a product tagged `151` «نویز کنسلینگ» also needs `144` «بی سیم \| بلوتوث» or `119` «هدفون بی سیم» to appear in ANC paths; a wired-only product carrying the ANC tag is a data-quality conflict.
+
+### Budget field range
+
+The budget field spans the live catalog: its floor is the cheapest eligible price and its ceiling the most expensive one, per flow (falling back to the whole catalog), never outside the documented public range `500000`–`500000000` that the REST boundary enforces. The span is computed server-side (`CatalogAdapter::price_range()`) and shipped in the page's bootstrap config as `prices`; the browser only renders it. A page whose catalog cannot be read falls back to the documented range instead of failing.
 
 
 The read-only catalog-health report groups products as ready, incomplete, or unusable and links directly to each affected WooCommerce product. Correct the named WooCommerce field; the plugin never writes the correction itself.

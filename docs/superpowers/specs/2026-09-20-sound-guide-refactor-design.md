@@ -163,6 +163,24 @@ mind: a capability that resolves to `no` is displayed to shoppers as «ندار�
 so the category tree and attributes must be maintained for the storefront to
 make claims it can stand behind.
 
+#### ANC is usable only in wireless mode
+
+Active noise cancelling is powered by the product itself: on a wired connection
+the circuit is off, even on models that also offer a cable. ANC is therefore a
+wireless-mode feature, and the guide never claims it on a wired path:
+
+- an ANC priority (`pain=noise`) requires a wireless product; a wired
+  connection (`aux`, `usbc`) is rejected with the machine-readable reason
+  `anc_wired` and an explanatory notice, because no cable can satisfy it;
+- ANC is not credited as a scoring reason or a shown feature on `aux` or `usbc`
+  paths, including the implicit `commute` nudge;
+- the question flow withholds the wired option once ANC is the priority and
+  states why, instead of offering a cable the catalog cannot honour.
+
+Content consequence: a product carrying `151` «نویز کنسلینگ» also needs
+`144` «بی سیم | بلوتوث» or `119` «هدفون بی سیم» to be offered in ANC paths, and
+a wired-only product carrying the ANC tag is a data-quality conflict.
+
 ### Catalog Health
 
 The catalog-health service runs the same catalog mapping rules used by recommendations and produces product-level diagnostics without maintaining a second dataset.
@@ -195,7 +213,14 @@ The refactor preserves these business rules:
 - allowed answer enums and conditional answers;
 - budget clamping from 500,000 to 500,000,000 toman;
 - optional budget flexibility capped at 20 percent;
+- the public budget field spans the live catalog — cheapest eligible price as
+  the floor, most expensive as the ceiling, per flow with an overall fallback,
+  always inside the documented clamping range. The span is computed in the
+  catalog adapter and shipped in the bootstrap config (`prices`); the browser
+  renders it and never invents its own window;
 - strict connection, device, ANC, multipoint, fit, AUX microphone, and gaming-latency constraints;
+- ANC counted only on wireless paths: a wired connection cannot satisfy an ANC
+  priority (`anc_wired`) and never earns the ANC reason or bonus;
 - existing commute and work suitability bonuses;
 - price-first variant selection;
 - inventory depth only as a tie-break after equal suitability and price;
@@ -246,7 +271,7 @@ The refactor preserves:
 - preset entry points;
 - conditional quiz sequence and progress display;
 - answer trail and feedback;
-- budget slider, presets, exact input, and 20-percent option;
+- budget slider spanning the live catalog price range (cheapest to most expensive offer, per flow), its presets derived from that range, the exact input, and the 20-percent option;
 - loading, freshness, changed-inventory, error, and empty states;
 - recommendation cards, variation selection, reasons, cautions, sources, and purchase action;
 - comparison table;

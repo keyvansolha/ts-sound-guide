@@ -128,6 +128,44 @@ const installFetch = ( window, handler ) => {
 	check( 'budget rejects garbage', state.budget( 'abc' ) === false );
 }
 
+/* ---------- budget bounds come from the live catalog ---------- */
+{
+	const { root } = makeRoot();
+	const priced = {
+		...config,
+		prices: {
+			min: 1200000, max: 48000000,
+			byFlow: { earbuds: { min: 1500000, max: 12000000 }, headphones: { min: 4000000, max: 48000000 } },
+		},
+	};
+	const state = createState( root, priced );
+	state.setFlow( 'earbuds' );
+	state.start();
+	state.answer( 'commute' ); state.next();
+	state.answer( 'balanced' ); state.next();
+	state.answer( 'wireless' ); state.next();
+	state.answer( 'any' ); state.next();
+	const range = root.querySelector( '#ss-budget-range' );
+	check( 'budget field starts at the cheapest earbud price', range.min === '1500000' );
+	check( 'budget field ends at the most expensive earbud price', range.max === '12000000' );
+	check( 'budget field reads the catalog floor', state.priceBounds().min === 1500000 );
+	check( 'budget rejects a value below the catalog floor', state.budget( '1200000' ) === false );
+	check( 'budget accepts the catalog floor', state.budget( '1500000' ) === true );
+	check( 'budget accepts the catalog ceiling', state.budget( '12000000' ) === true );
+	check( 'budget rejects a value above the catalog ceiling', state.budget( '12000001' ) === false );
+	const presets = [ ...root.querySelectorAll( '.ss-budget-presets button' ) ].map( ( b ) => Number( b.dataset.budget ) );
+	check( 'presets stay inside the catalog span', presets.length >= 2 && presets.every( ( n ) => n >= 1500000 && n <= 12000000 ) );
+	check( 'presets reach the catalog floor and ceiling', presets[ 0 ] === 1500000 && presets[ presets.length - 1 ] === 12000000 );
+	state.setFlow( 'headphones' );
+	state.start();
+	state.answer( 'music' ); state.next();
+	state.answer( 'balanced' ); state.next();
+	state.answer( 'wireless' ); state.next();
+	const phoneRange = root.querySelector( '#ss-budget-range' );
+	check( 'headphone flow uses its own catalog span', phoneRange.min === '4000000' && phoneRange.max === '48000000' );
+	check( 'headphone default budget stays inside its span', state.currentAnswers().budget === 9000000 );
+}
+
 /* ---------- refresh flow: success, 409, network failure ---------- */
 /* refresh() is guarded by `closed` (legacy behavior: results render only
  * while the guide is open), so tests open the guide first. */

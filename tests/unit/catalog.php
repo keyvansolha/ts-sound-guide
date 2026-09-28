@@ -192,6 +192,30 @@ check( 'category/attribute disagreement is reported as a conflict', 'category_co
 check( 'unconflicted product reports no conflicts', [] === $catalog[109]['conflicts'] );
 check( 'silicone from a plain form-factor name is not a conflict', ! isset( $catalog[110]['conflicts']['silicone'] ) );
 
+/* ---------- public budget span: cheapest to most expensive offer ---------- */
+$span_source = [
+	[ 'flow' => 'earbuds', 'variants' => [ [ 'price' => 1500000.0 ], [ 'price' => 2500000.0 ] ] ],
+	[ 'flow' => 'headphones', 'variants' => [ [ 'price' => 7000000.0 ] ] ],
+	[ 'flow' => 'earbuds', 'variants' => [ [ 'price' => 0.0 ] ] ],
+	[ 'flow' => '', 'variants' => [ [ 'price' => 9000000.0 ] ] ],
+];
+$span = CatalogAdapter::price_range_of( $span_source );
+check( 'price span starts at the cheapest eligible price', 1500000.0 === $span['min'] );
+check( 'price span ends at the most expensive eligible offer', 9000000.0 === $span['max'] );
+check( 'price span is reported per flow', [ 'min' => 1500000.0, 'max' => 2500000.0 ] === $span['byFlow']['earbuds'] && [ 'min' => 7000000.0, 'max' => 7000000.0 ] === $span['byFlow']['headphones'] );
+check( 'unpriced variants never enter the span', 1500000.0 === $span['min'] );
+check( 'a product outside a flow never creates a per-flow span', ! isset( $span['byFlow'][''] ) );
+check( 'an empty catalog yields no span', [ 'min' => null, 'max' => null, 'byFlow' => [] ] === CatalogAdapter::price_range_of( [] ) );
+
+$live_span = $adapter->price_range();
+$live_prices = [];
+foreach ( $catalog as $live_product ) {
+	foreach ( $live_product['variants'] as $live_variant ) {
+		$live_prices[] = (float) $live_variant['price'];
+	}
+}
+check( 'live price span matches the eligible catalog', min( $live_prices ) === $live_span['min'] && max( $live_prices ) === $live_span['max'] );
+
 /* ---------- catalog health sees products filtered out of recommendations ---------- */
 $health = ( new CatalogHealth( $adapter ) )->report();
 $unusable_ids = array_column( $health['groups']['unusable'], 'id' );

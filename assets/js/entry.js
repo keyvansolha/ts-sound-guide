@@ -40,8 +40,7 @@ const boot = () => {
 			state.answer( b.dataset.answer );
 		} else if ( b.dataset.budget ) {
 			state.budget( b.dataset.budget );
-			root.querySelector( '#ss-budget-exact' ).value = b.dataset.budget;
-			root.querySelector( '#ss-budget-range' ).value = Math.min( Number( b.dataset.budget ), 20000000 );
+			$( 'ss-budget-exact' ).value = b.dataset.budget;
 		} else if ( b.dataset.edit ) {
 			state.editQuestion( b.dataset.edit );
 		} else if ( b.dataset.buy ) {
@@ -51,11 +50,9 @@ const boot = () => {
 
 	root.addEventListener( 'input', ( e ) => {
 		if ( [ 'ss-budget-range', 'ss-budget-exact' ].includes( e.target.id ) ) {
-			state.budget( e.target.value );
-			if ( e.target.id === 'ss-budget-range' ) {
+			const ok = state.budget( e.target.value );
+			if ( ok && e.target.id === 'ss-budget-range' ) {
 				$( 'ss-budget-exact' ).value = e.target.value;
-			} else if ( ! $( 'ss-next' ).disabled ) {
-				$( 'ss-budget-range' ).value = Math.min( state.currentAnswers().budget, 20000000 );
 			}
 		}
 	} );

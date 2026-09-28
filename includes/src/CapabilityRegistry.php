@@ -17,10 +17,11 @@ defined( 'ABSPATH' ) || exit;
  *
  * Resolution order (first match wins):
  *  1. Category authority: a product in a category that names the capability
- *     (e.g. «هندزفری نویز کنسلینگ») has it — true, regardless of attributes.
+ *     (e.g. «نویز کنسلینگ» (151), «بی سیم | بلوتوث» (144)) has it — true,
+ *     regardless of attributes.
  *  2. Explicit attribute value: an existing attribute value answers yes/no.
  *  3. Category negation: a category that explicitly excludes the capability
- *     (e.g. «هدفون سیمی») sets it to false.
+ *     (e.g. «با سیم | سیمی» (34745)) sets it to false.
  *  4. Absence policy: a missing/empty attribute follows the per-capability
  *     `absence` policy, which defaults to false ("not listed means it does
  *     not have it").

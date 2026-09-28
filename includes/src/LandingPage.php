@@ -40,6 +40,14 @@ final class LandingPage {
 	private bool $rendered = false;
 
 	/**
+	 * Live catalog snapshot for this request. Heroes and the public budget
+	 * span read the same snapshot so the catalog is queried once.
+	 *
+	 * @var array<int, array<string, mixed>>|null
+	 */
+	private ?array $catalog_snapshot = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Settings       $settings Settings.
@@ -125,10 +133,34 @@ final class LandingPage {
 			'homeUrl'      => home_url( '/' ),
 			'categoryUrls' => $this->category_urls(),
 			'hero'         => $heroes,
+			// Public budget span: the cheapest and most expensive eligible
+			// offer in the live catalog, never a fixed window.
+			'prices'       => CatalogAdapter::price_range_of( $this->snapshot() ),
 		];
 
 		$view = new GuideView( $config, $heroes );
 		return $view->render();
+	}
+
+	/**
+	 * The live recommendation catalog for this request, or an empty array when
+	 * WooCommerce is unavailable or the query fails. Queried once per request:
+	 * heroes and the public price span both read this snapshot.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function snapshot(): array {
+		if ( null === $this->catalog_snapshot ) {
+			try {
+				$this->catalog_snapshot = $this->catalog->catalog();
+			} catch ( \Throwable $e ) {
+				// Catalog unavailable at render time: neutral heroes and no
+				// price span; the budget field falls back to its documented
+				// bounds instead of failing the page.
+				$this->catalog_snapshot = [];
+			}
+		}
+		return $this->catalog_snapshot;
 	}
 
 	/**
@@ -144,7 +176,7 @@ final class LandingPage {
 	private function heroes(): array {
 		$heroes = [ 'earbuds' => null, 'headphones' => null ];
 		try {
-			$catalog = $this->catalog->catalog();
+			$catalog = $this->snapshot();
 			$by_flow = [ 'earbuds' => [], 'headphones' => [] ];
 			$selected = $this->settings->hero_products();
 			foreach ( $catalog as $p ) {

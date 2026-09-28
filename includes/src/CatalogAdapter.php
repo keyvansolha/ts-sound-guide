@@ -81,6 +81,52 @@ final class CatalogAdapter {
 	}
 
 	/**
+	 * Public budget span for the recommendation catalog: the cheapest and the
+	 * most expensive eligible price, overall and per flow.
+	 *
+	 * Variants are already eligibility-filtered in map_variation() (priced, in
+	 * stock, purchasable, colour and guarantee present), so this only
+	 * aggregates them. The guide's budget field spans this range instead of a
+	 * hardcoded window.
+	 *
+	 * @return array{min:float|null,max:float|null,byFlow:array<string,array{min:float,max:float}>}
+	 * @throws RuntimeException When WooCommerce is unavailable or the currency is unsupported.
+	 */
+	public function price_range(): array {
+		return self::price_range_of( $this->catalog() );
+	}
+
+	/**
+	 * Aggregate a built catalog into a price span (pure).
+	 *
+	 * @param array<int, array<string, mixed>> $catalog Internal catalog.
+	 * @return array{min:float|null,max:float|null,byFlow:array<string,array{min:float,max:float}>}
+	 */
+	public static function price_range_of( array $catalog ): array {
+		$range = [ 'min' => null, 'max' => null, 'byFlow' => [] ];
+		foreach ( $catalog as $product ) {
+			$flow = (string) ( $product['flow'] ?? '' );
+			foreach ( (array) ( $product['variants'] ?? [] ) as $variant ) {
+				$value = (float) ( $variant['price'] ?? 0.0 );
+				if ( $value <= 0 ) {
+					continue;
+				}
+				$range['min'] = null === $range['min'] ? $value : min( $range['min'], $value );
+				$range['max'] = null === $range['max'] ? $value : max( $range['max'], $value );
+				if ( '' === $flow ) {
+					continue;
+				}
+				$current = $range['byFlow'][ $flow ] ?? [ 'min' => $value, 'max' => $value ];
+				$range['byFlow'][ $flow ] = [
+					'min' => min( (float) $current['min'], $value ),
+					'max' => max( (float) $current['max'], $value ),
+				];
+			}
+		}
+		return $range;
+	}
+
+	/**
 	 * Build the admin health snapshot, including relevant products that are
 	 * deliberately excluded from the recommendation catalog.
 	 *

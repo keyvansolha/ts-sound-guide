@@ -2,6 +2,22 @@
 
 const useLabels = { commute: 'رفت‌وآمد', music: 'موسیقی', work: 'کار و تماس', gaming: 'بازی', gift: 'هدیه' };
 
+/* ANC only runs while the product is used wirelessly: plug a cable into a
+ * hybrid model and the noise-cancelling circuit switches off. Asking for ANC
+ * and then offering a wired connection promises something the catalog cannot
+ * deliver, so the wired option is withheld for that priority. */
+const wantsAnc = ( answers ) => answers.pain === 'noise';
+
+/** Connection options for the flow; wired is withheld when ANC is required. */
+const connectionOptions = ( answers ) => {
+	const headphones = answers.flow === 'headphones';
+	const wireless = [ 'wireless', 'بی‌سیم با بلوتوث', headphones ? 'گوشی یا لپ‌تاپ' : 'آزاد از کابل' ];
+	const wired = headphones
+		? [ 'aux', 'با کابل AUX', 'برای دستگاه با جک صدا' ]
+		: [ 'usbc', 'سیمی USB-C', 'بدون شارژ باتری' ];
+	return wantsAnc( answers ) ? [ wireless ] : [ wireless, wired ];
+};
+
 /** Build the ordered question list for the current answers. */
 const questions = ( answers = {} ) => {
 	const list = [
@@ -20,13 +36,7 @@ const questions = ( answers = {} ) => {
 			[ 'charge', 'شارژکردن خسته‌ام کرده', 'کمتر درگیر شارژ شوم' ],
 			[ 'balanced', 'مشکل خاصی ندارم', 'یک انتخاب متعادل می‌خواهم' ],
 		] },
-		{ key: 'connection', title: 'چطور می‌خواهی وصلش کنی؟', help: answers.pain === 'charge' ? 'مدل سیمی به شارژ باتری نیاز ندارد.' : 'اتصالی را انتخاب کن که واقعاً استفاده می‌کنی.', scene: 'wireless', sceneTitle: 'بدون دردسرِ اتصال.', sceneCopy: 'نوع اتصال، شرط انتخاب است؛ مدل ناسازگار کنار می‌رود.', options: answers.flow === 'headphones' ? [
-			[ 'wireless', 'بی‌سیم با بلوتوث', 'گوشی یا لپ‌تاپ' ],
-			[ 'aux', 'با کابل AUX', 'برای دستگاه با جک صدا' ],
-		] : [
-			[ 'wireless', 'بی‌سیم با بلوتوث', 'آزاد از کابل' ],
-			[ 'usbc', 'سیمی USB-C', 'بدون شارژ باتری' ],
-		] },
+		{ key: 'connection', title: 'چطور می‌خواهی وصلش کنی؟', help: wantsAnc( answers ) ? 'حذف نویز فعال (ANC) فقط در حالت بی‌سیم کار می‌کند؛ روی کابل مدار ANC خاموش است. پس فقط اتصال بی‌سیم را می‌بینی. اگر کابل می‌خواهی، اولویت را عوض کن.' : ( answers.pain === 'charge' ? 'مدل سیمی به شارژ باتری نیاز ندارد.' : 'اتصالی را انتخاب کن که واقعاً استفاده می‌کنی.' ), scene: 'wireless', sceneTitle: 'بدون دردسرِ اتصال.', sceneCopy: wantsAnc( answers ) ? 'ANC فقط وقتی بی‌سیم کار می‌کند معنا دارد؛ مدل سیمی از این مسیر کنار می‌رود.' : 'نوع اتصال، شرط انتخاب است؛ مدل ناسازگار کنار می‌رود.', options: connectionOptions( answers ) },
 	];
 	if ( answers.connection === 'usbc' ) {
 		list.push( { key: 'device', title: 'درگاه دستگاهت کدام است؟', help: 'اگر مدل دقیق دستگاه را نمی‌دانی، حدس نمی‌زنیم.', scene: 'usbc', sceneTitle: 'USB-C فقط شکل درگاه نیست.', sceneCopy: 'پشتیبانی از صدای USB باید برای مدل دستگاه بررسی شود.', options: [
@@ -60,7 +70,7 @@ const questions = ( answers = {} ) => {
 
 /** Per-answer feedback strings. */
 const feedback = {
-	noise: 'مدل‌هایی را نگه می‌داریم که ANC برای شنیدن داشته باشند.',
+	noise: 'مدل‌هایی را نگه می‌داریم که ANC برای شنیدن داشته باشند؛ ANC فقط در حالت بی‌سیم کار می‌کند، پس گزینه سیمی را نشان نمی‌دهیم.',
 	switch: 'اتصال هم‌زمانِ تأییدشده شرط انتخاب می‌شود.',
 	calls: 'محیط تماس را هم می‌پرسیم تا قول بی‌پشتوانه ندهیم.',
 	fit: 'سؤال بعدیِ راحتی، فرم مناسب‌تر را مشخص می‌کند.',
