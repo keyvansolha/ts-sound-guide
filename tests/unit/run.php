@@ -75,15 +75,33 @@ check( 'AUX mic false when attribute absent (absence policy)', false === $regist
 check( 'fit yes from box contents', true === $registry->resolve( 'silicone', [ 'pa_inside-the-box' => 'سری سیلیکونی' ] ) );
 check( 'fit no from form factor fallback', false === $registry->resolve( 'silicone', [ 'pa_headphones-type' => 'open-ear' ] ) );
 
-/* ---------------- category authority (rule 1) and negation (rule 3) ---------------- */
-$anc_category = [ [ 'name' => 'هندزفری نویز کنسلینگ', 'slug' => 'handsfree-noise-cancelling' ] ];
-check( 'category implies capability -> true with no attribute', true === $registry->resolve( 'anc', [], $anc_category ) );
-check( 'category authority beats an explicit negative', true === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'ندارد' ], $anc_category ) );
+/* ---------------- category authority (rule 1) and negation (rule 3) ----------------
+ * Signals are the store's real «ویژگی ها» feature categories:
+ * 144 «بی سیم | بلوتوث», 34745 «با سیم | سیمی», 151 «نویز کنسلینگ». */
+$anc_category    = [ [ 'id' => '151', 'name' => 'نویز کنسلینگ', 'slug' => 'noise-cancelling' ] ];
+$wireless_category = [ [ 'id' => '144', 'name' => 'بی سیم | بلوتوث', 'slug' => 'wireless-bluetooth' ] ];
+$wired_category  = [ [ 'id' => '34745', 'name' => 'با سیم | سیمی', 'slug' => 'wired' ] ];
+
+check( 'feature category grants capability with no attribute', true === $registry->resolve( 'anc', [], $anc_category ) );
+check( 'feature category grants wireless with no attribute', true === $registry->resolve( 'wireless', [], $wireless_category ) );
+check( 'category authority beats an explicit negative attribute', true === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'ندارد' ], $anc_category ) );
 check( 'category/attribute disagreement reported', 'category_conflict' === $registry->conflict( 'anc', [ 'pa_noise-cancellation' => 'ندارد' ], $anc_category ) );
-check( 'slug also carries category authority', true === $registry->resolve( 'wireless', [], [ [ 'name' => 'دسته‌بندی', 'slug' => 'handsfree-wireless' ] ] ) );
-check( 'category negation forces false for absent attribute', false === $registry->resolve( 'wireless', [], [ [ 'name' => 'هدفون سیمی', 'slug' => 'headphone-wired' ] ] ) );
-check( 'explicit positive attribute beats category negation', true === $registry->resolve( 'wireless', [ 'pa_bluetooth' => 'دارد' ], [ [ 'name' => 'هدفون سیمی', 'slug' => 'headphone-wired' ] ] ) );
-check( 'unrelated category implies nothing', false === $registry->resolve( 'anc', [], [ [ 'name' => 'لوازم جانبی', 'slug' => 'accessories' ] ] ) );
+check( 'category negation forces false for an absent attribute', false === $registry->resolve( 'wireless', [], $wired_category ) );
+check( 'explicit positive attribute beats category negation', true === $registry->resolve( 'wireless', [ 'pa_bluetooth' => 'دارد' ], $wired_category ) );
+
+// Term ID matching is primary; the name fragment is what keeps a re-created
+// category working. Both are exercised independently.
+check( 'term ID matches regardless of a renamed category', true === $registry->resolve( 'anc', [], [ [ 'id' => '151', 'name' => 'دسته‌بندی تغییرنام‌یافته', 'slug' => 'renamed' ] ] ) );
+check( 'name fragment matches a category created with a new ID', true === $registry->resolve( 'anc', [], [ [ 'id' => '99001', 'name' => 'نویز کنسلینگ', 'slug' => 'anc-new' ] ] ) );
+check( 'a form category that names the capability grants it (هدفون بی سیم)', true === $registry->resolve( 'wireless', [], [ [ 'id' => '119', 'name' => 'هدفون بی سیم', 'slug' => 'headphone-wireless' ] ] ) );
+check( 'form categories that state no capability grant nothing (ایرباد)', false === $registry->resolve( 'silicone', [], [ [ 'id' => '128', 'name' => 'ایرباد', 'slug' => 'earbud' ] ] ) );
+check( 'unrelated category implies nothing', false === $registry->resolve( 'anc', [], [ [ 'id' => '106', 'name' => 'لوازم جانبی', 'slug' => 'accessories' ] ] ) );
+
+// Category membership never grants capabilities the store tree does not claim.
+check( 'no USB-C category exists, so USB-C stays attribute-only', false === $registry->resolve( 'usbc', [], [ [ 'id' => '116', 'name' => 'هدفون', 'slug' => 'headphone' ] ] ) );
+check( 'no multipoint category exists in the tree', false === $registry->resolve( 'multipoint', [], [ [ 'id' => '144', 'name' => 'بی سیم | بلوتوث', 'slug' => 'wireless-bluetooth' ] ] ) );
+check( 'no AUX category exists in the tree', false === $registry->resolve( 'aux', [], [ [ 'id' => '34745', 'name' => 'با سیم | سیمی', 'slug' => 'wired' ] ] ) );
+
 check( 'absence policy defaults to false for every capability', false === $registry->resolve( 'multipoint', [] ) && false === $registry->resolve( 'silicone', [] ) && false === $registry->resolve( 'usbc', [] ) );
 check( 'absent attribute is not a conflict', null === $registry->conflict( 'anc', [], $anc_category ) );
 check( 'unreadable primary attribute stays unknown', null === $registry->resolve( 'usbc', [ 'pa_connection' => 'درگاه شارژ' ] ) );

@@ -110,25 +110,31 @@ Recommendation capabilities use a tri-state value resolved in a fixed
 precedence order:
 
 1. **Category authority — `yes`.** A product in a category whose name declares
-   the capability («هندزفری نویز کنسلینگ»، «هدفون بی‌سیم»، «جک AUX» …) has that
-   capability. Category authority outranks attributes, including an attribute
-   whose value says otherwise; such a disagreement is reported in catalog
-   health rather than silently winning.
+   the capability has that capability. Authority comes from the store's
+   «ویژگی ها» feature tree — «بی سیم | بلوتوث» (144) grants wireless,
+   «نویز کنسلینگ» (151) grants listening ANC, «با سیم | سیمی» (34745) denies
+   wireless — and from product-tree categories that state the capability, such
+   as «هدفون بی سیم» (119). Category authority outranks attributes, including
+   an attribute whose value says otherwise; such a disagreement is reported in
+   catalog health rather than silently winning.
 2. **Explicit attribute value — `yes`/`no`.** An existing WooCommerce attribute
    value answers directly.
 3. **Category negation — `no`.** A category that excludes the capability
-   («هدفون سیمی») forces `no`.
+   («با سیم | سیمی») forces `no`.
 4. **Absence policy — `no` by default.** A missing or empty attribute means the
    store has not listed the feature, so the product is treated as not having
    it. Absence is never `unknown`.
 5. **`unknown`.** Reserved for attribute text that is present but
    contradictory or not interpretable by the registry.
 
-Category signals and negations are declared in the same registry and are
-filterable through `ts_sound_guide_category_signals` and
-`ts_sound_guide_category_negations`, so a store can add its own category
-vocabulary (names or slugs) without code changes. Ancestor categories count:
-a product in «هدفون بی‌سیم گیمینگ» inherits the «هدفون بی‌سیم» signal.
+Category signals and negations are declared in the same registry, keyed by the
+store's real term IDs plus the exact category names, and are filterable through
+`ts_sound_guide_category_signals` and `ts_sound_guide_category_negations`.
+Ancestor categories count: a product in a sub-tag of «بی سیم | بلوتوث» inherits
+the signal. Categories that describe product form, type, or use (ایرباد،
+ایرفون، دور گوشی، گیمینگ، ورزشی، مانیتورینگ …) grant nothing, and no signal is
+declared for a capability the tree does not state (USB-C audio, AUX, AUX
+microphone, multipoint, and tip material are attribute-only).
 
 The initial mapped capabilities are:
 

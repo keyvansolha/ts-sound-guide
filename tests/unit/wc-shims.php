@@ -164,13 +164,21 @@ function get_term_by( $field, $value, $taxonomy = '' ) {
  */
 function ts_wc_terms(): array {
 	return $GLOBALS['ts_wc_term_map'] ?? [
-		11 => [ 'name' => 'هندزفری', 'slug' => 'handsfree', 'parent' => 0 ],
-		12 => [ 'name' => 'هندزفری نویز کنسلینگ', 'slug' => 'handsfree-noise-cancelling', 'parent' => 11 ],
-		13 => [ 'name' => 'هندزفری بی‌سیم', 'slug' => 'handsfree-wireless', 'parent' => 11 ],
-		21 => [ 'name' => 'هدفون', 'slug' => 'headphone', 'parent' => 0 ],
-		22 => [ 'name' => 'هدفون بی‌سیم', 'slug' => 'headphone-wireless', 'parent' => 21 ],
-		23 => [ 'name' => 'هدفون سیمی', 'slug' => 'headphone-wired', 'parent' => 21 ],
-		24 => [ 'name' => 'هدفون بی‌سیم گیمینگ', 'slug' => 'headphone-wireless-gaming', 'parent' => 22 ],
+		// Product tree (ids and names as they exist in the store).
+		116 => [ 'name' => 'هدفون', 'slug' => 'headphone', 'parent' => 0 ],
+		117 => [ 'name' => 'ایرفون', 'slug' => 'earphone', 'parent' => 125 ],
+		119 => [ 'name' => 'هدفون بی سیم', 'slug' => 'headphone-wireless', 'parent' => 116 ],
+		122 => [ 'name' => 'هدفون گیمینگ', 'slug' => 'headphone-gaming', 'parent' => 116 ],
+		125 => [ 'name' => 'هندزفری', 'slug' => 'handsfree', 'parent' => 116 ],
+		128 => [ 'name' => 'ایرباد', 'slug' => 'earbud', 'parent' => 125 ],
+		// Feature tree «ویژگی ها»: explicit feature claims.
+		139 => [ 'name' => 'ویژگی ها', 'slug' => 'features', 'parent' => 0 ],
+		144 => [ 'name' => 'بی سیم | بلوتوث', 'slug' => 'wireless-bluetooth', 'parent' => 139 ],
+		151 => [ 'name' => 'نویز کنسلینگ', 'slug' => 'noise-cancelling', 'parent' => 139 ],
+		34745 => [ 'name' => 'با سیم | سیمی', 'slug' => 'wired', 'parent' => 139 ],
+		// A store-created sub-tag under the wireless feature, used to prove
+		// that an ancestor category grants its children the capability.
+		14401 => [ 'name' => 'بی سیم | بلوتوث نسل جدید', 'slug' => 'wireless-bluetooth-next', 'parent' => 144 ],
 	];
 }
 

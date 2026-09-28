@@ -21,7 +21,7 @@ use TSSoundGuide\RecommendationEngine;
 
 /* Settings fixture: earbuds term 11, headphones term 21. */
 $GLOBALS['ts_test_option'] = [
-	'ts_sound_guide_settings' => [ 'page_id' => 0, 'earbuds_term' => 11, 'headphones_term' => 21 ],
+	'ts_sound_guide_settings' => [ 'page_id' => 0, 'earbuds_term' => 125, 'headphones_term' => 116 ],
 ];
 
 /* WP option shim override (wp-shims has no get_option). */
@@ -50,7 +50,7 @@ $engine   = new RecommendationEngine();
 /* ---------- fixture store ---------- */
 // A1: variable earbud, parent-managed stock, explicit capabilities.
 ts_wc_product( 101, [
-	'type' => 'variable', 'name' => 'Aurora ANC Buds', 'cats' => [ 11 ],
+	'type' => 'variable', 'name' => 'Aurora ANC Buds', 'cats' => [ 125 ],
 	'attributes' => [
 		'pa_bluetooth' => 'بلوتوث دارد',
 		'pa_connection' => 'ندارد',
@@ -67,7 +67,7 @@ ts_wc_product( 101, [
 
 // A2: variable product with a backordered child and a missing-guarantee child.
 ts_wc_product( 102, [
-	'type' => 'variable', 'name' => 'Mixed Buds', 'cats' => [ 12 ], // child category of earbuds.
+	'type' => 'variable', 'name' => 'Mixed Buds', 'cats' => [ 128 ], // ایرباد: child of هندزفری.
 	'attributes' => [ 'pa_bluetooth' => 'دارد' ],
 	'children' => [ 1021, 1022 ],
 ], [
@@ -77,19 +77,19 @@ ts_wc_product( 102, [
 
 // A3: product-status=stop product.
 ts_wc_product( 103, [
-	'name' => 'Stopped Star', 'cats' => [ 11 ], 'meta' => [ 'product-status' => 'stop' ],
+	'name' => 'Stopped Star', 'cats' => [ 125 ], 'meta' => [ 'product-status' => 'stop' ],
 	'attributes' => [ 'pa_bluetooth' => 'دارد' ],
 ], [ 1031 => [ 'price' => 5000000, 'variation_attributes' => [ 'pa_color' => 'b', 'pa_guarantee' => '6m' ] ] ] );
 
 // A4: hidden catalog visibility.
 ts_wc_product( 104, [
-	'name' => 'Hidden One', 'cats' => [ 11 ], 'catalog_visibility' => 'hidden',
+	'name' => 'Hidden One', 'cats' => [ 125 ], 'catalog_visibility' => 'hidden',
 	'attributes' => [ 'pa_bluetooth' => 'دارد' ],
 ], [ 1041 => [ 'price' => 5000000, 'variation_attributes' => [ 'pa_color' => 'b', 'pa_guarantee' => '6m' ] ] ] );
 
 // A5: simple headphone in headphones category with managed stock fully held.
 ts_wc_product( 105, [
-	'type' => 'simple', 'name' => 'Held Headphone', 'cats' => [ 21 ],
+	'type' => 'simple', 'name' => 'Held Headphone', 'cats' => [ 116 ],
 	'attributes' => [ 'pa_bluetooth' => 'دارد' ],
 	'price' => 9000000, 'managing_stock' => true, 'stock_quantity' => 2, 'held' => 2,
 	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
@@ -97,13 +97,13 @@ ts_wc_product( 105, [
 
 // A6: unknown-capability earbud product (no attribute data at all).
 ts_wc_product( 106, [
-	'name' => 'Mystery Buds', 'cats' => [ 11 ], 'price' => 4000000,
+	'name' => 'Mystery Buds', 'cats' => [ 125 ], 'price' => 4000000,
 	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
 ], [] );
 
 // A7: fully mapped but unpublished product; health must explain publication.
 ts_wc_product( 107, [
-	'status' => 'draft', 'name' => 'Draft Buds', 'cats' => [ 11 ], 'price' => 4500000,
+	'status' => 'draft', 'name' => 'Draft Buds', 'cats' => [ 125 ], 'price' => 4500000,
 	'attributes' => [
 		'pa_bluetooth' => 'دارد', 'pa_connection' => 'ندارد',
 		'pa_noise-cancellation' => 'ندارد', 'pa_qip5asto9pe6c2dzxq' => 'ندارد',
@@ -114,7 +114,7 @@ ts_wc_product( 107, [
 
 // A8: ready headphone. USB-C/silicone are unknown but irrelevant to this flow.
 ts_wc_product( 108, [
-	'name' => 'Ready Headphone', 'cats' => [ 21 ], 'price' => 9500000,
+	'name' => 'Ready Headphone', 'cats' => [ 116 ], 'price' => 9500000,
 	'attributes' => [
 		'pa_bluetooth' => 'دارد', 'pa_aux' => 'دارد', 'pa_aux-microphone' => 'دارد',
 		'pa_noise-cancellation' => 'ندارد', 'pa_qip5asto9pe6c2dzxq' => 'ندارد',
@@ -124,32 +124,33 @@ ts_wc_product( 108, [
 ], [] );
 
 /* A9-A11: category authority fixtures (rule 1 and rule 3). */
-// A9: sits in «هندزفری نویز کنسلینگ» with NO ANC attribute -> anc must be true.
+// A9: tagged «نویز کنسلینگ» (151) with NO ANC attribute -> anc must be true.
 ts_wc_product( 109, [
-	'name' => 'Category ANC Buds', 'cats' => [ 12 ], 'price' => 5200000,
+	'name' => 'Category ANC Buds', 'cats' => [ 125, 151 ], 'price' => 5200000,
 	'attributes' => [ 'pa_bluetooth' => 'دارد', 'pa_inside-the-box' => 'سری سیلیکونی' ],
 	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
 ], [] );
 
-// A10: in a grandchild of «هدفون بی‌سیم» with no bluetooth attribute ->
-//      wireless must be true through the ancestor category (rule 1).
+// A10: tagged with a sub-tag of «بی سیم | بلوتوث» (14401 under 144) and no
+//      bluetooth attribute -> wireless must be true through the ancestor.
 ts_wc_product( 110, [
-	'name' => 'Ancestor Wireless Headphone', 'cats' => [ 24 ], 'price' => 11000000,
+	'name' => 'Ancestor Wireless Headphone', 'cats' => [ 116, 14401 ], 'price' => 11000000,
 	'attributes' => [ 'pa_headphones-type' => 'روی گوش' ],
 	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
 ], [] );
 
-// A11: in «هدفون سیمی» with no bluetooth attribute -> wireless false (rule 3).
+// A11: tagged «با سیم | سیمی» (34745) with no bluetooth attribute ->
+//      wireless false (rule 3).
 ts_wc_product( 111, [
-	'name' => 'Wired Headphone', 'cats' => [ 23 ], 'price' => 2200000,
+	'name' => 'Wired Headphone', 'cats' => [ 116, 34745 ], 'price' => 2200000,
 	'attributes' => [ 'pa_headphones-type' => 'روی گوش' ],
 	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
 ], [] );
 
-// A12: category says ANC but the attribute explicitly says ندارد -> category
-//      wins (true) and the disagreement is reported as a conflict.
+// A12: «نویز کنسلینگ» tag says ANC but the attribute explicitly says ندارد ->
+//      category wins (true) and the disagreement is reported as a conflict.
 ts_wc_product( 112, [
-	'name' => 'Conflicted ANC Buds', 'cats' => [ 12 ], 'price' => 4800000,
+	'name' => 'Conflicted ANC Buds', 'cats' => [ 125, 151 ], 'price' => 4800000,
 	'attributes' => [
 		'pa_bluetooth' => 'دارد',
 		'pa_noise-cancellation' => 'ندارد',
@@ -160,7 +161,9 @@ ts_wc_product( 112, [
 
 /* ---------- adapter behavior ---------- */
 $catalog = $adapter->catalog();
-check( 'catalog queries WooCommerce categories by term ID + descendants', [ 11, 12, 13, 21, 22, 23, 24 ] === ( $GLOBALS['ts_wc_last_query']['product_category_id'] ?? null ) );
+$queried_terms = (array) ( $GLOBALS['ts_wc_last_query']['product_category_id'] ?? [] );
+sort( $queried_terms );
+check( 'catalog queries the configured trees plus descendants', [ 116, 117, 119, 122, 125, 128 ] === $queried_terms );
 $ids = array_keys( $catalog );
 sort( $ids );
 check( 'catalog includes only eligible products', [ 101, 106, 108, 109, 110, 111, 112 ] === $ids );

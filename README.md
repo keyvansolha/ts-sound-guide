@@ -55,18 +55,20 @@ Capabilities are tri-state and resolve in a fixed precedence order:
 4. **Absence — `no`.** A missing or empty attribute means the store has not listed the feature, so the product is treated as not having it. Absence is never `unknown`.
 5. **`unknown`.** Only when the store's own attribute text is present but contradictory or unreadable. Reported in catalog health with the field to correct.
 
-Category vocabulary lives in the same registry and is filterable with `ts_sound_guide_category_signals` and `ts_sound_guide_category_negations`, so you can teach the guide new category names or slugs without touching plugin code.
+Category vocabulary is data-derived from this store's `product_cat` tree and lives in the registry as term IDs plus exact names, so it survives a rename (ID) or a re-created category (name). Extend it with `ts_sound_guide_category_signals` and `ts_sound_guide_category_negations` — no code edits needed.
 
-| Capability | WooCommerce attribute | Category examples that grant it |
-| --- | --- | --- |
-| Bluetooth/wireless | `pa_bluetooth` | «هدفون بی‌سیم»، «بلوتوث» (denied by «سیمی») |
-| USB-C audio | `pa_connection` | «USB-C»، «تایپ سی» |
-| AUX | `pa_aux` | «AUX»، «جک ۳.۵» |
-| Microphone while using AUX | `pa_aux-microphone` | «میکروفون AUX» only |
-| Listening ANC | `pa_noise-cancellation` | «نویز کنسلینگ»، «حذف نویز» |
-| Multipoint | `pa_qip5asto9pe6c2dzxq` | «اتصال هم‌زمان»، «دو دستگاه» |
-| Silicone/open fit | `pa_inside-the-box`, then `pa_headphones-type` | «سیلیکونی» (denied by «اوپن ایر») |
-| Human-readable form factor | `pa_headphones-type` | — |
+| Capability | WooCommerce attribute | Categories that grant it | Categories that deny it |
+| --- | --- | --- | --- |
+| Bluetooth/wireless | `pa_bluetooth` | `144` «بی سیم \| بلوتوث»، `119` «هدفون بی سیم» | `34745` «با سیم \| سیمی» |
+| Listening ANC | `pa_noise-cancellation` | `151` «نویز کنسلینگ» | — |
+| USB-C audio | `pa_connection` | — (attribute only) | — |
+| AUX | `pa_aux` | — (attribute only) | — |
+| Microphone while using AUX | `pa_aux-microphone` | — (attribute only) | — |
+| Multipoint | `pa_qip5asto9pe6c2dzxq` | — (attribute only) | — |
+| Silicone/open fit | `pa_inside-the-box`, then `pa_headphones-type` | — (attribute only) | — |
+| Human-readable form factor | `pa_headphones-type` | — (product field) | — |
+
+Everything else in the tree describes form, type, or use — «ایرباد» `128`, «ایرفون» `117`, «هدفون دور گوشی» `127`, «هدفون گیمینگ» `122`, «هدفون ورزشی» `120`, «هدست» `126`, «میکروفون» `111` — and grants no capability, because a form name is not a feature claim. Two feature tags are deliberately left unclaimed until you confirm how consistently they are applied: `149` «پخش یو اس بی» (USB playback: could be USB-C, USB-A, or a dongle) and `143` «مکالمه تلفنی» (phone calls: proves a call microphone, not a microphone in AUX mode).
 
 Use explicit values that match the registry in `includes/src/CapabilityRegistry.php`. In particular:
 

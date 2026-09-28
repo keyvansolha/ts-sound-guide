@@ -42,6 +42,23 @@ final class CapabilityRegistry {
 	public const NO      = false;
 	public const UNKNOWN = null;
 
+	/*
+	 * Category term IDs from the store's product_cat tree.
+	 *
+	 * Capability authority comes from the «ویژگی ها» feature tree (139),
+	 * whose categories are explicit feature claims about a product:
+	 *   - 144 «بی سیم | بلوتوث»  -> wireless
+	 *   - 34745 «با سیم | سیمی»  -> not wireless
+	 *   - 151 «نویز کنسلینگ»     -> listening ANC
+	 *
+	 * Everything else in the tree describes product form or type (هدفون دور
+	 * گوشی، ایرباد، هدفون گیمینگ …) and grants no capability.
+	 */
+	public const CAT_BI_WIRELESS = 144;   // ویژگی ها → بی سیم | بلوتوث.
+	public const CAT_WIRED       = 34745; // ویژگی ها → با سیم | سیمی.
+	public const CAT_ANC         = 151;   // ویژگی ها → نویز کنسلینگ.
+	public const CAT_WIRELESS_HEADPHONE = 119; // هدفون → هدفون بی سیم.
+
 	/**
 	 * Capability definitions keyed by internal capability name.
 	 *
@@ -50,12 +67,17 @@ final class CapabilityRegistry {
 	 *  - attribute_alt: optional secondary taxonomy consulted when the
 	 *    primary yields unknown (e.g. fit from box contents or form factor);
 	 *  - yes / no: exact value fragments for explicit answers;
-	 *  - categories: category-name fragments that imply the capability (rule 1);
-	 *  - category_negations: category-name fragments that exclude it (rule 3);
+	 *  - categories: category term IDs (int) and/or name fragments (string)
+	 *    that grant the capability (rule 1);
+	 *  - category_negations: same shape, but exclude the capability (rule 3);
 	 *  - absence: value used when the attribute is missing/empty (rule 4);
 	 *  - label: human-readable label for admin diagnostics;
 	 *  - field: plain-language instruction naming the WooCommerce field to
 	 *    correct when the capability stays unknown.
+	 *
+	 * Category entries are deliberately limited to categories that exist in
+	 * this store's tree and state a capability; form/type categories grant
+	 * nothing.
 	 *
 	 * @return array<string, array<string, mixed>>
 	 */
@@ -65,17 +87,19 @@ final class CapabilityRegistry {
 				'attribute' => 'pa_bluetooth',
 				'yes'       => [ 'دارد', 'بلوتوث', 'Bluetooth', 'bluetooth', 'BT' ],
 				'no'        => [ 'ندارد', 'فاقد', 'بدون' ],
-				'categories'         => [ 'بلوتوث', 'بی‌سیم', 'بی سیم', 'wireless', 'bluetooth' ],
-				'category_negations' => [ 'سیمی', 'باسیم', 'با سیم', 'wired' ],
+				'categories'         => [ self::CAT_BI_WIRELESS, self::CAT_WIRELESS_HEADPHONE, 'بی سیم', 'بلوتوث' ],
+				'category_negations' => [ self::CAT_WIRED, 'با سیم', 'سیمی' ],
 				'absence'   => self::NO,
 				'label'     => 'اتصال بی‌سیم',
-				'field'     => 'ویژگی «بلوتوث» محصول یا دسته‌بندی بی‌سیم',
+				'field'     => 'ویژگی «بلوتوث» محصول یا دسته‌بندی «بی سیم | بلوتوث»',
 			],
 			'usbc'       => [
 				'attribute' => 'pa_connection',
 				'yes'       => [ 'USB-C', 'USB C', 'usbc', 'USB Type-C', 'Type-C' ],
 				'no'        => [ 'ندارد', 'فاقد', 'بدون' ],
-				'categories'         => [ 'USB-C', 'USB C', 'تایپ سی', 'تایپ-سی', 'usb-c' ],
+				// No USB-C category exists in the store tree; only the
+				// attribute can confirm USB-C audio.
+				'categories'         => [],
 				'category_negations' => [],
 				'absence'   => self::NO,
 				'label'     => 'صدای USB-C',
@@ -85,7 +109,9 @@ final class CapabilityRegistry {
 				'attribute' => 'pa_aux',
 				'yes'       => [ 'دارد', 'AUX', 'aux', '3.5', 'ورودی صدا' ],
 				'no'        => [ 'ندارد', 'فاقد', 'بدون' ],
-				'categories'         => [ 'AUX', 'aux', 'جک صدای', 'جک ۳.۵', 'جک 3.5' ],
+				// «با سیم | سیمی» only rules wireless out; it does not say
+				// whether the wire is AUX, so it grants nothing here.
+				'categories'         => [],
 				'category_negations' => [],
 				'absence'   => self::NO,
 				'label'     => 'ورودی AUX',
@@ -95,9 +121,10 @@ final class CapabilityRegistry {
 				'attribute' => 'pa_aux-microphone',
 				'yes'       => [ 'دارد', 'میکروفون', 'microphone' ],
 				'no'        => [ 'ندارد', 'فاقد', 'بدون' ],
-				// Only AUX-specific categories may imply this; a generic
-				// microphone category never does.
-				'categories'         => [ 'میکروفون AUX', 'AUX میکروفون', 'میکروفون سیمی' ],
+				// The store has a «میکروفون» product category (111) and a
+				// «مکالمه تلفنی» feature (143); neither states microphone
+				// support in AUX mode, so neither grants this capability.
+				'categories'         => [],
 				'category_negations' => [],
 				'absence'   => self::NO,
 				'label'     => 'میکروفون در حالت AUX',
@@ -107,29 +134,32 @@ final class CapabilityRegistry {
 				'attribute' => 'pa_noise-cancellation',
 				'yes'       => [ 'ANC', 'Active Noise', 'Adaptive Noise', 'حذف نویز فعال', 'حذف نویز تطبیقی' ],
 				'no'        => [ 'ندارد', 'فاقد', 'بدون' ],
-				'categories'         => [ 'نویز کنسلینگ', 'نویزکنسلینگ', 'نویز کنسل', 'حذف نویز', 'ANC' ],
+				'categories'         => [ self::CAT_ANC, 'نویز کنسلینگ' ],
 				'category_negations' => [],
 				'absence'   => self::NO,
 				'label'     => 'ANC برای شنیدن',
-				'field'     => 'ویژگی «حذف نویز» محصول (ANC فعال برای شنیدن؛ ENC مربوط به تماس است)',
+				'field'     => 'ویژگی «حذف نویز» محصول یا دسته‌بندی «نویز کنسلینگ»',
 			],
 			'multipoint' => [
 				'attribute' => 'pa_qip5asto9pe6c2dzxq',
 				'yes'       => [ 'دارد', 'Multipoint', 'multipoint' ],
 				'no'        => [ 'ندارد', 'فاقد', 'بدون' ],
-				'categories'         => [ 'دو دستگاه', 'اتصال هم‌زمان', 'هم‌زمان', 'مولتی پوینت', 'multipoint' ],
+				// No multipoint category exists in the store tree.
+				'categories'         => [],
 				'category_negations' => [],
 				'absence'   => self::NO,
 				'label'     => 'اتصال هم‌زمان دو دستگاه',
-				'field'     => 'ویژگی «اتصال هم‌زمان» محصول یا دسته‌بندی دو دستگاه',
+				'field'     => 'ویژگی «اتصال هم‌زمان» محصول',
 			],
 			'silicone'   => [
 				'attribute'      => 'pa_inside-the-box',
 				'attribute_alt'  => 'pa_headphones-type',
 				'yes'            => [ 'سیلیکونی' ],
 				'no'             => [ 'بدون سری سیلیکونی', 'open-ear', 'open ear', 'نیمه داخل گوش' ],
-				'categories'         => [ 'سیلیکونی' ],
-				'category_negations' => [ 'اوپن ایر', 'open air', 'open-ear', 'بدون سری' ],
+				// Form categories (ایرباد، ایرفون، دور گوشی …) describe shape,
+				// not tip material, so none of them grants a fit answer.
+				'categories'         => [],
+				'category_negations' => [],
 				'absence'   => self::NO,
 				'label'          => 'فرم سری (سیلیکونی/باز)',
 				'field'          => 'ویژگی «داخل جعبه» یا «نوع هدفون» محصول',
@@ -197,14 +227,36 @@ final class CapabilityRegistry {
 	}
 
 	/**
-	 * Match category rows against fragments (name or slug, case-insensitive).
+	 * Match category rows against registry entries.
+	 *
+	 * Entries may be term IDs (int, matched against the row's id) or name
+	 * fragments (string, matched case-insensitively against the category name
+	 * and slug). Term IDs are the primary, data-derived form; fragments let a
+	 * re-created category with the same name keep working.
 	 *
 	 * @param array<int, array<string, string>> $categories Category rows.
-	 * @param array<int, string>                $fragments Fragments.
+	 * @param array<int, int|string>            $entries    Registry entries.
 	 * @return bool
 	 */
-	private function categories_match( array $categories, array $fragments ): bool {
+	private function categories_match( array $categories, array $entries ): bool {
+		$ids       = [];
+		$fragments = [];
+		foreach ( $entries as $entry ) {
+			if ( is_int( $entry ) || ( is_string( $entry ) && ctype_digit( $entry ) ) ) {
+				$ids[] = (int) $entry;
+				continue;
+			}
+			if ( is_string( $entry ) && '' !== trim( $entry ) ) {
+				$fragments[] = $entry;
+			}
+		}
 		foreach ( $categories as $category ) {
+			if ( $ids && in_array( (int) ( $category['id'] ?? 0 ), $ids, true ) ) {
+				return true;
+			}
+			if ( ! $fragments ) {
+				continue;
+			}
 			$haystack = $this->normalize_text(
 				(string) ( $category['name'] ?? '' ) . ' ' . (string) ( $category['slug'] ?? '' )
 			);
