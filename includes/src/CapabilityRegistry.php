@@ -97,6 +97,18 @@ final class CapabilityRegistry {
 	];
 
 	/**
+	 * Whole-value affirmatives the storefront uses in a feature-named field.
+	 *
+	 * «دارد» in a field that itself names the feature («حذف نویز», «بلوتوث»,
+	 * «اتصال هم‌زمان») is a plain yes; it is matched as the *whole* value so an
+	 * ambiguous mixed value such as «دارد / میکروفون (noise isolation)» stays
+	 * unreadable instead of being promoted to a claim.
+	 *
+	 * @var array<int, string>
+	 */
+	private const AFFIRMATIVE_VALUES = [ 'دارد', 'دارد.', 'بله', 'yes', 'supported' ];
+
+	/**
 	 * Value fragments that name a USB-C connector at all.
 	 *
 	 * @var array<int, string>
@@ -148,7 +160,9 @@ final class CapabilityRegistry {
 		return [
 			'wireless'   => [
 				'attribute' => 'pa_bluetooth',
-				'yes'       => [ 'دارد', 'بلوتوث', 'Bluetooth', 'bluetooth', 'BT' ],
+				// A Bluetooth version on the Bluetooth field («نسخه 5.0») states
+				// presence without repeating the word.
+				'yes'       => [ 'دارد', 'بلوتوث', 'Bluetooth', 'bluetooth', 'BT', 'نسخه' ],
 				'no'        => [ 'ندارد', 'فاقد', 'بدون' ],
 				'categories'         => [ self::CAT_BI_WIRELESS, self::CAT_WIRELESS_HEADPHONE, 'بی سیم', 'بلوتوث' ],
 				'category_negations' => [ self::CAT_WIRED, 'با سیم', 'سیمی' ],
@@ -506,6 +520,12 @@ final class CapabilityRegistry {
 		$has_yes = $this->contains_any( $value, $def['yes'] );
 		if ( $has_yes ) {
 			return self::YES;
+		}
+		// A field that names the feature and says only «دارد» is a plain yes.
+		foreach ( self::AFFIRMATIVE_VALUES as $affirmative ) {
+			if ( 0 === mb_stripos( $value, $affirmative ) && mb_strlen( $value ) === mb_strlen( $affirmative ) ) {
+				return self::YES;
+			}
 		}
 		return self::UNKNOWN;
 	}

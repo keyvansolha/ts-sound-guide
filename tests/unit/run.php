@@ -116,6 +116,11 @@ check( 'USB-C charging-only text with audio wording still counts', true === $reg
 check( 'a USB-C audio connector is confirmed', true === $registry->resolve( 'usbc', [ 'pa_connection' => 'باسیم با کانکتور USB-C؛ سازگاری پخش وابسته به دستگاه میزبان' ] ) );
 check( 'a charging port is never used as a USB-C audio source', null === $registry->resolve( 'usbc', [ 'pa_charging-port' => 'USB-C' ] ) );
 check( 'R50i reading: no USB-C audio, but silicone tips are confirmed', false === $registry->resolve( 'usbc', [ 'pa_connection' => 'بی‌سیم از طریق بلوتوث؛ USB-C کیس فقط برای شارژ' ] ) && true === $registry->resolve( 'silicone', [ 'pa_inside-the-box' => '2 ایرباد، کیس شارژ، 3 جفت ایرتیپ، کابل USB-A به USB-C' ] ) );
+/* WP-45 §2: whole-value storefront answers are read instead of being left
+ * unknown, while a genuinely mixed value stays unreadable. */
+check( 'a feature field that says only «دارد» is a yes', true === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'دارد' ] ) && true === $registry->resolve( 'multipoint', [ 'pa_qip5asto9pe6c2dzxq' => 'دارد' ] ) );
+check( 'a mixed value is not promoted to a claim', null === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'دارد / میکروفون (noise isolation)' ] ) );
+check( 'a Bluetooth version on the Bluetooth field states presence', true === $registry->resolve( 'wireless', [ 'pa_bluetooth' => 'نسخه 4.0' ] ) );
 check( 'the alternate source answers when the primary carries no answer', true === $registry->resolve( 'silicone', [ 'pa_inside-the-box' => 'کابل USB-C', 'pa_headphones-type' => 'داخل گوش (In-Ear) با سری سیلیکونی' ] ) );
 check( 'a form-factor name alone is not a tip claim', null === $registry->resolve( 'silicone', [ 'pa_headphones-type' => 'روی گوش ( on-ear )' ] ) );
 check( 'open fit is reported when the store says so', false === $registry->resolve( 'silicone', [ 'pa_inside-the-box' => 'بدون سری سیلیکونی اضافه' ] ) );
