@@ -17,7 +17,7 @@ function plugin_header( string $source, string $field ): string {
 
 $expected = [
 	'Plugin Name'      => 'TehranSpeaker Sound Guide',
-	'Version'          => '3.2.0',
+	'Version'          => '3.2.1',
 	'Requires PHP'     => '8.0',
 	'Requires Plugins' => 'woocommerce',
 	'Text Domain'      => 'ts-sound-guide',
