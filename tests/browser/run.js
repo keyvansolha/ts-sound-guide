@@ -118,7 +118,7 @@ try {
 			await compareScreenshot( page.locator( '.ss-hero' ), `hero-${ viewportName }-${ theme }` );
 			await completeGuide( page );
 			await page.waitForSelector( '.ss-product' );
-			check( `${ viewportName } ${ theme } success workflow renders recommendations`, await page.locator( '.ss-product' ).count() === 2 );
+			check( `${ viewportName } ${ theme } success workflow renders recommendations`, await page.locator( '#ss-results-grid .ss-product' ).count() === 2 );
 			check( `${ viewportName } ${ theme } has no console/page errors`, errors.length === 0, errors.join( '; ' ) );
 			await page.close();
 		}
@@ -154,6 +154,12 @@ try {
 		await page.click( '#ss-next' );
 		await page.waitForSelector( '.ss-product' );
 		await compareScreenshot( page.locator( '#ss-results' ), 'results-desktop-light' );
+		// Extra eligible models: reachable, hidden until asked for, same cards.
+		check( 'extra eligible models are offered separately', await page.locator( '#ss-more-toggle' ).isVisible() && await page.locator( '#ss-more-grid .ss-product' ).count() === 2 );
+		check( 'extra eligible models start collapsed', await page.locator( '#ss-more-grid' ).isHidden() );
+		await page.click( '#ss-more-toggle' );
+		check( 'seeing more options reveals the extra cards', await page.locator( '#ss-more-grid .ss-product' ).first().isVisible() );
+		await compareScreenshot( page.locator( '#ss-more' ), 'more-options-desktop-light' );
 		await page.click( '#ss-compare' );
 		check( 'comparison workflow renders a visible table', await page.locator( '#ss-compare-table table' ).isVisible() );
 		await compareScreenshot( page.locator( '#ss-compare-table' ), 'comparison-desktop-light' );

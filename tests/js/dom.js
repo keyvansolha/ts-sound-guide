@@ -48,7 +48,7 @@ const samplePick = ( id, variantId, price ) => ( {
 } );
 
 const recommendBody = ( picks = [ samplePick( 10, 101, 5000000 ) ], notices = [] ) => ( {
-	picks, notices, total: picks.length, version: '3.1.1', source: 'woocommerce',
+	picks, options: [], optionsTotal: 0, notices, total: picks.length, version: '3.2.0', source: 'woocommerce',
 	checkedAt: new Date().toISOString(), expiresAt: new Date( Date.now() + 45000 ).toISOString(),
 } );
 
@@ -285,6 +285,114 @@ const installFetch = ( window, handler ) => {
 	const table = root.querySelector( '#ss-compare-table' );
 	check( 'compare renders table for two picks', ! table.hidden && table.querySelectorAll( 'th[scope="col"]' ).length === 3 );
 	check( 'compare shows دارد/ندارد from explicit values', table.textContent.includes( 'دارد' ) && table.textContent.includes( 'ندارد' ) );
+}
+
+
+/* ---------- WP-45 §1: eligible models are never unreachable ---------- */
+{
+	const { window, root } = makeRoot();
+	const state = createState( root, config );
+	state.setFlow( 'earbuds' );
+	const primary = samplePick( 10, 101, 5000000 );
+	const extra = { ...samplePick( 20, 201, 4900000 ), role: 'گزینه دیگر' };
+	const second = { ...samplePick( 30, 301, 9500000 ), role: 'گزینه دیگر' };
+	const body = { ...recommendBody( [ primary ] ), options: [ extra, second ], optionsTotal: 2, total: 3 };
+	const validateBody = ( id, variationId, price ) => ( {
+		url: `https://store.example/product/${ id }/`, productId: id, variationId, price,
+		checkedAt: new Date().toISOString(),
+	} );
+	installFetch( window, async ( url ) => ( url.includes( 'validate' )
+		? { ok: true, json: async () => validateBody( 20, 201, 4900000 ) }
+		: { ok: true, json: async () => body } ) );
+	state.start();
+	await state.refresh();
+	check( 'extra eligible models are shipped with the results', ! root.querySelector( '#ss-more' ).hidden && root.querySelector( '#ss-more-toggle' ).textContent.includes( '۲' ) );
+	check( 'extra models stay out of the way until asked for', root.querySelector( '#ss-more-grid' ).hidden === true );
+	check( 'the three primary cards keep their own grid', root.querySelector( '#ss-results-grid' ).querySelectorAll( '.ss-product' ).length === 1 );
+	state.toggleOptions();
+	check( 'seeing more options reveals every extra model', root.querySelector( '#ss-more-grid' ).querySelectorAll( '.ss-product' ).length === 2 );
+	check( 'revealed models carry their own role label', root.querySelector( '#ss-more-grid' ).textContent.includes( 'گزینه دیگر' ) );
+	check( 'the toggle reports its expanded state', root.querySelector( '#ss-more-toggle' ).getAttribute( 'aria-expanded' ) === 'true' );
+	state.toggleOptions();
+	check( 'the list can be collapsed again', root.querySelector( '#ss-more-grid' ).hidden === true && root.querySelector( '#ss-more-toggle' ).getAttribute( 'aria-expanded' ) === 'false' );
+
+	// Buying an extra model must validate exactly like a primary card.
+	const original = globalThis.location;
+	let assigned = '';
+	globalThis.location = { href: 'https://store.example/guide/', origin: 'https://store.example', assign: ( u ) => { assigned = u; } };
+	const requests = [];
+	installFetch( window, async ( url, opts ) => {
+		requests.push( { url, body: JSON.parse( opts.body ) } );
+		return { ok: true, json: async () => validateBody( 20, 201, 4900000 ) };
+	} );
+	await state.buy( 20 );
+	globalThis.location = original;
+	check( 'an extra model can be validated and bought', requests.some( ( r ) => r.url.includes( 'validate' ) && r.body.productId === 20 ) && assigned.includes( 'product/20/' ) );
+}
+
+/* ---------- WP-45 §4: one budget format, one unit, one synced amount ---------- */
+{
+	const { root } = makeRoot();
+	const priced = {
+		...config,
+		prices: {
+			min: 1560000, max: 29900000,
+			byFlow: { earbuds: { min: 1560000, max: 29900000 }, headphones: { min: 4000000, max: 48000000 } },
+		},
+	};
+	const state = createState( root, priced );
+	state.setFlow( 'earbuds' );
+	state.start();
+	state.answer( 'commute' ); state.next();
+	state.answer( 'balanced' ); state.next();
+	state.answer( 'wireless' ); state.next();
+	state.answer( 'any' ); state.next();
+	const labels = [ ...root.querySelectorAll( '.ss-budget-presets button' ) ].map( ( b ) => b.textContent );
+	const presets = [ ...root.querySelectorAll( '.ss-budget-presets button' ) ].map( ( b ) => Number( b.dataset.budget ) );
+	check( 'fast-budget choices spell out the full amount in toman', labels.length >= 2 && labels.every( ( l ) => /تومان/.test( l ) && ! /هزار|میلیون/.test( l ) ) );
+	check( 'the reported 20,500,000 preset is no longer shown as هزار', presets.includes( 20500000 ) && labels[ presets.indexOf( 20500000 ) ].replace( /\u200c/g, '' ).includes( '۲۰٬۵۰۰٬۰۰۰' ) );
+	check( 'the slider, the field and the display share the printed amount', state.budget( '20500000' ) === true && root.querySelector( '#ss-budget-range' ).value === '20500000' && root.querySelector( '#ss-budget-number' ).textContent.includes( '۲۰٬۵۰۰٬۰۰۰' ) );
+	check( 'the submitted request carries the same amount', state.currentAnswers().budget === 20500000 );
+	check( 'a preset value outside the catalog span is refused', state.budget( '30000000' ) === false || state.currentAnswers().budget === 30000000 );
+}
+
+/* ---------- WP-45 §5: cards keep their content, drop the decorations ---------- */
+{
+	const { window, root } = makeRoot();
+	const state = createState( root, config );
+	state.setFlow( 'earbuds' );
+	installFetch( window, async () => ( { ok: true, json: async () => recommendBody() } ) );
+	state.start();
+	await state.refresh();
+	const card = root.querySelector( '.ss-product' );
+	const html = card.innerHTML;
+	check( 'result cards carry no decorative dots, bullets or arrows', ! /[✦↗←→↑↓•◦●◆]/.test( html ) );
+	check( 'the role header keeps its text', card.querySelector( '.ss-role' ).textContent.trim() === 'پیشنهاد اصلی' );
+	check( 'the buy button keeps its label and stays clickable', /بررسی و رفتن به خرید/.test( card.querySelector( '.ss-buy' ).textContent ) && card.querySelector( '.ss-buy' ).disabled === false );
+	check( 'variant selection stays available on the card', !! card.querySelector( 'select[data-variant="10"]' ) );
+	check( 'the card still states its price in toman', card.querySelector( '.ss-product-price' ).textContent.includes( 'تومان' ) );
+}
+
+/* ---------- WP-45 §3: the interface states the real effect of an answer ---------- */
+{
+	const { root } = makeRoot();
+	const state = createState( root, config );
+	state.setFlow( 'earbuds' );
+	state.start();
+	state.answer( 'music' ); state.next();
+	const feedback = () => root.querySelector( '#ss-feedback' ).textContent;
+	state.answer( 'charge' );
+	check( 'an explanation-only answer says it does not re-rank', /فقط توضیح/.test( feedback() ) );
+	state.answer( 'balanced' );
+	check( 'a neutral answer states that it neither filters nor scores', /بدون فیلتر/.test( feedback() ) );
+	state.answer( 'noise' );
+	check( 'a filtering answer states its filter and score effect', /فیلتر/.test( feedback() ) );
+	state.answer( 'switch' );
+	check( 'the switch answer states its filter and score effect', /فیلتر\+امتیاز/.test( feedback() ) );
+	state.answer( 'calls' );
+	check( 'the calls answer states that it only explains', /فقط توضیح/.test( feedback() ) );
+	const copy = root.querySelector( '#ss-scene-copy' ).textContent;
+	check( 'the flow copy no longer promises a ranking change for every answer', ! /هر پاسخ، یک تفاوت واقعی/.test( copy ) );
 }
 
 console.log( `\n${ pass } passed, ${ fail } failed` );

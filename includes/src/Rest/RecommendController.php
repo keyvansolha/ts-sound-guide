@@ -23,6 +23,13 @@ defined( 'ABSPATH' ) || exit;
 final class RecommendController extends Controller {
 
 	/**
+	 * Maximum number of extra eligible models shipped to the browser. The
+	 * catalog for one flow is small; the cap only guards the payload, and the
+	 * response states the true count in `optionsTotal`.
+	 */
+	private const MAX_OPTIONS = 24;
+
+	/**
 	 * Catalog adapter.
 	 *
 	 * @var CatalogAdapter
@@ -109,8 +116,10 @@ final class RecommendController extends Controller {
 
 			return $this->respond( $this->dto->recommend_response(
 				$this->dto->products( $result['picks'] ),
+				$this->dto->products( array_slice( $result['options'], 0, self::MAX_OPTIONS ) ),
 				$result['notices'],
 				$result['total'],
+				count( $result['options'] ),
 				gmdate( 'c' ),
 				gmdate( 'c', time() + 45 )
 			) );

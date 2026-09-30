@@ -67,22 +67,32 @@ final class PublicDto {
 	/**
 	 * The recommend response envelope.
 	 *
+	 * `picks` carries the three primary cards; `options` carries every other
+	 * eligible model, so matching products are never unreachable just because
+	 * they lost the primary-selection tie-break. `optionsTotal` is the full
+	 * number of extra eligible models, so the browser can state the true count
+	 * even when the shipped list is capped.
+	 *
 	 * @param array<int, array<string, mixed>> $picks    Public picks.
+	 * @param array<int, array<string, mixed>> $options  Public extra options.
 	 * @param array<int, string>               $notices  Shopper notices.
 	 * @param int                              $total    Matched count.
+	 * @param int                              $options_total Extra options count.
 	 * @param string                           $checkedAt ISO timestamp.
 	 * @param string                           $expiresAt ISO timestamp.
 	 * @return array<string, mixed>
 	 */
-	public function recommend_response( array $picks, array $notices, int $total, string $checked_at, string $expires_at ): array {
+	public function recommend_response( array $picks, array $options, array $notices, int $total, int $options_total, string $checked_at, string $expires_at ): array {
 		return [
-			'picks'     => $picks,
-			'notices'   => $notices,
-			'total'     => $total,
-			'version'   => TS_SOUND_GUIDE_VERSION,
-			'source'    => 'woocommerce',
-			'checkedAt' => $checked_at,
-			'expiresAt' => $expires_at,
+			'picks'        => $picks,
+			'options'      => $options,
+			'optionsTotal' => $options_total,
+			'notices'      => $notices,
+			'total'        => $total,
+			'version'      => TS_SOUND_GUIDE_VERSION,
+			'source'       => 'woocommerce',
+			'checkedAt'    => $checked_at,
+			'expiresAt'    => $expires_at,
 		];
 	}
 

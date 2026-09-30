@@ -1,12 +1,20 @@
 <?php
 /**
- * Parity harness: the refactored engine must reproduce the legacy baseline.
+ * Parity harness: the refactored engine must reproduce the legacy baseline,
+ * except exactly where a recorded intentional change says otherwise.
  *
  * Converts the legacy-shaped characterization fixtures into the new internal
  * shape (capabilities sub-array), runs TSSoundGuide\RecommendationEngine over
  * every scenario, and diffs against tests/characterization/baseline.json.
  *
- * Usage: php tests/unit/parity.php
+ * The frozen baseline stays frozen: a deliberate behaviour change is recorded
+ * per scenario and per field in tests/characterization/intentional-deltas.json
+ * (each entry names its reason). Any difference that is not recorded still
+ * fails, and a recorded difference that no longer applies fails too, so the
+ * record cannot silently drift.
+ *
+ * Usage: php tests/unit/parity.php            # verify
+ *        php tests/unit/parity.php --record   # record the current deltas
  */
 
 declare(strict_types=1);
@@ -69,6 +77,11 @@ $flatten = static function ( array $p ): array {
 	return $p;
 };
 
+$deltas_path = __DIR__ . '/../characterization/intentional-deltas.json';
+$record      = in_array( '--record', $argv, true );
+$deltas      = $record ? [] : json_decode( (string) @file_get_contents( $deltas_path ), true );
+$deltas      = is_array( $deltas ) ? ( $deltas['scenarios'] ?? [] ) : [];
+
 $failures = 0;
 /**
  * Canonicalize any value for comparison: recursively sort object keys (JSON
@@ -129,23 +142,61 @@ foreach ( $scenarios as $name => $answers ) {
 		),
 	];
 
-	$expected = $base;
+		$expected = $base;
 	// Both sides normalize flex identically (legacy always sets it; the new
 	// engine always sets it too), so no field needs to be ignored.
 
-	if ( $canonical( $actual ) !== $canonical( $expected ) ) {
-		$failures++;
-		echo "MISMATCH: {$name}\n";
-		foreach ( [ 'answers_normalized', 'public_picks', 'notices', 'total', 'rejected_ids' ] as $field ) {
-			$av = $actual[ $field ] ?? null;
-			$bv = $expected[ $field ] ?? null;
-			if ( $canonical( $av ) !== $canonical( $bv ) ) {
-				echo "  field: {$field}\n";
-				echo '  expected: ' . json_encode( $bv, JSON_UNESCAPED_UNICODE ) . "\n";
-				echo '  actual:   ' . json_encode( $av, JSON_UNESCAPED_UNICODE ) . "\n";
-			}
+	$fields  = [ 'answers_normalized', 'public_picks', 'notices', 'total', 'rejected_ids' ];
+	$changes = [];
+	foreach ( $fields as $field ) {
+		$av = $actual[ $field ] ?? null;
+		$bv = $expected[ $field ] ?? null;
+		if ( $canonical( $av ) === $canonical( $bv ) ) {
+			continue;
+		}
+		$changes[ $field ] = $av;
+	}
+	if ( $record ) {
+		if ( $changes ) {
+			$deltas[ $name ] = $changes;
+			echo "recorded delta: {$name} (" . implode( ', ', array_keys( $changes ) ) . ")\n";
+		}
+		continue;
+	}
+
+	$recorded = $deltas[ $name ] ?? [];
+	foreach ( $changes as $field => $value ) {
+		if ( ! array_key_exists( $field, $recorded ) ) {
+			$failures++;
+			echo "UNRECORDED MISMATCH: {$name} field {$field}\n";
+			echo '  baseline: ' . json_encode( $base[ $field ] ?? null, JSON_UNESCAPED_UNICODE ) . "\n";
+			echo '  actual:   ' . json_encode( $value, JSON_UNESCAPED_UNICODE ) . "\n";
+			continue;
+		}
+		if ( $canonical( $value ) !== $canonical( $recorded[ $field ] ) ) {
+			$failures++;
+			echo "STALE RECORDED DELTA: {$name} field {$field}\n";
+			echo '  recorded: ' . json_encode( $recorded[ $field ], JSON_UNESCAPED_UNICODE ) . "\n";
+			echo '  actual:   ' . json_encode( $value, JSON_UNESCAPED_UNICODE ) . "\n";
 		}
 	}
+	// A recorded delta that no longer differs from the baseline is dead weight.
+	foreach ( $recorded as $field => $value ) {
+		if ( ! array_key_exists( $field, $changes ) ) {
+			$failures++;
+			echo "REDUNDANT RECORDED DELTA: {$name} field {$field} matches the baseline again\n";
+		}
+	}
+}
+
+if ( $record ) {
+	$payload = [
+		'note'      => 'Deliberate behaviour changes (WP-45) recorded against the frozen legacy baseline. Each entry is verified by tests/unit/parity.php; unrecorded differences still fail.',
+		'scenarios' => $deltas,
+	];
+	file_put_contents( $deltas_path, json_encode( $payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) . "\n" );
+	echo 'RECORDED ' . count( $deltas ) . " scenario deltas -> tests/characterization/intentional-deltas.json\n";
+	exit( 0 );
 }
 
 echo $failures ? "PARITY FAILURES: {$failures}\n" : "PARITY OK: " . count( $scenarios ) . " scenarios identical\n";

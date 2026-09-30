@@ -1,7 +1,7 @@
 /* Guide state and transitions. Pure with respect to the DOM root. */
 import { questions, feedback, useLabels } from './questions.js';
 import { request, parseDigits } from './rest.js';
-import { focusSection, icon, card, selectedVariant } from './render.js';
+import { focusSection, icon, card, selectedVariant, overBudgetNote } from './render.js';
 import { fa, esc } from './format.js';
 import { track } from './analytics.js';
 
@@ -89,8 +89,14 @@ const createState = ( root, config ) => {
 		return presets;
 	};
 
-	/** Compact preset label: میلیون for round millions, هزار otherwise. */
-	const budgetLabel = ( n ) => ( n % 1000000 === 0 ? `${ fa( n / 1000000 ) } میلیون` : `${ fa( n / 1000 ) } هزار` );
+	/**
+	 * Preset label: the full amount in toman, one format for every preset.
+	 *
+	 * The old compact form printed «۲۰٬۵۰۰ هزار» for 20,500,000 — a different
+	 * unit from the slider, the exact field and the submitted request. Every
+	 * budget surface now states the same number with the same unit.
+	 */
+	const budgetLabel = ( n ) => `${ fa( n ) } تومان`;
 
 	const renderBudget = () => {
 		const b = priceBounds();
@@ -210,6 +216,47 @@ const createState = ( root, config ) => {
 		}
 	};
 
+	/** Extra eligible models: shown on request, never dropped silently. */
+	const options = () => ( result && Array.isArray( result.options ) ? result.options : [] );
+
+	/** Toggle label carrying the true number of extra eligible models. */
+	const moreLabel = () => {
+		const total = result && Number.isFinite( result.optionsTotal ) ? result.optionsTotal : options().length;
+		return `دیدن گزینه‌های بیشتر (${ fa( total ) })`;
+	};
+
+	/** Render the extra eligible models; hidden until the shopper asks. */
+	const renderOptions = () => {
+		const wrap = $( 'ss-more' );
+		const toggle = $( 'ss-more-toggle' );
+		const box = $( 'ss-more-grid' );
+		if ( ! wrap || ! toggle || ! box ) {
+			return;
+		}
+		const list = options();
+		wrap.hidden = list.length === 0;
+		box.hidden = true;
+		toggle.setAttribute( 'aria-expanded', 'false' );
+		toggle.textContent = moreLabel();
+		box.innerHTML = list.map( ( p, i ) => card( p, i, answers, selectedVariants ) ).join( '' );
+	};
+
+	/** Show or hide the extra eligible models. */
+	const toggleOptions = () => {
+		const toggle = $( 'ss-more-toggle' );
+		const box = $( 'ss-more-grid' );
+		if ( ! toggle || ! box ) {
+			return;
+		}
+		const open = box.hidden;
+		box.hidden = ! open;
+		toggle.setAttribute( 'aria-expanded', String( open ) );
+		if ( open ) {
+			box.scrollIntoView?.( { block: 'nearest' } );
+			track( root, 'options_view', { count: options().length } );
+		}
+	};
+
 	const renderResults = () => {
 		const r = result;
 		$( 'ss-result-title' ).textContent = {
@@ -221,13 +268,16 @@ const createState = ( root, config ) => {
 		$( 'ss-retry' ).hidden = true;
 		$( 'ss-notices' ).innerHTML = r.notices.map( ( n ) => '<p class="ss-notice">' + esc( n ) + '</p>' ).join( '' );
 		$( 'ss-results-grid' ).innerHTML = r.picks.map( ( p, i ) => card( p, i, answers, selectedVariants ) ).join( '' );
+		renderOptions();
 		$( 'ss-compare' ).hidden = r.picks.length < 2;
 		$( 'ss-compare-table' ).hidden = true;
-		$( 'ss-empty' ).hidden = r.picks.length > 0;
-		if ( ! r.picks.length ) {
+		$( 'ss-empty' ).hidden = r.picks.length > 0 || options().length > 0;
+		if ( ! r.picks.length && ! options().length ) {
 			renderEmpty();
 		}
-		$( 'ss-announcement' ).textContent = fa( r.picks.length ) + ' پیشنهاد پیدا شد.';
+		$( 'ss-announcement' ).textContent = options().length
+			? fa( r.picks.length ) + ' پیشنهاد اصلی و ' + fa( options().length ) + ' گزینه دیگر منطبق پیدا شد.'
+			: fa( r.picks.length ) + ' پیشنهاد پیدا شد.';
 	};
 
 	const renderEmpty = () => {
@@ -249,7 +299,7 @@ const createState = ( root, config ) => {
 		if ( ! result ) {
 			return;
 		}
-		const p = result.picks.find( ( x ) => x.id === id );
+		const p = result.picks.concat( options() ).find( ( x ) => x.id === id );
 		if ( ! p ) {
 			return;
 		}
@@ -278,7 +328,7 @@ const createState = ( root, config ) => {
 				return;
 			}
 			button.disabled = false;
-			button.innerHTML = 'بررسی و رفتن به خرید <span aria-hidden="true">←</span>';
+			button.textContent = 'بررسی و رفتن به خرید';
 			if ( e.status === 409 ) {
 				await refresh();
 				$( 'ss-stock-status' ).textContent = 'قیمت، رنگ یا موجودی تغییر کرده است. پیشنهاد تازه را بررسی و دوباره انتخاب کن.';
@@ -399,7 +449,7 @@ const createState = ( root, config ) => {
 		guideCard.querySelector( '.ss-photo-caption' ).hidden = ! ! ( v.image || p.image );
 		const warning = guideCard.querySelector( '.ss-over-budget' );
 		warning.hidden = v.price <= answers.budget;
-		warning.textContent = fa( Math.max( 0, v.price - answers.budget ) ) + ' تومان بالاتر از سقف اولیه؛ با اجازه افزایش بودجه';
+		warning.textContent = overBudgetNote( p, v, answers.budget );
 		$( 'ss-compare-table' ).hidden = true;
 		track( root, 'variant_select', { productId, variationId: variantId } );
 	};
@@ -411,9 +461,9 @@ const createState = ( root, config ) => {
 
 	return {
 		setFlow, start, refresh, buy, compare, answer, setPreset, editQuestion,
-		close, next, back, toggleMotion, setFlex, budget, selectVariant,
+		close, next, back, toggleMotion, setFlex, budget, selectVariant, toggleOptions,
 		isVisible, hasResult, currentAnswers, currentStep, renderQuestion,
-		priceBounds, budgetPresets,
+		priceBounds, budgetPresets, options,
 	};
 };
 

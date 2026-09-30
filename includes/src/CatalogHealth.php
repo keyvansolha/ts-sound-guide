@@ -35,7 +35,7 @@ final class CatalogHealth {
 	/**
 	 * Build the health report.
 	 *
-	 * @return array{ok:bool,groups:array<string,array<int,array<string,mixed>>>,summary:array<string,int>,issues:array<int,array<string,mixed>>}
+	 * @return array{ok:bool,groups:array<string,array<int,array<string,mixed>>>,summary:array<string,int>,issues:array<int,array<string,mixed>>,not_listed:array<string,mixed>}
 	 */
 	public function report(): array {
 		$groups  = [ 'ready' => [], 'incomplete' => [], 'unusable' => [] ];
@@ -47,6 +47,7 @@ final class CatalogHealth {
 				'groups'  => $groups,
 				'summary' => $summary,
 				'issues'  => [],
+				'not_listed' => [ 'by_capability' => [], 'products' => [] ],
 				'error'   => 'WooCommerce is not available.',
 			];
 		}
@@ -57,6 +58,7 @@ final class CatalogHealth {
 				'groups'  => $groups,
 				'summary' => $summary,
 				'issues'  => [],
+				'not_listed' => [ 'by_capability' => [], 'products' => [] ],
 				'error'   => 'Store currency is unsupported. Use IRR, IRT, or TOMAN.',
 			];
 		}
@@ -69,11 +71,13 @@ final class CatalogHealth {
 				'groups'  => $groups,
 				'summary' => $summary,
 				'issues'  => [],
+				'not_listed' => [ 'by_capability' => [], 'products' => [] ],
 				'error'   => 'Catalog query failed: ' . get_class( $e ),
 			];
 		}
 
-		$issues = [];
+		$issues     = [];
+		$not_listed = [ 'by_capability' => [], 'products' => [] ];
 		foreach ( $catalog as $row ) {
 			$p              = $row['product'];
 			$product_issues = $row['issues'];
@@ -88,6 +92,15 @@ final class CatalogHealth {
 			}
 
 			$product_issues = $this->product_issues( $p );
+			$unlisted       = array_map( 'strval', (array) ( $p['unlisted'] ?? [] ) );
+			if ( $unlisted ) {
+				// Not listed is not a defect: it stays unknown for the shopper
+				// and is reported as a coverage gap the data team can close.
+				foreach ( $unlisted as $capability ) {
+					$not_listed['by_capability'][ $capability ] = ( $not_listed['by_capability'][ $capability ] ?? 0 ) + 1;
+				}
+				$not_listed['products'][] = $this->summary_row( $p ) + [ 'capabilities' => $unlisted ];
+			}
 			if ( ! $product_issues ) {
 				$groups['ready'][] = $this->summary_row( $p );
 				$summary['ready']++;
@@ -101,27 +114,37 @@ final class CatalogHealth {
 			}
 		}
 
-		return [ 'ok' => true, 'groups' => $groups, 'summary' => $summary, 'issues' => $issues ];
+		return [
+			'ok'         => true,
+			'groups'     => $groups,
+			'summary'    => $summary,
+			'issues'     => $issues,
+			'not_listed' => $not_listed,
+		];
 	}
 
 	/**
 	 * Diagnostics for one mapped product.
 	 *
-	 * Under the category-authority rules a capability is false when absent, so
-	 * "unknown" can only come from contradictory or unreadable attribute text.
-	 * Both that and a category/attribute disagreement are reported here as
-	 * data-quality warnings; Ready means no warnings at all.
+	 * Only actionable defects are reported here: unreadable or contradictory
+	 * attribute text, a category/attribute disagreement, and a missing form.
+	 * A capability the store has simply not listed is not a defect — it is
+	 * `unknown` for the shopper and is reported separately as `not_listed`, so
+	 * the Incomplete group stays a to-do list instead of naming every product.
+	 *
+	 * Ready means no warnings at all.
 	 *
 	 * @param array<string, mixed> $p Mapped product.
 	 * @return array<int, array<string, mixed>>
 	 */
 	private function product_issues( array $p ): array {
-		$issues = [];
+		$issues   = [];
+		$unlisted = array_map( 'strval', (array) ( $p['unlisted'] ?? [] ) );
 
 		$conflicts = is_array( $p['conflicts'] ?? null ) ? $p['conflicts'] : [];
 		foreach ( $conflicts as $capability => $kind ) {
 			$issues[] = [
-				'severity'   => 'contradiction' === $kind || 'category_conflict' === $kind ? 'warning' : 'notice',
+				'severity'   => in_array( $kind, [ 'contradiction', 'category_conflict', 'category_negation_conflict' ], true ) ? 'warning' : 'notice',
 				'capability' => (string) $capability,
 				'kind'       => (string) $kind,
 				'field'      => $this->field_hint( (string) $capability ),
@@ -130,7 +153,7 @@ final class CatalogHealth {
 		}
 
 		foreach ( (array) $p['capabilities'] as $capability => $value ) {
-			if ( null === $value ) {
+			if ( null === $value && ! in_array( (string) $capability, $unlisted, true ) ) {
 				$issues[] = [
 					'severity'   => 'warning',
 					'capability' => (string) $capability,
@@ -166,10 +189,29 @@ final class CatalogHealth {
 		if ( 'category_conflict' === $kind ) {
 			return 'دسته‌بندی می‌گوید «' . $label . '» دارد، اما مقدار ویژگی محصول خلاف آن است. دسته‌بندی اولویت دارد؛ برای رفع تناقض، مقدار ویژگی را اصلاح کنید یا محصول را از دسته‌بندی حذف کنید.';
 		}
+		if ( 'category_negation_conflict' === $kind ) {
+			return 'دسته‌بندی «' . $label . '» را رد می‌کند، اما مقدار ویژگی محصول آن را تأیید می‌کند. دسته‌بندی اولویت دارد؛ برای رفع تناقض، مقدار ویژگی را اصلاح کنید یا دسته‌بندی را بررسی کنید.';
+		}
 		if ( 'unreadable' === $kind ) {
 			return 'مقدار ویژگی «' . $label . '» قابل تفسیر نیست (نه «دارد» و نه «ندارد»). برای بررسی در مسیرهای پیشنهاد، مقدار صریح ثبت کنید.';
 		}
 		return 'مقدار ویژگی «' . $label . '» هم‌زمان مثبت و منفی است و قابل اتکا نیست؛ مقدار صریح «دارد» یا «ندارد» ثبت کنید.';
+	}
+
+	/**
+	 * Capability labels and WooCommerce field hints for admin reports.
+	 *
+	 * @return array<string, array{label:string,field:string}>
+	 */
+	public function capability_fields(): array {
+		$rows = [];
+		foreach ( ( new CapabilityRegistry() )->capabilities() as $capability => $def ) {
+			$rows[ (string) $capability ] = [
+				'label' => (string) ( $def['label'] ?? $capability ),
+				'field' => (string) ( $def['field'] ?? '' ),
+			];
+		}
+		return $rows;
 	}
 
 	/**

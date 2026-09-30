@@ -117,8 +117,11 @@ final class ValidateController extends Controller {
 
 			$catalog   = $this->catalog->catalog();
 			$selection = $this->engine->select( $answers, $catalog );
+			// Any eligible model the guide showed can be bought, not only the
+			// three primary cards: the extra options are validated by exactly
+			// the same rules.
 			$chosen    = null;
-			foreach ( $selection['picks'] as $pick ) {
+			foreach ( array_merge( $selection['picks'], $selection['options'] ) as $pick ) {
 				if ( (int) $pick['id'] === $product_id ) {
 					$chosen = $pick;
 					break;

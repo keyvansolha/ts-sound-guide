@@ -102,40 +102,9 @@ final class RecommendationEngine {
 		$fit  = $a['fit'] ?? '';
 
 		foreach ( $catalog as $p ) {
-			$reason = null;
 			$caps   = $p['capabilities'];
 			$vs     = $this->available_variants( $p, $cap );
-
-			if ( $p['flow'] !== $a['flow'] ) {
-				$reason = 'category';
-			} elseif ( ! $this->available_variants( $p ) ) {
-				$reason = 'unavailable';
-			} elseif ( ! $vs ) {
-				$reason = 'budget';
-			} elseif ( 'wireless' === $conn && true !== $caps['wireless'] ) {
-				$reason = 'connection';
-			} elseif ( 'usbc' === $conn && ( true !== $caps['usbc'] || ( $a['device'] ?? '' ) !== 'usbc' ) ) {
-				$reason = 'device';
-			} elseif ( 'aux' === $conn && true !== $caps['aux'] ) {
-				$reason = 'connection';
-			} elseif ( 'noise' === $pain && true !== $caps['anc'] ) {
-				$reason = 'anc';
-			} elseif ( 'noise' === $pain && ( true !== $caps['wireless'] || 'wireless' !== $conn ) ) {
-				// ANC only runs while the product is used wirelessly: on a
-				// wired connection the circuit is inactive even on hybrid
-				// models, so a wired path can never satisfy an ANC priority.
-				$reason = 'anc_wired';
-			} elseif ( 'switch' === $pain && true !== $caps['multipoint'] ) {
-				$reason = 'multipoint';
-			} elseif ( 'open' === $fit && false !== $caps['silicone'] ) {
-				$reason = 'fit';
-			} elseif ( 'silicone' === $fit && true !== $caps['silicone'] ) {
-				$reason = 'fit';
-			} elseif ( ( 'work' === $use || 'calls' === $pain ) && 'aux' === $conn && true !== $caps['auxMic'] ) {
-				$reason = 'wired_microphone';
-			} elseif ( 'gaming' === $use && 'wireless' === $conn ) {
-				$reason = 'gaming_latency';
-			}
+			$reason = $this->rejection( $p, $caps, $a, $vs );
 
 			if ( null !== $reason ) {
 				$rejected[] = [ 'id' => $p['id'], 'reason' => $reason ];
@@ -231,14 +200,150 @@ final class RecommendationEngine {
 
 		$notices = $this->notices( $a, $use, $pain, $conn, $fit );
 
+		// Eligibility is decided once, above; the three primary cards are only
+		// a presentation choice. Every other eligible model stays reachable
+		// through the "more options" list, and each one carries the reason it
+		// is not one of the primary three, so the management report never has
+		// to guess why a matching model was not on a card.
+		$pick_ids = array_column( $picks, 'id' );
+		$options  = [];
+		foreach ( $matched as $index => $p ) {
+			$matched[ $index ]['rank']     = $index + 1;
+			$matched[ $index ]['exposure'] = in_array( $p['id'], $pick_ids, true ) ? 'primary' : 'more';
+			if ( 'more' === $matched[ $index ]['exposure'] ) {
+				$options[] = array_merge( $matched[ $index ], [ 'role' => 'گزینه دیگر' ] );
+			}
+		}
+		foreach ( $picks as $index => $pick ) {
+			$picks[ $index ]['rank']     = $this->rank_of( $matched, (int) $pick['id'] );
+			$picks[ $index ]['exposure'] = 'primary';
+		}
+
 		return [
 			'answers'  => $a,
 			'picks'    => array_slice( $picks, 0, 3 ),
+			'options'  => $options,
 			'matched'  => $matched,
 			'rejected' => $rejected,
 			'notices'  => $notices,
 			'total'    => count( $matched ),
 			'version'  => TS_SOUND_GUIDE_VERSION,
+		];
+	}
+
+	/**
+	 * Why a product cannot be recommended for these answers, or null when it can.
+	 *
+	 * The reason names the deciding rule. When the rule is blocked because the
+	 * store has not listed the capability at all (the value is unknown rather
+	 * than an explicit «ندارد»), the reason carries the `_not_listed` suffix so
+	 * the coverage report can separate "the store says no" from "the store has
+	 * not said anything yet" for every excluded product.
+	 *
+	 * @param array<string, mixed>             $p    Product.
+	 * @param array<string, bool|null>         $caps Tri-state capabilities.
+	 * @param array<string, mixed>             $a    Normalized answers.
+	 * @param array<int, array<string, mixed>> $vs   Eligible variants within the budget cap.
+	 * @return string|null
+	 */
+	private function rejection( array $p, array $caps, array $a, array $vs ): ?string {
+		$suffix = static fn( $value ): string => null === $value ? '_not_listed' : '';
+		$use    = $a['use'] ?? '';
+		$pain   = $a['pain'] ?? '';
+		$conn   = $a['connection'] ?? '';
+		$fit    = $a['fit'] ?? '';
+
+		if ( $p['flow'] !== $a['flow'] ) {
+			return 'category';
+		}
+		if ( ! $this->available_variants( $p ) ) {
+			return 'unavailable';
+		}
+		if ( ! $vs ) {
+			return 'budget';
+		}
+		if ( 'wireless' === $conn && true !== $caps['wireless'] ) {
+			return 'connection' . $suffix( $caps['wireless'] );
+		}
+		if ( 'usbc' === $conn ) {
+			if ( true !== $caps['usbc'] ) {
+				return 'connection' . $suffix( $caps['usbc'] );
+			}
+			if ( 'usbc' !== ( $a['device'] ?? '' ) ) {
+				return 'device';
+			}
+		}
+		if ( 'aux' === $conn && true !== $caps['aux'] ) {
+			return 'connection' . $suffix( $caps['aux'] );
+		}
+		if ( 'noise' === $pain ) {
+			if ( true !== $caps['anc'] ) {
+				return 'anc' . $suffix( $caps['anc'] );
+			}
+			if ( true !== $caps['wireless'] || 'wireless' !== $conn ) {
+				// ANC only runs while the product is used wirelessly: on a
+				// wired connection the circuit is inactive even on hybrid
+				// models, so a wired path can never satisfy an ANC priority.
+				return 'anc_wired';
+			}
+		}
+		if ( 'switch' === $pain && true !== $caps['multipoint'] ) {
+			return 'multipoint' . $suffix( $caps['multipoint'] );
+		}
+		if ( 'open' === $fit && false !== $caps['silicone'] ) {
+			return 'fit' . $suffix( $caps['silicone'] );
+		}
+		if ( 'silicone' === $fit && true !== $caps['silicone'] ) {
+			return 'fit' . $suffix( $caps['silicone'] );
+		}
+		if ( ( 'work' === $use || 'calls' === $pain ) && 'aux' === $conn && true !== $caps['auxMic'] ) {
+			return 'wired_microphone' . $suffix( $caps['auxMic'] );
+		}
+		if ( 'gaming' === $use && 'wireless' === $conn ) {
+			return 'gaming_latency';
+		}
+		return null;
+	}
+
+	/**
+	 * Overall rank of a product inside the ranked match list (1-based).
+	 *
+	 * @param array<int, array<string, mixed>> $matched Ranked matches.
+	 * @param int                              $id      Product ID.
+	 * @return int
+	 */
+	private function rank_of( array $matched, int $id ): int {
+		foreach ( $matched as $index => $p ) {
+			if ( (int) $p['id'] === $id ) {
+				return $index + 1;
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * The exact effect of every answer on filtering, scoring, and copy.
+	 *
+	 * This is the documented contract the question flow and the shopper copy
+	 * must follow: an answer either filters eligibility, changes the score, or
+	 * only changes what is explained — and the interface never promises a
+	 * ranking change for an answer that has none. Battery, call, and comfort
+	 * answers stay explanation-only because the store has no comparable,
+	 * verified numbers for them.
+	 *
+	 * @return array<string, array{effect:string,detail:string}>
+	 */
+	public function answer_effects(): array {
+		return [
+			'flow'       => [ 'effect' => 'filter', 'detail' => 'دسته‌بندی محصول: فقط مدل‌های همان جریان (هندزفری/هدفون).' ],
+			'use'        => [ 'effect' => 'filter+score', 'detail' => 'بازی با اتصال بی‌سیم حذف می‌شود؛ رفت‌وآمد با ANC و کار/تماس با اتصال هم‌زمان امتیاز می‌گیرد.' ],
+			'pain'       => [ 'effect' => 'filter+score', 'detail' => 'صدای محیط ⇒ شرط ANC (فقط بی‌سیم) و ۲۵ امتیاز؛ جابه‌جایی اتصال ⇒ شرط اتصال هم‌زمان و ۲۵ امتیاز؛ شارژ و متعادل فقط توضیح‌اند.' ],
+			'connection' => [ 'effect' => 'filter', 'detail' => 'شرط نوع اتصال (بی‌سیم/USB-C/AUX) و ثبت دلیل نمایش.' ],
+			'device'     => [ 'effect' => 'filter', 'detail' => 'در مسیر USB-C فقط دستگاهی که درگاه USB-C دارد.' ],
+			'calls'      => [ 'effect' => 'copy', 'detail' => 'فقط نکته کیفیت تماس؛ عدد قابل‌مقایسه‌ای در فروشگاه ثبت نشده، پس رتبه‌بندی تغییر نمی‌کند.' ],
+			'fit'        => [ 'effect' => 'filter+copy', 'detail' => 'سری سیلیکونی/باز شرط انتخاب است؛ «استفاده طولانی» و «عینک» فقط نکته راحتی می‌سازند.' ],
+			'budget'     => [ 'effect' => 'filter', 'detail' => 'سقف قیمت؛ افزایش ۲۰٪ فقط با تیک خود کاربر (flex) اعمال می‌شود.' ],
+			'flex'       => [ 'effect' => 'filter', 'detail' => 'سقف را ۲۰٪ بالا می‌برد و هر پیشنهاد بالای سقف اولیه، مقدار اضافه را نشان می‌دهد.' ],
 		];
 	}
 

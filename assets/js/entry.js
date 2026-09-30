@@ -48,6 +48,8 @@ const boot = () => {
 		}
 	} );
 
+	$( 'ss-more-toggle' )?.addEventListener( 'click', () => state.toggleOptions() );
+
 	root.addEventListener( 'input', ( e ) => {
 		if ( [ 'ss-budget-range', 'ss-budget-exact' ].includes( e.target.id ) ) {
 			const ok = state.budget( e.target.value );

@@ -56,6 +56,11 @@ ts_wc_product( 201, [
 	'attributes' => [ 'pa_bluetooth' => 'دارد', 'pa_noise-cancellation' => 'ندارد' ],
 	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
 ] );
+ts_wc_product( 203, [
+	'type' => 'simple', 'name' => 'Second Eligible Buds', 'cats' => [ 11 ], 'price' => 5800000,
+	'attributes' => [ 'pa_bluetooth' => 'دارد', 'pa_noise-cancellation' => 'ندارد' ],
+	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
+] );
 ts_wc_product( 202, [
 	'type' => 'simple', 'name' => 'Wired Buds', 'cats' => [ 11 ], 'price' => 3500000,
 	'attributes' => [ 'pa_bluetooth' => 'ندارد', 'pa_connection' => 'AUX' ],
@@ -75,6 +80,25 @@ check( 'recommend success returns 200', 200 === $response->get_status() );
 check( 'recommend success returns WooCommerce source and a pick', 'woocommerce' === ( $data['source'] ?? null ) && 1 === count( $data['picks'] ?? [] ) );
 check( 'recommend response omits private inventory fields', ! str_contains( (string) json_encode( $data ), 'stockOwnerId' ) && ! str_contains( (string) json_encode( $data ), '"qty"' ) );
 check( 'recommend response sets no-store/noindex headers', str_contains( $headers['Cache-Control'] ?? '', 'no-store' ) && 'noindex, nofollow' === ( $headers['X-Robots-Tag'] ?? '' ) );
+/* WP-45 §1: eligibility is separate from the three primary cards, so the
+ * response always carries the extra eligible models and their true count. */
+check( 'recommend response separates extra eligible models from the primary cards', array_key_exists( 'options', $data ) && is_array( $data['options'] ) && array_key_exists( 'optionsTotal', $data ) && is_int( $data['optionsTotal'] ) );
+check( 'extra eligible models are allow-listed public DTOs too', ! str_contains( (string) json_encode( $data['options'] ), 'stockOwnerId' ) );
+
+/* WP-45 §1: the extra models are purchasable through the same validation. */
+$option   = $data['options'][ 0 ] ?? null;
+if ( is_array( $option ) ) {
+	$validate = new ValidateController( $settings, $catalog, new Attribution() );
+	$response = $validate->handle( request( [
+		'answers'     => complete_answers(),
+		'productId'   => (int) $option['id'],
+		'variationId' => (int) $option['variants'][ 0 ]['id'],
+		'price'       => (float) $option['variants'][ 0 ]['price'],
+	] ) );
+	check( 'an extra eligible model passes final validation like a primary card', 200 === $response->get_status() );
+} else {
+	check( 'an extra eligible model passes final validation like a primary card', false );
+}
 
 /* Invalid transport and answer shapes never fall through to default values. */
 $response = $recommend->handle( request( [ 'answers' => complete_answers() ], 'text/plain' ) );

@@ -195,6 +195,24 @@ final class AdminScreens {
 		<?php else : ?>
 			<p>همه محصولات بررسی‌شده داده کامل دارند.</p>
 		<?php endif; ?>
+		<?php $gap = $health['not_listed'] ?? [ 'by_capability' => [], 'products' => [] ]; ?>
+		<?php if ( ! empty( $gap['by_capability'] ) ) : ?>
+			<h3>پوشش مشخصات ثبت‌نشده</h3>
+			<p>این محصولات به‌خاطر نبودن مشخصه حذف نمی‌شوند؛ تا زمانی که مقدار ثبت شود، آن قابلیت در رابط «نامشخص» نمایش داده می‌شود و «ندارد» تلقی نمی‌شود.</p>
+			<table class="widefat striped">
+				<thead><tr><th>قابلیت</th><th>تعداد محصول بدون مقدار</th><th>فیلد WooCommerce</th></tr></thead>
+				<tbody>
+				<?php $capability_fields = $this->health->capability_fields(); ?>
+				<?php foreach ( $gap['by_capability'] as $capability => $count ) : ?>
+					<tr>
+						<td><?php echo esc_html( (string) ( $capability_fields[ $capability ]['label'] ?? $capability ) ); ?> <code><?php echo esc_html( (string) $capability ); ?></code></td>
+						<td><?php echo (int) $count; ?></td>
+						<td><?php echo esc_html( (string) ( $capability_fields[ $capability ]['field'] ?? '' ) ); ?></td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+		<?php endif; ?>
 	<?php endif; ?>
 </div>
 		<?php

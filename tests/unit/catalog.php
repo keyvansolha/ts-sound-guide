@@ -179,7 +179,10 @@ check( 'price carried in toman (IRT 1:1)', 8000000.0 === $v[0]['price'] );
 check( 'variation query includes color+guarantee', isset( $v[0]['query']['attribute_pa_color'] ) && isset( $v[0]['query']['attribute_pa_guarantee'] ) );
 
 check( 'explicit attributes map to confirmed capabilities', true === $catalog[101]['capabilities']['anc'] && true === $catalog[101]['capabilities']['wireless'] && true === $catalog[101]['capabilities']['multipoint'] && true === $catalog[101]['capabilities']['silicone'] );
-check( 'absent attributes resolve to false (absence policy)', false === $catalog[106]['capabilities']['anc'] && false === $catalog[106]['capabilities']['usbc'] );
+/* WP-45 §2: a product the store has not described is reported as unknown for
+ * every capability, never as a definite «ندارد». */
+check( 'unlisted attributes stay unknown (tri-state)', null === $catalog[106]['capabilities']['anc'] && null === $catalog[106]['capabilities']['usbc'] );
+check( 'unlisted capabilities are listed for coverage, not as defects', in_array( 'anc', $catalog[106]['unlisted'], true ) && ! isset( $catalog[106]['conflicts']['anc'] ) );
 check( 'missing form factor is not replaced with an inferred label', null === $catalog[106]['form'] );
 
 /* ---------- category authority (rule 1) and negation (rule 3) ---------- */
@@ -228,6 +231,11 @@ check( 'health report attaches actionable issues to unusable products', [] === a
 $ready_ids = array_column( $health['groups']['ready'], 'id' );
 sort( $ready_ids );
 check( 'health applies only flow-relevant capabilities', [ 101, 108, 110, 111 ] === $ready_ids );
+
+/* WP-45 §6: the coverage report separates "not listed" from a data defect, so
+ * an incomplete spec sheet cannot hide inside the readiness grouping. */
+check( 'health reports unlisted capabilities as a coverage gap', is_array( $health['not_listed'] ) && isset( $health['not_listed']['by_capability']['silicone'] ) );
+check( 'unlisted capabilities never appear as product defects', [] === array_filter( $health['issues'], static fn( array $i ): bool => 'unknown' === ( $i['kind'] ?? '' ) && in_array( $i['capability'], $catalog[106]['unlisted'] ?? [], true ) ) );
 $mystery_capabilities = array_values( array_map(
 	static fn( array $issue ): string => (string) $issue['capability'],
 	array_filter( $health['issues'], static fn( array $issue ): bool => 106 === (int) $issue['product']['id'] )

@@ -1,0 +1,549 @@
+{
+    "note": "Deliberate behaviour changes (WP-45) recorded against the frozen legacy baseline. Each entry is verified by tests/unit/parity.php; unrecorded differences still fail.",
+    "scenarios": {
+        "earbuds-commute-noise-wireless-silicone": {
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "anc"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "anc_not_listed"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection"
+                },
+                {
+                    "id": 160,
+                    "reason": "anc_not_listed"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection"
+                }
+            ]
+        },
+        "earbuds-work-switch-wireless-any": {
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "multipoint"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "multipoint_not_listed"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection"
+                }
+            ]
+        },
+        "earbuds-music-balanced-usbc-device": {
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "fit"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 80,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 90,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 160,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection_not_listed"
+                }
+            ]
+        },
+        "earbuds-fit-open-noise": {
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "anc"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "anc_not_listed"
+                },
+                {
+                    "id": 80,
+                    "reason": "fit"
+                },
+                {
+                    "id": 90,
+                    "reason": "fit"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection"
+                },
+                {
+                    "id": 160,
+                    "reason": "anc_not_listed"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection"
+                }
+            ]
+        },
+        "earbuds-aux-calls-quiet": {
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 80,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 90,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 160,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 170,
+                    "reason": "wired_microphone_not_listed"
+                }
+            ]
+        },
+        "earbuds-aux-calls-unknown-mic": {
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "budget"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "budget"
+                },
+                {
+                    "id": 80,
+                    "reason": "budget"
+                },
+                {
+                    "id": 90,
+                    "reason": "budget"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 160,
+                    "reason": "budget"
+                },
+                {
+                    "id": 170,
+                    "reason": "wired_microphone_not_listed"
+                }
+            ]
+        },
+        "earbuds-music-balanced-usbc-any": {
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 80,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 90,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 160,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection_not_listed"
+                }
+            ]
+        },
+        "usbc-device-lightning": {
+            "rejected_ids": [
+                {
+                    "id": 10,
+                    "reason": "budget"
+                },
+                {
+                    "id": 20,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 30,
+                    "reason": "budget"
+                },
+                {
+                    "id": 40,
+                    "reason": "device"
+                },
+                {
+                    "id": 50,
+                    "reason": "category"
+                },
+                {
+                    "id": 60,
+                    "reason": "category"
+                },
+                {
+                    "id": 70,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 80,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 90,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 100,
+                    "reason": "budget"
+                },
+                {
+                    "id": 110,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 120,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 130,
+                    "reason": "unavailable"
+                },
+                {
+                    "id": 140,
+                    "reason": "budget"
+                },
+                {
+                    "id": 150,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 160,
+                    "reason": "connection_not_listed"
+                },
+                {
+                    "id": 170,
+                    "reason": "connection_not_listed"
+                }
+            ]
+        }
+    }
+}

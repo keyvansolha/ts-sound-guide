@@ -64,14 +64,19 @@ $registry = new CapabilityRegistry();
 check( 'ANC yes from explicit ANC value', true === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'ANC دارد' ] ) );
 check( 'ANC stays unknown from ENC-only value', null === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'ENC دارد' ] ) );
 check( 'ANC no from explicit ندارد', false === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'ندارد' ] ) );
-check( 'ANC false when attribute absent (absence policy)', false === $registry->resolve( 'anc', [] ) );
+/* Absence policy (WP-45 §2): an unlisted capability is never turned into a
+ * false claim about the product. The store saying nothing keeps the third
+ * state; only an explicit value, a negating category, or an unreadable value
+ * answers for the store. */
+check( 'ANC stays unknown when the attribute is not listed', null === $registry->resolve( 'anc', [] ) );
+check( 'unlisted ANC is not counted as a data-quality defect', null === $registry->conflict( 'anc', [] ) );
 check( 'ANC unknown on contradictory value', null === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'ANC دارد ولی ندارد' ] ) );
 check( 'wireless no from explicit ندارد', false === $registry->resolve( 'wireless', [ 'pa_bluetooth' => 'ندارد' ] ) );
 check( 'wireless contradictory yes/no stays unknown', null === $registry->resolve( 'wireless', [ 'pa_bluetooth' => 'دارد ولی ندارد' ] ) );
 check( 'USB-C yes only from audio-capable value', true === $registry->resolve( 'usbc', [ 'pa_connection' => 'USB-C audio' ] ) );
 check( 'USB-C unknown from generic charging port text', null === $registry->resolve( 'usbc', [ 'pa_connection' => 'درگاه شارژ' ] ) );
 check( 'AUX mic yes from explicit AUX-mic value', true === $registry->resolve( 'auxMic', [ 'pa_aux-microphone' => 'میکروفون دارد' ] ) );
-check( 'AUX mic false when attribute absent (absence policy)', false === $registry->resolve( 'auxMic', [ 'pa_bluetooth' => 'دارد' ] ) );
+check( 'AUX mic stays unknown when the attribute is not listed', null === $registry->resolve( 'auxMic', [ 'pa_bluetooth' => 'دارد' ] ) );
 check( 'fit yes from box contents', true === $registry->resolve( 'silicone', [ 'pa_inside-the-box' => 'سری سیلیکونی' ] ) );
 check( 'fit no from form factor fallback', false === $registry->resolve( 'silicone', [ 'pa_headphones-type' => 'open-ear' ] ) );
 
@@ -94,15 +99,27 @@ check( 'explicit positive attribute beats category negation', true === $registry
 check( 'term ID matches regardless of a renamed category', true === $registry->resolve( 'anc', [], [ [ 'id' => '151', 'name' => 'دسته‌بندی تغییرنام‌یافته', 'slug' => 'renamed' ] ] ) );
 check( 'name fragment matches a category created with a new ID', true === $registry->resolve( 'anc', [], [ [ 'id' => '99001', 'name' => 'نویز کنسلینگ', 'slug' => 'anc-new' ] ] ) );
 check( 'a form category that names the capability grants it (هدفون بی سیم)', true === $registry->resolve( 'wireless', [], [ [ 'id' => '119', 'name' => 'هدفون بی سیم', 'slug' => 'headphone-wireless' ] ] ) );
-check( 'form categories that state no capability grant nothing (ایرباد)', false === $registry->resolve( 'silicone', [], [ [ 'id' => '128', 'name' => 'ایرباد', 'slug' => 'earbud' ] ] ) );
-check( 'unrelated category implies nothing', false === $registry->resolve( 'anc', [], [ [ 'id' => '106', 'name' => 'لوازم جانبی', 'slug' => 'accessories' ] ] ) );
+check( 'form categories that state no capability grant nothing (ایرباد)', null === $registry->resolve( 'silicone', [], [ [ 'id' => '128', 'name' => 'ایرباد', 'slug' => 'earbud' ] ] ) );
+check( 'unrelated category implies nothing', null === $registry->resolve( 'anc', [], [ [ 'id' => '106', 'name' => 'لوازم جانبی', 'slug' => 'accessories' ] ] ) );
 
 // Category membership never grants capabilities the store tree does not claim.
-check( 'no USB-C category exists, so USB-C stays attribute-only', false === $registry->resolve( 'usbc', [], [ [ 'id' => '116', 'name' => 'هدفون', 'slug' => 'headphone' ] ] ) );
-check( 'no multipoint category exists in the tree', false === $registry->resolve( 'multipoint', [], [ [ 'id' => '144', 'name' => 'بی سیم | بلوتوث', 'slug' => 'wireless-bluetooth' ] ] ) );
-check( 'no AUX category exists in the tree', false === $registry->resolve( 'aux', [], [ [ 'id' => '34745', 'name' => 'با سیم | سیمی', 'slug' => 'wired' ] ] ) );
+check( 'no USB-C category exists, so USB-C stays attribute-only', null === $registry->resolve( 'usbc', [], [ [ 'id' => '116', 'name' => 'هدفون', 'slug' => 'headphone' ] ] ) );
+check( 'no multipoint category exists in the tree', null === $registry->resolve( 'multipoint', [], [ [ 'id' => '144', 'name' => 'بی سیم | بلوتوث', 'slug' => 'wireless-bluetooth' ] ] ) );
+check( 'no AUX category exists in the tree', null === $registry->resolve( 'aux', [], [ [ 'id' => '34745', 'name' => 'با سیم | سیمی', 'slug' => 'wired' ] ] ) );
 
-check( 'absence policy defaults to false for every capability', false === $registry->resolve( 'multipoint', [] ) && false === $registry->resolve( 'silicone', [] ) && false === $registry->resolve( 'usbc', [] ) );
+check( 'absence policy keeps every capability unknown until the store lists it', null === $registry->resolve( 'multipoint', [] ) && null === $registry->resolve( 'silicone', [] ) && null === $registry->resolve( 'usbc', [] ) );
+check( 'the three states stay independent', null === $registry->resolve( 'anc', [] ) && true === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'ANC دارد' ] ) && false === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'ندارد' ] ) );
+
+/* WP-45 §2: USB-C charging is never read as USB-C audio. */
+check( 'USB-C charging-only text is an explicit no for USB-C audio', false === $registry->resolve( 'usbc', [ 'pa_connection' => 'بی‌سیم از طریق بلوتوث؛ USB-C کیس فقط برای شارژ' ] ) );
+check( 'USB-C charging-only text with audio wording still counts', true === $registry->resolve( 'usbc', [ 'pa_connection' => 'بی‌سیم و با کابل صدای USB-C؛ شارژ کیس هم دارد' ] ) );
+check( 'a USB-C audio connector is confirmed', true === $registry->resolve( 'usbc', [ 'pa_connection' => 'باسیم با کانکتور USB-C؛ سازگاری پخش وابسته به دستگاه میزبان' ] ) );
+check( 'a charging port is never used as a USB-C audio source', null === $registry->resolve( 'usbc', [ 'pa_charging-port' => 'USB-C' ] ) );
+check( 'R50i reading: no USB-C audio, but silicone tips are confirmed', false === $registry->resolve( 'usbc', [ 'pa_connection' => 'بی‌سیم از طریق بلوتوث؛ USB-C کیس فقط برای شارژ' ] ) && true === $registry->resolve( 'silicone', [ 'pa_inside-the-box' => '2 ایرباد، کیس شارژ، 3 جفت ایرتیپ، کابل USB-A به USB-C' ] ) );
+check( 'the alternate source answers when the primary carries no answer', true === $registry->resolve( 'silicone', [ 'pa_inside-the-box' => 'کابل USB-C', 'pa_headphones-type' => 'داخل گوش (In-Ear) با سری سیلیکونی' ] ) );
+check( 'a form-factor name alone is not a tip claim', null === $registry->resolve( 'silicone', [ 'pa_headphones-type' => 'روی گوش ( on-ear )' ] ) );
+check( 'open fit is reported when the store says so', false === $registry->resolve( 'silicone', [ 'pa_inside-the-box' => 'بدون سری سیلیکونی اضافه' ] ) );
+check( 'category negation against an affirmative attribute is reported', 'category_negation_conflict' === $registry->conflict( 'wireless', [ 'pa_bluetooth' => 'دارد' ], $wired_category ) );
 check( 'absent attribute is not a conflict', null === $registry->conflict( 'anc', [], $anc_category ) );
 check( 'unreadable primary attribute stays unknown', null === $registry->resolve( 'usbc', [ 'pa_connection' => 'درگاه شارژ' ] ) );
 
@@ -150,7 +167,7 @@ $fixture_product['capabilities'] = $caps;
 $unknown_anc = $fixture_product;
 $unknown_anc['capabilities']['anc'] = null;
 $result = $engine->select( [ 'flow' => 'earbuds', 'use' => 'commute', 'pain' => 'noise', 'connection' => 'wireless', 'fit' => 'silicone', 'budget' => 20000000 ], [ $unknown_anc ] );
-check( 'unknown required ANC excludes from that path', 0 === $result['total'] && 'anc' === $result['rejected'][0]['reason'] );
+check( 'unknown required ANC excludes from that path', 0 === $result['total'] && 'anc_not_listed' === $result['rejected'][0]['reason'] );
 
 // Same product on a path that does not need ANC stays eligible.
 $result = $engine->select( [ 'flow' => 'earbuds', 'use' => 'music', 'pain' => 'balanced', 'connection' => 'wireless', 'fit' => 'silicone', 'budget' => 20000000 ], [ $unknown_anc ] );

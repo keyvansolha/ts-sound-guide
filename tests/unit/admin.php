@@ -74,6 +74,10 @@ $checks = [
 	'earbud selector marks the configured product' => preg_match( '#value="202"\s+selected="selected"#', $earbuds ) === 1,
 	'headphone selector marks the configured product' => preg_match( '#value="203"\s+selected="selected"#', $headphones ) === 1,
 	'hero choices stay inside their configured flow' => ! str_contains( $earbuds, 'Selected Headphone' ) && ! str_contains( $headphones, 'Selected Earbud' ),
+	/* WP-45 §6: the admin report states which specs are unlisted, separately
+	 * from real data defects. */
+	'admin reports unlisted specifications as a coverage gap' => str_contains( $output, 'پوشش مشخصات ثبت‌نشده' ) && str_contains( $output, 'st_placeholder_missing' ) === false && str_contains( $output, '<code>silicone</code>' ),
+	'coverage gap counts the products missing that spec' => (bool) preg_match( '#<code>silicone</code></td>\s*<td>3</td>#', $output ),
 ];
 
 $pass = 0;

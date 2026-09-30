@@ -330,8 +330,16 @@ final class CatalogAdapter {
 		$raw_attributes = $this->raw_attributes( $product );
 		$categories     = $this->product_categories( $product );
 		$caps           = [];
+		$unlisted       = [];
 		foreach ( array_keys( $this->capabilities->capabilities() ) as $capability ) {
-			$caps[ $capability ] = $this->capabilities->resolve( $capability, $raw_attributes, $categories );
+			$reading             = $this->capabilities->interpretation( $capability, $raw_attributes, $categories );
+			$caps[ $capability ] = $reading['value'];
+			if ( 'absent' === $reading['source'] ) {
+				// The store has not listed this feature at all. That is not a
+				// false claim and not a data defect; it stays unknown, and is
+				// reported separately from unresolved contradictions.
+				$unlisted[] = $capability;
+			}
 		}
 		$conflicts = [];
 		foreach ( array_keys( $caps ) as $capability ) {
@@ -351,6 +359,7 @@ final class CatalogAdapter {
 			'form'        => $this->form_label( $product ),
 			'capabilities' => $caps,
 			'conflicts'   => $conflicts,
+			'unlisted'    => $unlisted,
 			'categories'  => $categories,
 			'variants'    => $variants,
 			'status'      => 'publish',
