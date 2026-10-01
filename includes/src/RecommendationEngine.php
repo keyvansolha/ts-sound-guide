@@ -177,7 +177,7 @@ final class RecommendationEngine {
 			] );
 		}
 
-		usort( $matched, static fn( array $x, array $y ): int => ( $y['fitScore'] <=> $x['fitScore'] ) ?: ( $x['price'] <=> $y['price'] ) ?: ( $x['id'] <=> $y['id'] ) );
+		usort( $matched, static fn( array $x, array $y ): int => ( $y['fitScore'] <=> $x['fitScore'] ) ?: ( $y['price'] <=> $x['price'] ) ?: ( $x['id'] <=> $y['id'] ) );
 
 		// Inventory depth only breaks ties after equal suitability and price;
 		// parent-managed stock is deduplicated.

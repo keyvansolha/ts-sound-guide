@@ -158,6 +158,43 @@ check( 'managed stock fully held yields no variants', [] === $engine->available_
 $unmanaged = [ 'status' => 'publish', 'lifecycle' => 'active', 'inStock' => true, 'purchasable' => true, 'variants' => [ [ 'id' => 1, 'price' => 10.0, 'qty' => null, 'held' => 0.0 ] ] ];
 check( 'unmanaged stock stays eligible (not coerced to zero)', 1 === count( $engine->available_variants( $unmanaged ) ) );
 
+/* ---------------- budget-aware price priority ---------------- */
+$rank_product = static function ( int $id, float $price, bool $anc = false ): array {
+	return [
+		'id'          => $id,
+		'wcId'        => $id,
+		'name'        => 'Rank product ' . $id,
+		'flow'        => 'earbuds',
+		'status'      => 'publish',
+		'lifecycle'   => 'active',
+		'inStock'     => true,
+		'purchasable' => true,
+		'capabilities' => [
+			'wireless' => true,
+			'usbc' => false,
+			'aux' => false,
+			'auxMic' => false,
+			'anc' => $anc,
+			'multipoint' => false,
+			'silicone' => true,
+		],
+		'variants' => [ [ 'id' => $id * 10, 'price' => $price, 'qty' => null ] ],
+	];
+};
+
+$result = $engine->select(
+	[ 'flow' => 'earbuds', 'use' => 'music', 'pain' => 'balanced', 'connection' => 'wireless', 'fit' => 'any', 'budget' => 10000000 ],
+	[ $rank_product( 201, 5000000.0 ), $rank_product( 202, 8000000.0 ), $rank_product( 203, 6000000.0 ) ]
+);
+check( 'equal-fit products rank from highest price to lowest inside the budget', [ 202, 203, 201 ] === array_column( $result['matched'], 'id' ) );
+check( 'the highest-priced equal-fit product becomes the primary pick', 202 === ( $result['picks'][0]['id'] ?? 0 ) );
+
+$result = $engine->select(
+	[ 'flow' => 'earbuds', 'use' => 'commute', 'pain' => 'balanced', 'connection' => 'wireless', 'fit' => 'any', 'budget' => 10000000 ],
+	[ $rank_product( 204, 5000000.0, true ), $rank_product( 205, 9000000.0, false ) ]
+);
+check( 'a better fit still outranks a more expensive lower-fit product', [ 204, 205 ] === array_column( $result['matched'], 'id' ) );
+
 /* ---------------- unknown-capability path semantics ---------------- */
 require __DIR__ . '/../characterization/fixtures.php';
 $fixture_product = ts_sound_fixtures_catalog()[0]; // Aurora ANC Buds
@@ -186,7 +223,7 @@ $hybrid = [
 	'id' => 900, 'wcId' => 900, 'name' => 'Hybrid ANC Headphones', 'flow' => 'headphones',
 	'status' => 'publish', 'lifecycle' => 'active', 'inStock' => true, 'purchasable' => true,
 	'capabilities' => [ 'wireless' => true, 'usbc' => false, 'aux' => true, 'auxMic' => true, 'anc' => true, 'multipoint' => true, 'silicone' => false ],
-	'variants' => [ [ 'id' => 9001, 'price' => 5000000.0 ] ],
+	'variants' => [ [ 'id' => 9001, 'price' => 5000000.0, 'qty' => null ] ],
 ];
 
 $result = $engine->select( [ 'flow' => 'headphones', 'use' => 'music', 'pain' => 'noise', 'connection' => 'aux', 'budget' => 6000000 ], [ $hybrid ] );

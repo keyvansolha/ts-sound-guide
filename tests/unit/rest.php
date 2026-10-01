@@ -61,6 +61,11 @@ ts_wc_product( 203, [
 	'attributes' => [ 'pa_bluetooth' => 'دارد', 'pa_noise-cancellation' => 'ندارد' ],
 	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
 ] );
+ts_wc_product( 204, [
+	'type' => 'simple', 'name' => 'Extra Eligible Buds', 'cats' => [ 11 ], 'price' => 5200000,
+	'attributes' => [ 'pa_bluetooth' => 'دارد', 'pa_noise-cancellation' => 'ندارد' ],
+	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
+] );
 ts_wc_product( 202, [
 	'type' => 'simple', 'name' => 'Wired Buds', 'cats' => [ 11 ], 'price' => 3500000,
 	'attributes' => [ 'pa_bluetooth' => 'ندارد', 'pa_connection' => 'AUX' ],
@@ -77,7 +82,7 @@ $response = $recommend->handle( request( [ 'answers' => complete_answers() ] ) )
 $data     = $response->get_data();
 $headers  = $response->get_headers();
 check( 'recommend success returns 200', 200 === $response->get_status() );
-check( 'recommend success returns WooCommerce source and a pick', 'woocommerce' === ( $data['source'] ?? null ) && 1 === count( $data['picks'] ?? [] ) );
+check( 'recommend success returns WooCommerce source and a pick', 'woocommerce' === ( $data['source'] ?? null ) && 0 < count( $data['picks'] ?? [] ) );
 check( 'recommend response omits private inventory fields', ! str_contains( (string) json_encode( $data ), 'stockOwnerId' ) && ! str_contains( (string) json_encode( $data ), '"qty"' ) );
 check( 'recommend response sets no-store/noindex headers', str_contains( $headers['Cache-Control'] ?? '', 'no-store' ) && 'noindex, nofollow' === ( $headers['X-Robots-Tag'] ?? '' ) );
 /* WP-45 §1: eligibility is separate from the three primary cards, so the

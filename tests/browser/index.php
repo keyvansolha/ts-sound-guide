@@ -57,7 +57,7 @@ window.fetch = async (url) => {
 	// Extra eligible models: shipped separately from the primary cards so they
 	// stay reachable behind «دیدن گزینه‌های بیشتر».
 	const options = scenario === 'empty' ? [] : [{...product(30,5400000,true), role:'گزینه دیگر'},{...product(40,4100000,false), role:'گزینه دیگر'}];
-	return {ok:true,status:200,json:async()=>({picks,options,optionsTotal:options.length,notices:[],total:picks.length+options.length,version:'3.2.1',source:'woocommerce',checkedAt:new Date().toISOString(),expiresAt:new Date(Date.now()+45000).toISOString()})};
+	return {ok:true,status:200,json:async()=>({picks,options,optionsTotal:options.length,notices:[],total:picks.length+options.length,version:'3.2.2',source:'woocommerce',checkedAt:new Date().toISOString(),expiresAt:new Date(Date.now()+45000).toISOString()})};
 };
 </script>
 <script type="module" src="../../assets/js/entry.js"></script>

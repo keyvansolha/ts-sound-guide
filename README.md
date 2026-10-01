@@ -110,6 +110,8 @@ Eligibility and presentation are separate decisions. A product is either eligibl
 
 `امکانات بیشتر` is only used when the model really adds the capability the shopper asked for (ANC for commute, multipoint for work); a higher price alone never earns the label. A suggestion above the first budget ceiling always states the extra amount *and* the related advantage; when there is no related advantage it says so.
 
+Eligible products are ranked by verified suitability first. When suitability scores are equal, the higher-priced model inside the shopper's ceiling comes first; the deliberately cheaper model remains available as `هزینه کمتر`. This ordering never inflates a product's own price: each model still uses its least expensive eligible colour and guarantee variation.
+
 ## Answer effects (what each answer actually changes)
 
 `RecommendationEngine::answer_effects()` is the documented contract, and the shopper-facing copy follows it:
