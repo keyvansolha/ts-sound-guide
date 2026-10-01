@@ -35,7 +35,7 @@ final class CatalogHealth {
 	/**
 	 * Build the health report.
 	 *
-	 * @return array{ok:bool,groups:array<string,array<int,array<string,mixed>>>,summary:array<string,int>,issues:array<int,array<string,mixed>>,not_listed:array<string,mixed>}
+	 * @return array{ok:bool,groups:array<string,array<int,array<string,mixed>>>,summary:array<string,int>,issues:array<int,array<string,mixed>>,information_issues:array<int,array<string,mixed>>,commerce_issues:array<int,array<string,mixed>>,not_listed:array<string,mixed>}
 	 */
 	public function report(): array {
 		$groups  = [ 'ready' => [], 'incomplete' => [], 'unusable' => [] ];
@@ -47,6 +47,8 @@ final class CatalogHealth {
 				'groups'  => $groups,
 				'summary' => $summary,
 				'issues'  => [],
+				'information_issues' => [],
+				'commerce_issues'    => [],
 				'not_listed' => [ 'by_capability' => [], 'products' => [] ],
 				'error'   => 'WooCommerce is not available.',
 			];
@@ -58,6 +60,8 @@ final class CatalogHealth {
 				'groups'  => $groups,
 				'summary' => $summary,
 				'issues'  => [],
+				'information_issues' => [],
+				'commerce_issues'    => [],
 				'not_listed' => [ 'by_capability' => [], 'products' => [] ],
 				'error'   => 'Store currency is unsupported. Use IRR, IRT, or TOMAN.',
 			];
@@ -71,13 +75,17 @@ final class CatalogHealth {
 				'groups'  => $groups,
 				'summary' => $summary,
 				'issues'  => [],
+				'information_issues' => [],
+				'commerce_issues'    => [],
 				'not_listed' => [ 'by_capability' => [], 'products' => [] ],
 				'error'   => 'Catalog query failed: ' . get_class( $e ),
 			];
 		}
 
-		$issues     = [];
-		$not_listed = [ 'by_capability' => [], 'products' => [] ];
+		$issues             = [];
+		$information_issues = [];
+		$commerce_issues    = [];
+		$not_listed         = [ 'by_capability' => [], 'products' => [] ];
 		foreach ( $catalog as $row ) {
 			$p              = $row['product'];
 			$product_issues = $row['issues'];
@@ -86,7 +94,8 @@ final class CatalogHealth {
 				$summary['unusable']++;
 				foreach ( $product_issues as $issue ) {
 					$issue['product'] = $this->summary_row( $p );
-					$issues[]         = $issue;
+					$issues[]          = $issue;
+					$commerce_issues[] = $issue;
 				}
 				continue;
 			}
@@ -110,7 +119,8 @@ final class CatalogHealth {
 			$summary['incomplete']++;
 			foreach ( $product_issues as $issue ) {
 				$issue['product'] = $this->summary_row( $p );
-				$issues[]         = $issue;
+				$issues[]             = $issue;
+				$information_issues[] = $issue;
 			}
 		}
 
@@ -119,7 +129,9 @@ final class CatalogHealth {
 			'groups'     => $groups,
 			'summary'    => $summary,
 			'issues'     => $issues,
-			'not_listed' => $not_listed,
+			'information_issues' => $information_issues,
+			'commerce_issues'    => $commerce_issues,
+			'not_listed'         => $not_listed,
 		];
 	}
 

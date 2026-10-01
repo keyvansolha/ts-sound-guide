@@ -159,6 +159,15 @@ ts_wc_product( 112, [
 	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
 ], [] );
 
+// A13: unavailable now, but otherwise mappable. Its missing form must become
+// an information issue automatically when commerce state turns healthy.
+ts_wc_product( 113, [
+	'name' => 'Returning Buds', 'cats' => [ 125 ], 'price' => 6100000,
+	'in_stock' => false, 'purchasable' => false,
+	'attributes' => [ 'pa_bluetooth' => 'دارد' ],
+	'variation_attributes' => [ 'pa_color' => 'black', 'pa_guarantee' => '6m' ],
+], [] );
+
 /* ---------- adapter behavior ---------- */
 $catalog = $adapter->catalog();
 $queried_terms = (array) ( $GLOBALS['ts_wc_last_query']['product_category_id'] ?? [] );
@@ -225,12 +234,42 @@ $unusable_ids = array_column( $health['groups']['unusable'], 'id' );
 sort( $unusable_ids );
 $issue_ids = array_unique( array_map( static fn( array $issue ): int => (int) $issue['product']['id'], $health['issues'] ) );
 sort( $issue_ids );
-check( 'health report includes every mapped or unusable relevant product', 12 === array_sum( $health['summary'] ) );
-check( 'health report groups filtered commerce failures as unusable', [ 102, 103, 104, 105, 107 ] === $unusable_ids );
-check( 'health report attaches actionable issues to unusable products', [] === array_diff( [ 102, 103, 104, 105, 107 ], $issue_ids ) );
+check( 'health report includes every mapped or unusable relevant product', 13 === array_sum( $health['summary'] ) );
+check( 'health report groups filtered commerce failures as unusable', [ 102, 103, 104, 105, 107, 113 ] === $unusable_ids );
+check( 'health report attaches actionable issues to unusable products', [] === array_diff( [ 102, 103, 104, 105, 107, 113 ], $issue_ids ) );
 $ready_ids = array_column( $health['groups']['ready'], 'id' );
 sort( $ready_ids );
 check( 'health applies only flow-relevant capabilities', [ 101, 108, 110, 111 ] === $ready_ids );
+
+$information_issue_ids = array_values( array_unique( array_map(
+	static fn( array $issue ): int => (int) $issue['product']['id'],
+	$health['information_issues'] ?? []
+) ) );
+$commerce_issue_ids = array_values( array_unique( array_map(
+	static fn( array $issue ): int => (int) $issue['product']['id'],
+	$health['commerce_issues'] ?? []
+) ) );
+$returning_blockers = array_values( array_map(
+	static fn( array $issue ): string => (string) $issue['capability'],
+	array_filter( $health['commerce_issues'] ?? [], static fn( array $issue ): bool => 113 === (int) $issue['product']['id'] )
+) );
+sort( $returning_blockers );
+check( 'eligible specification problems are separated from commerce blockers', in_array( 112, $information_issue_ids, true ) && ! in_array( 112, $commerce_issue_ids, true ) );
+check( 'unavailable products appear only in commerce problems', in_array( 113, $commerce_issue_ids, true ) && ! in_array( 113, $information_issue_ids, true ) );
+check( 'every commerce blocker is retained for one product', [ 'purchasable', 'stock' ] === $returning_blockers );
+
+$GLOBALS['ts_wc_products'][113]['props']['in_stock']    = true;
+$GLOBALS['ts_wc_products'][113]['props']['purchasable'] = true;
+$refreshed_health = ( new CatalogHealth( $adapter ) )->report();
+$refreshed_information = array_filter(
+	$refreshed_health['information_issues'] ?? [],
+	static fn( array $issue ): bool => 113 === (int) $issue['product']['id'] && 'form' === (string) $issue['capability']
+);
+$refreshed_commerce = array_filter(
+	$refreshed_health['commerce_issues'] ?? [],
+	static fn( array $issue ): bool => 113 === (int) $issue['product']['id']
+);
+check( 'a product entering stock moves its specification errors on the next report', 1 === count( $refreshed_information ) && [] === $refreshed_commerce );
 
 /* WP-45 §6: the coverage report separates "not listed" from a data defect, so
  * an incomplete spec sheet cannot hide inside the readiness grouping. */
