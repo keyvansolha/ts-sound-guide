@@ -74,6 +74,10 @@ check( 'ANC unknown on contradictory value', null === $registry->resolve( 'anc',
 check( 'wireless no from explicit ندارد', false === $registry->resolve( 'wireless', [ 'pa_bluetooth' => 'ندارد' ] ) );
 check( 'wireless contradictory yes/no stays unknown', null === $registry->resolve( 'wireless', [ 'pa_bluetooth' => 'دارد ولی ندارد' ] ) );
 check( 'USB-C yes only from audio-capable value', true === $registry->resolve( 'usbc', [ 'pa_connection' => 'USB-C audio' ] ) );
+check( 'Bluetooth-only connection explicitly has no USB-C audio', false === $registry->resolve( 'usbc', [ 'pa_connection' => 'بی‌سیم از طریق بلوتوث' ] ) );
+check( 'AUX-only connection explicitly has no USB-C audio', false === $registry->resolve( 'usbc', [ 'pa_connection' => 'AUX 3.5 mm' ] ) );
+check( 'plain USB-C connector stays unknown without audio purpose', null === $registry->resolve( 'usbc', [ 'pa_connection' => 'USB-C' ] ) );
+check( 'known non-USB connection is not a data conflict', null === $registry->conflict( 'usbc', [ 'pa_connection' => 'بی‌سیم' ] ) );
 check( 'USB-C unknown from generic charging port text', null === $registry->resolve( 'usbc', [ 'pa_connection' => 'درگاه شارژ' ] ) );
 check( 'AUX mic yes from explicit AUX-mic value', true === $registry->resolve( 'auxMic', [ 'pa_aux-microphone' => 'میکروفون دارد' ] ) );
 check( 'AUX mic stays unknown when the attribute is not listed', null === $registry->resolve( 'auxMic', [ 'pa_bluetooth' => 'دارد' ] ) );
@@ -91,8 +95,8 @@ check( 'feature category grants capability with no attribute', true === $registr
 check( 'feature category grants wireless with no attribute', true === $registry->resolve( 'wireless', [], $wireless_category ) );
 check( 'category authority beats an explicit negative attribute', true === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'ندارد' ], $anc_category ) );
 check( 'category/attribute disagreement reported', 'category_conflict' === $registry->conflict( 'anc', [ 'pa_noise-cancellation' => 'ندارد' ], $anc_category ) );
-check( 'category negation forces false for an absent attribute', false === $registry->resolve( 'wireless', [], $wired_category ) );
-check( 'explicit positive attribute beats category negation', true === $registry->resolve( 'wireless', [ 'pa_bluetooth' => 'دارد' ], $wired_category ) );
+check( 'wired-capable category alone does not deny Bluetooth', null === $registry->resolve( 'wireless', [], $wired_category ) );
+check( 'explicit Bluetooth remains true on a dual-mode product', true === $registry->resolve( 'wireless', [ 'pa_bluetooth' => 'دارد' ], $wired_category ) );
 
 // Term ID matching is primary; the name fragment is what keeps a re-created
 // category working. Both are exercised independently.
@@ -124,7 +128,7 @@ check( 'a Bluetooth version on the Bluetooth field states presence', true === $r
 check( 'the alternate source answers when the primary carries no answer', true === $registry->resolve( 'silicone', [ 'pa_inside-the-box' => 'کابل USB-C', 'pa_headphones-type' => 'داخل گوش (In-Ear) با سری سیلیکونی' ] ) );
 check( 'a form-factor name alone is not a tip claim', null === $registry->resolve( 'silicone', [ 'pa_headphones-type' => 'روی گوش ( on-ear )' ] ) );
 check( 'open fit is reported when the store says so', false === $registry->resolve( 'silicone', [ 'pa_inside-the-box' => 'بدون سری سیلیکونی اضافه' ] ) );
-check( 'category negation against an affirmative attribute is reported', 'category_negation_conflict' === $registry->conflict( 'wireless', [ 'pa_bluetooth' => 'دارد' ], $wired_category ) );
+check( 'dual wired and Bluetooth support is not a category conflict', null === $registry->conflict( 'wireless', [ 'pa_bluetooth' => 'دارد' ], $wired_category ) );
 check( 'absent attribute is not a conflict', null === $registry->conflict( 'anc', [], $anc_category ) );
 check( 'unreadable primary attribute stays unknown', null === $registry->resolve( 'usbc', [ 'pa_connection' => 'درگاه شارژ' ] ) );
 

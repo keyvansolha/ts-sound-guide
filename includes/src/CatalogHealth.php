@@ -152,9 +152,15 @@ final class CatalogHealth {
 	private function product_issues( array $p ): array {
 		$issues   = [];
 		$unlisted = array_map( 'strval', (array) ( $p['unlisted'] ?? [] ) );
+		$relevant = 'headphones' === (string) ( $p['flow'] ?? '' )
+			? [ 'wireless', 'usbc', 'aux', 'auxMic', 'anc', 'multipoint' ]
+			: [ 'wireless', 'usbc', 'anc', 'multipoint', 'silicone' ];
 
 		$conflicts = is_array( $p['conflicts'] ?? null ) ? $p['conflicts'] : [];
 		foreach ( $conflicts as $capability => $kind ) {
+			if ( ! in_array( (string) $capability, $relevant, true ) ) {
+				continue;
+			}
 			$issues[] = [
 				'severity'   => in_array( $kind, [ 'contradiction', 'category_conflict', 'category_negation_conflict' ], true ) ? 'warning' : 'notice',
 				'capability' => (string) $capability,
@@ -165,6 +171,9 @@ final class CatalogHealth {
 		}
 
 		foreach ( (array) $p['capabilities'] as $capability => $value ) {
+			if ( ! in_array( (string) $capability, $relevant, true ) ) {
+				continue;
+			}
 			if ( null === $value && ! in_array( (string) $capability, $unlisted, true ) ) {
 				$issues[] = [
 					'severity'   => 'warning',

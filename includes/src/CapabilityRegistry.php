@@ -120,7 +120,7 @@ final class CapabilityRegistry {
 	 *
 	 * @var array<int, string>
 	 */
-	private const USBC_AUDIO = [ 'صوتی', 'صدا', 'آدیو', 'audio', 'dac', 'lossless', 'پخش کابلی', 'پخش موسیقی', 'مانیتورینگ' ];
+	private const USBC_AUDIO = [ 'صوتی', 'صدا', 'آدیو', 'audio', 'dac', 'lossless', 'پخش کابلی', 'پخش موسیقی', 'سازگاری پخش', 'مانیتورینگ' ];
 
 	/**
 	 * Value fragments that describe charging only.
@@ -132,6 +132,20 @@ final class CapabilityRegistry {
 	 * @var array<int, string>
 	 */
 	private const USBC_CHARGING_ONLY = [ 'فقط برای شارژ', 'فقط شارژ', 'برای شارژ', 'شارژ کیس', 'کیس شارژ', 'کابل شارژ', 'شارژر' ];
+
+	/**
+	 * Connection modes that explicitly carry audio somewhere other than USB-C.
+	 *
+	 * These values are valid answers in the shared «نوع اتصال» field. When no
+	 * USB-C connector is named, they mean USB-C audio is not a supported mode;
+	 * they are not malformed product data.
+	 *
+	 * @var array<int, string>
+	 */
+	private const USBC_OTHER_AUDIO_MODES = [
+		'بی سیم', 'بی‌سیم', 'بیسیم', 'بلوتوث', 'Bluetooth',
+		'AUX', '3.5', 'جک صدا', 'Lightning', 'لایتنینگ',
+	];
 
 	/**
 	 * Capability definitions keyed by internal capability name.
@@ -165,7 +179,9 @@ final class CapabilityRegistry {
 				'yes'       => [ 'دارد', 'بلوتوث', 'Bluetooth', 'bluetooth', 'BT', 'نسخه' ],
 				'no'        => [ 'ندارد', 'فاقد', 'بدون' ],
 				'categories'         => [ self::CAT_BI_WIRELESS, self::CAT_WIRELESS_HEADPHONE, 'بی سیم', 'بلوتوث' ],
-				'category_negations' => [ self::CAT_WIRED, 'با سیم', 'سیمی' ],
+				// A product can support Bluetooth and a cable at the same time;
+				// wired-capable categories therefore never negate Bluetooth.
+				'category_negations' => [],
 				'absence'   => self::UNKNOWN,
 				'label'     => 'اتصال بی‌سیم',
 				'field'     => 'ویژگی «بلوتوث» محصول یا دسته‌بندی «بی سیم | بلوتوث»',
@@ -178,6 +194,7 @@ final class CapabilityRegistry {
 				'connector' => self::USBC_CONNECTOR,
 				'audio'     => self::USBC_AUDIO,
 				'charging'  => self::USBC_CHARGING_ONLY,
+				'other_audio_modes' => self::USBC_OTHER_AUDIO_MODES,
 				// No USB-C category exists in the store tree; only the
 				// attribute can confirm USB-C audio.
 				'categories'         => [],
@@ -454,6 +471,16 @@ final class CapabilityRegistry {
 		$normalized = $this->normalize_text( $effective );
 		$has_yes    = $this->contains_any( $normalized, $def['yes'] );
 		$has_no     = $this->contains_any( $normalized, $def['no'] );
+		if ( ! empty( $def['connector'] ) && ! empty( $def['audio'] ) ) {
+			$has_connector = $this->contains_any( $normalized, (array) $def['connector'] );
+			$has_audio     = $this->contains_any( $normalized, (array) $def['audio'] );
+			$has_yes       = $has_connector && $has_audio;
+			$has_no        = $has_no
+				|| ( $has_connector
+					&& $this->contains_any( $normalized, (array) ( $def['charging'] ?? [] ) )
+					&& ! $has_audio )
+				|| ( ! $has_connector && $this->contains_any( $normalized, (array) ( $def['other_audio_modes'] ?? [] ) ) );
+		}
 
 		// Explicit category authority against an explicit opposite attribute.
 		if ( $this->category_implies( $capability, $categories ) && $has_no && ! $has_yes ) {
@@ -508,14 +535,21 @@ final class CapabilityRegistry {
 			}
 			return self::NO;
 		}
-		// Charging-only connector wording: the store named a USB-C port, but
-		// only as a power inlet. Without audio wording in the same value this
-		// is a no, never an inferred yes.
-		if ( ! empty( $def['charging'] )
-			&& $this->contains_any( $value, (array) ( $def['connector'] ?? $def['yes'] ) )
-			&& $this->contains_any( $value, (array) $def['charging'] )
-			&& ! $this->contains_any( $value, (array) ( $def['audio'] ?? [] ) ) ) {
-			return self::NO;
+		if ( ! empty( $def['connector'] ) && ! empty( $def['audio'] ) ) {
+			$has_connector = $this->contains_any( $value, (array) $def['connector'] );
+			$has_audio     = $this->contains_any( $value, (array) $def['audio'] );
+			if ( $has_connector ) {
+				if ( $has_audio ) {
+					return self::YES;
+				}
+				if ( $this->contains_any( $value, (array) ( $def['charging'] ?? [] ) ) ) {
+					return self::NO;
+				}
+				return self::UNKNOWN;
+			}
+			if ( $this->contains_any( $value, (array) ( $def['other_audio_modes'] ?? [] ) ) ) {
+				return self::NO;
+			}
 		}
 		$has_yes = $this->contains_any( $value, $def['yes'] );
 		if ( $has_yes ) {

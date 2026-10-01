@@ -117,6 +117,7 @@ ts_wc_product( 108, [
 	'name' => 'Ready Headphone', 'cats' => [ 116 ], 'price' => 9500000,
 	'attributes' => [
 		'pa_bluetooth' => 'دارد', 'pa_aux' => 'دارد', 'pa_aux-microphone' => 'دارد',
+		'pa_connection' => 'Bluetooth, AUX', 'pa_inside-the-box' => 'کابل شارژ و دفترچه',
 		'pa_noise-cancellation' => 'ندارد', 'pa_qip5asto9pe6c2dzxq' => 'ندارد',
 		'pa_headphones-type' => 'روی گوش',
 	],
@@ -197,12 +198,12 @@ check( 'missing form factor is not replaced with an inferred label', null === $c
 /* ---------- category authority (rule 1) and negation (rule 3) ---------- */
 check( 'category names the capability -> true without any attribute', true === $catalog[109]['capabilities']['anc'] );
 check( 'ancestor category implies capability for its children', true === $catalog[110]['capabilities']['wireless'] );
-check( 'wireless stays false for an absent attribute without a category signal', false === $catalog[111]['capabilities']['wireless'] );
-check( 'category negation forces false', false === $catalog[111]['capabilities']['wireless'] );
+check( 'wired category alone leaves Bluetooth unknown', null === $catalog[111]['capabilities']['wireless'] );
 check( 'category authority beats an explicit negative attribute', true === $catalog[112]['capabilities']['anc'] );
 check( 'category/attribute disagreement is reported as a conflict', 'category_conflict' === ( $catalog[112]['conflicts']['anc'] ?? null ) );
 check( 'unconflicted product reports no conflicts', [] === $catalog[109]['conflicts'] );
 check( 'silicone from a plain form-factor name is not a conflict', ! isset( $catalog[110]['conflicts']['silicone'] ) );
+check( 'known Bluetooth and AUX modes explicitly rule out USB-C audio', false === $catalog[108]['capabilities']['usbc'] && ! isset( $catalog[108]['conflicts']['usbc'] ) );
 
 /* ---------- public budget span: cheapest to most expensive offer ---------- */
 $span_source = [
@@ -240,6 +241,10 @@ check( 'health report attaches actionable issues to unusable products', [] === a
 $ready_ids = array_column( $health['groups']['ready'], 'id' );
 sort( $ready_ids );
 check( 'health applies only flow-relevant capabilities', [ 101, 108, 110, 111 ] === $ready_ids );
+check( 'headphone box contents never create an ear-tip information issue', [] === array_filter(
+	$health['information_issues'] ?? [],
+	static fn( array $issue ): bool => 108 === (int) $issue['product']['id'] && 'silicone' === (string) $issue['capability']
+) );
 
 $information_issue_ids = array_values( array_unique( array_map(
 	static fn( array $issue ): int => (int) $issue['product']['id'],
