@@ -463,7 +463,11 @@ final class CapabilityRegistry {
 		$def      = $defs[ $capability ];
 		$primary  = trim( (string) ( $raw[ $def['attribute'] ] ?? '' ) );
 		$alternate = ! empty( $def['attribute_alt'] ) ? trim( (string) ( $raw[ $def['attribute_alt'] ] ?? '' ) ) : '';
-		$effective = '' !== $primary ? $primary : $alternate;
+		$primary_value   = '' !== $primary ? $this->match( $primary, $def ) : null;
+		$alternate_value = '' !== $alternate ? $this->match( $alternate, $def ) : null;
+		$effective       = null !== $primary_value
+			? $primary
+			: ( null !== $alternate_value ? $alternate : ( '' !== $primary ? $primary : $alternate ) );
 		if ( '' === $effective ) {
 			return null; // Absent: governed by the absence policy, not a conflict.
 		}
@@ -501,7 +505,7 @@ final class CapabilityRegistry {
 		// Unreadable text is only reported for the primary attribute: the
 		// alternate source (e.g. form factor) legitimately carries values that
 		// are neither a yes nor a no for the capability.
-		if ( '' !== $primary && ! $has_yes && ! $has_no ) {
+		if ( '' !== $primary && null === $primary_value && null === $alternate_value && ! $has_yes && ! $has_no ) {
 			return 'unreadable';
 		}
 		return null;

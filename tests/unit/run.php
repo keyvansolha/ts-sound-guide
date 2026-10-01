@@ -126,6 +126,7 @@ check( 'a feature field that says only «دارد» is a yes', true === $registr
 check( 'a mixed value is not promoted to a claim', null === $registry->resolve( 'anc', [ 'pa_noise-cancellation' => 'دارد / میکروفون (noise isolation)' ] ) );
 check( 'a Bluetooth version on the Bluetooth field states presence', true === $registry->resolve( 'wireless', [ 'pa_bluetooth' => 'نسخه 4.0' ] ) );
 check( 'the alternate source answers when the primary carries no answer', true === $registry->resolve( 'silicone', [ 'pa_inside-the-box' => 'کابل USB-C', 'pa_headphones-type' => 'داخل گوش (In-Ear) با سری سیلیکونی' ] ) );
+check( 'an explicit alternate answer prevents an unreadable-primary conflict', null === $registry->conflict( 'silicone', [ 'pa_inside-the-box' => 'کابل USB-C', 'pa_headphones-type' => 'open-ear' ] ) );
 check( 'a form-factor name alone is not a tip claim', null === $registry->resolve( 'silicone', [ 'pa_headphones-type' => 'روی گوش ( on-ear )' ] ) );
 check( 'open fit is reported when the store says so', false === $registry->resolve( 'silicone', [ 'pa_inside-the-box' => 'بدون سری سیلیکونی اضافه' ] ) );
 check( 'dual wired and Bluetooth support is not a category conflict', null === $registry->conflict( 'wireless', [ 'pa_bluetooth' => 'دارد' ], $wired_category ) );
