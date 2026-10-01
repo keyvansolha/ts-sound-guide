@@ -84,6 +84,19 @@ final class AdminScreens {
 		$woo     = $this->catalog->woo_available();
 		$currency = $this->catalog->currency();
 		$health  = $this->health->report();
+		$requested_health_tab = isset( $_GET['ts_sound_tab'] ) ? sanitize_key( (string) wp_unslash( $_GET['ts_sound_tab'] ) ) : 'information';
+		$active_health_tab    = 'commerce' === $requested_health_tab ? 'commerce' : 'information';
+		$health_page_url      = admin_url( 'options-general.php' );
+		$information_tab_url  = add_query_arg( [ 'page' => 'ts-sound-guide', 'ts_sound_tab' => 'information' ], $health_page_url );
+		$commerce_tab_url     = add_query_arg( [ 'page' => 'ts-sound-guide', 'ts_sound_tab' => 'commerce' ], $health_page_url );
+		$refresh_url          = add_query_arg(
+			[
+				'page'             => 'ts-sound-guide',
+				'ts_sound_tab'     => $active_health_tab,
+				'ts_sound_refresh' => time(),
+			],
+			$health_page_url
+		);
 		$selected_heroes = $this->settings->hero_products();
 		$hero_products = [ 'earbuds' => [], 'headphones' => [] ];
 		try {
@@ -176,25 +189,44 @@ final class AdminScreens {
 			ناقص: <strong><?php echo (int) $health['summary']['incomplete']; ?></strong> ·
 			غیرقابل ارائه: <strong><?php echo (int) $health['summary']['unusable']; ?></strong>
 		</p>
-		<?php if ( $health['issues'] ) : ?>
-		<table class="widefat striped">
-			<thead><tr><th>محصول</th><th>شدت</th><th>قابلیت</th><th>فیلد WooCommerce</th><th>توضیح</th><th>ویرایش</th></tr></thead>
-			<tbody>
-			<?php foreach ( $health['issues'] as $issue ) : ?>
-				<tr>
-					<td><?php echo esc_html( $issue['product']['name'] ); ?> <code>#<?php echo (int) $issue['product']['wcId']; ?></code></td>
-					<td><?php echo 'error' === $issue['severity'] ? '⛔' : '⚠'; ?></td>
-					<td><?php echo esc_html( $issue['capability'] ); ?></td>
-					<td><?php echo esc_html( $issue['field'] ); ?></td>
-					<td><?php echo esc_html( $issue['help'] ); ?></td>
-					<td><a href="<?php echo esc_url( (string) $issue['product']['edit'] ); ?>">ویرایش محصول ↗</a></td>
-				</tr>
-			<?php endforeach; ?>
-			</tbody>
-		</table>
-		<?php else : ?>
-			<p>همه محصولات بررسی‌شده داده کامل دارند.</p>
-		<?php endif; ?>
+		<?php $information_issues = (array) ( $health['information_issues'] ?? [] ); ?>
+		<?php $commerce_issues = (array) ( $health['commerce_issues'] ?? [] ); ?>
+		<p><a class="button" href="<?php echo esc_url( $refresh_url ); ?>">رفرش گزارش</a></p>
+		<nav class="nav-tab-wrapper" role="tablist" aria-label="دسته‌بندی مشکلات سلامت محصولات">
+			<a
+				id="ts-sound-information-tab"
+				class="nav-tab <?php echo 'information' === $active_health_tab ? 'nav-tab-active' : ''; ?>"
+				href="<?php echo esc_url( $information_tab_url ); ?>"
+				role="tab"
+				aria-controls="ts-sound-information-panel"
+				aria-selected="<?php echo 'information' === $active_health_tab ? 'true' : 'false'; ?>"
+			>مشکلات اطلاعاتی محصولات موجود (<?php echo count( $information_issues ); ?>)</a>
+			<a
+				id="ts-sound-commerce-tab"
+				class="nav-tab <?php echo 'commerce' === $active_health_tab ? 'nav-tab-active' : ''; ?>"
+				href="<?php echo esc_url( $commerce_tab_url ); ?>"
+				role="tab"
+				aria-controls="ts-sound-commerce-panel"
+				aria-selected="<?php echo 'commerce' === $active_health_tab ? 'true' : 'false'; ?>"
+			>مشکلات موجودی و فروش (<?php echo count( $commerce_issues ); ?>)</a>
+		</nav>
+		<section
+			id="ts-sound-information-panel"
+			role="tabpanel"
+			aria-labelledby="ts-sound-information-tab"
+			<?php echo 'information' === $active_health_tab ? '' : 'hidden'; ?>
+		>
+			<?php $this->issue_table( $information_issues, 'هیچ مشکل اطلاعاتی برای محصولات قابل‌خرید پیدا نشد.' ); ?>
+		</section>
+		<section
+			id="ts-sound-commerce-panel"
+			role="tabpanel"
+			aria-labelledby="ts-sound-commerce-tab"
+			<?php echo 'commerce' === $active_health_tab ? '' : 'hidden'; ?>
+		>
+			<p>محصولات این تب فعلاً وارد پیشنهادها نمی‌شوند. پس از رفع وضعیت فروش، خطاهای مشخصات آن‌ها در تب اول نمایش داده می‌شود.</p>
+			<?php $this->issue_table( $commerce_issues, 'هیچ مشکل موجودی یا فروش پیدا نشد.' ); ?>
+		</section>
 		<?php $gap = $health['not_listed'] ?? [ 'by_capability' => [], 'products' => [] ]; ?>
 		<?php if ( ! empty( $gap['by_capability'] ) ) : ?>
 			<h3>پوشش مشخصات ثبت‌نشده</h3>
@@ -215,6 +247,38 @@ final class AdminScreens {
 		<?php endif; ?>
 	<?php endif; ?>
 </div>
+		<?php
+	}
+
+	/**
+	 * Render one catalog-health issue table or its empty state.
+	 *
+	 * @param array<int, array<string, mixed>> $issues Issues for one tab.
+	 * @param string                           $empty  Empty-state copy.
+	 */
+	private function issue_table( array $issues, string $empty ): void {
+		if ( ! $issues ) {
+			?>
+			<p><?php echo esc_html( $empty ); ?></p>
+			<?php
+			return;
+		}
+		?>
+		<table class="widefat striped">
+			<thead><tr><th>محصول</th><th>شدت</th><th>قابلیت</th><th>فیلد WooCommerce</th><th>توضیح</th><th>ویرایش</th></tr></thead>
+			<tbody>
+			<?php foreach ( $issues as $issue ) : ?>
+				<tr>
+					<td><?php echo esc_html( (string) $issue['product']['name'] ); ?> <code>#<?php echo (int) $issue['product']['wcId']; ?></code></td>
+					<td><?php echo 'error' === $issue['severity'] ? '⛔' : '⚠'; ?></td>
+					<td><?php echo esc_html( (string) $issue['capability'] ); ?></td>
+					<td><?php echo esc_html( (string) $issue['field'] ); ?></td>
+					<td><?php echo esc_html( (string) $issue['help'] ); ?></td>
+					<td><a href="<?php echo esc_url( (string) $issue['product']['edit'] ); ?>">ویرایش محصول ↗</a></td>
+				</tr>
+			<?php endforeach; ?>
+			</tbody>
+		</table>
 		<?php
 	}
 
